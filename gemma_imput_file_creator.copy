@@ -1,0 +1,37 @@
+#Script to create a correct gemma imput formatted file
+rm(list=ls())
+
+#set arguments
+male_table <- "/nfs/users/nfs_m/mc14/Work/SANGER/FVG/PHENO/GLICEMIC/INSULIN_BMIadj_fvg_males.phen"
+female_table <- "/nfs/users/nfs_m/mc14/Work/SANGER/FVG/PHENO/GLICEMIC/INSULIN_BMIadj_fvg_females.phen"
+trait <- "INSadjBMI"
+sorted_file <- "/nfs/users/nfs_m/mc14/Work/SANGER/FVG/PHENO/imputation_order_id.samples"
+out_file <- "/nfs/users/nfs_m/mc14/Work/SANGER/FVG/PHENO/GLICEMIC/INSULIN_BMIadj_fvg_all.phen"
+
+#read males and females files
+males <- read.table(male_table,header=F,sep="\t",skip=1)
+females <- read.table(female_table,header=F,sep="\t",skip=1)
+
+colnames(males) <- c("ID",trait)
+colnames(females) <- c("ID",trait)
+
+males$ID <- as.character(males$ID)
+females$ID <- as.character(females$ID)
+
+#read the sorted sample list
+sorted_ids <- read.table(sorted_file,header=T,sep=" ")
+sorted_ids$ID_2 <- as.character(sorted_ids$ID_2)
+
+pheno_merged_males <- merge(sorted_ids,males,all=T,by.x="ID_2",by.y="ID")   
+pheno_merged_males_females <- merge(pheno_merged_males,females,all=T,by.x="ID_2",by.y="ID")
+source("~/Work/r_scripts/add_column.r")
+
+pheno_merged_males_females$TRAIT <- apply(pheno_merged_males_females,1,function(row) pheno_add(row[3],row[4]))
+pheno_merged_males_females$TRAIT <- as.numeric(as.character(pheno_merged_males_females$TRAIT))
+pheno_merged <- data.frame(pheno_merged_males_females$ID_2,pheno_merged_males_females$TRAIT)
+pheno_merged$ID <- as.character(pheno_merged$ID)
+colnames(pheno_merged) <- c("ID",trait)
+
+write.table(pheno_merged,file=out_file,row.names=F,quote=F,col.names=T,sep="\t")
+
+

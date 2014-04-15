@@ -26,13 +26,21 @@ split_bins <- function(maf_classes,snp_set,population){
 	snp_set$D_MAF <- as.numeric(as.character(snp_set$D_MAF))
   }
   #count how many snps we have in each maf range
-  for(i in 2:(length(maf_classes))){
+  for(i in 2:(length(maf_classes) + 1)){
     class_maf_name <- paste(population,'_maf_lte_',maf_classes[i],sep='')
-    if(maf_classes[i] == maf_classes[2]){
-      class_maf_count <- snp_set[snp_set$MAF <= maf_classes[i],]
+    
+    if (maf_classes[i - 1] == maf_classes[length(maf_classes)]){
+      if (maf_classes[length(maf_classes)] != 0.5) {
+        class_maf_count <- snp_set[snp_set$MAF > maf_classes[i-1],]
+        class_maf_name <- paste(population,'_maf_gte_',maf_classes[i-1],sep='')
+      }else{ break}
     }else{
-      class_maf_count <- snp_set[snp_set$MAF > maf_classes[i-1],]
-      class_maf_count <- class_maf_count[class_maf_count$MAF <= maf_classes[i],]
+      if(maf_classes[i] == maf_classes[2]){
+        class_maf_count <- snp_set[snp_set$MAF <= maf_classes[i],]
+      }else {
+        class_maf_count <- snp_set[snp_set$MAF > maf_classes[i-1],]
+        class_maf_count <- class_maf_count[class_maf_count$MAF <= maf_classes[i],]
+      }
     }
 
     assign(paste(class_maf_name,'summary',sep='_'), summary(class_maf_count))

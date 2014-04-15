@@ -31,12 +31,15 @@ rm(list=ls())
 # trait <- "GGT"
 # trait <- "DBP"
 # trait <- "SBP"
-trait <- "HR"
+# trait <- "HR"
+# trait <- "VLDL"
+trait <- "FOSFAT"
 
 
 # basepath <- "/nfs/users/nfs_m/mc14/Work/SANGER/FVG/PHENO/"
 basepath <- "/nfs/users/nfs_m/mc14/Work/SANGER/CARLANTINO/PHENO/"
-phenopath <- paste(basepath,"CARDIO/",sep="")
+phenopath <- paste(basepath,"RENAL/",sep="")
+# phenopath <- paste(basepath,"LIPIDS/new/VLDL/",sep="")
 pop <- "CARL"
 # pop <- "FVG"
 

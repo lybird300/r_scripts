@@ -32,10 +32,8 @@ dim(to_plot_unfiltered)
 dim(merged_new)
 
 #colnames(to_plot_unfiltered)=c("SNP","CHR","BP","P")
-# colnames(to_plot_unfiltered)[1] <- "CHR"
-# colnames(to_plot_unfiltered)[2] <- "SNP"
-# colnames(to_plot_unfiltered)[3] <- "BP"
-# colnames(to_plot_unfiltered)[9] <- "P"
+#colnames(to_plot_unfiltered)=c("CHR","SNP","BP","P")
+#colnames(to_plot_unfiltered)=c("CHR","BP","P")
 
 dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 1 & to_plot_unfiltered$P >= 0.1),])
 dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 0.1 & to_plot_unfiltered$P >= 0.01),])
@@ -43,17 +41,19 @@ dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 0.01),])
 
 #extract snps to color
 low_to_comm <- merged_new[which(merged_new$MAF >= 0.01 & merged_new$MAF < 0.05),]$SNP
+#remove snps with pval >= 0.2
+low_to_comm <- to_plot_unfiltered[-which(to_plot_unfiltered$P < 1 & to_plot_unfiltered$P >= 0.2),])
 
 jpeg(paste(args[[1]], "_", args[[2]], ".manhattan.unfiltered.jpg", sep=""), width = 750, height = 300, pointsize = 10)
 manhattan(merged_new, annotate=low_to_comm, pch=16, main=paste(args[[1]], "_", args[[2]], " unfiltered", sep=""))
-# jpeg(paste("TC", "_", "22", ".manhattan.unfiltered.jpg", sep=""), width = 1300, height = 600, pointsize = 16)
-# manhattan(to_plot_unfiltered, pch=16, main=paste("TC", "_", "22", " unfiltered", sep=""))
+# jpeg(paste("VLDL", "_", "all", ".manhattan.unfiltered.jpg", sep=""), width = 1300, height = 600, pointsize = 16)
+# manhattan(to_plot_unfiltered, pch=16, main=paste("VLDL", "_", "all", " unfiltered", sep=""))
 dev.off()
 
 jpeg(paste(args[[1]], "_", args[[2]], ".qq.unfiltered.jpg", sep=""), width = 750, height = 300, pointsize = 10)
 qq(to_plot_unfiltered$P, main=paste(args[[1]], "_", args[[2]], " unfiltered", sep=""))
-# jpeg(paste("TC", "_", "22", ".qq.unfiltered.jpg", sep=""), width = 1300, height = 600, pointsize = 16)
-# qq(to_plot_unfiltered$P, pch=16, main=paste("TC", "_", "22", " unfiltered", sep=""))
+# jpeg(paste("VLDL", "_", "all", ".qq.unfiltered.jpg", sep=""), width = 1300, height = 600, pointsize = 16)
+# qq(to_plot_unfiltered$P, pch=16, main=paste("VLDL", "_", "all", " unfiltered", sep=""))
 dev.off()
 
 # PLOT ONLY SNPS WITH RSQ > 0.4

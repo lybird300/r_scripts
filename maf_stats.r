@@ -8,7 +8,9 @@ require(gplots)
 args <- commandArgs(trailing=TRUE)
 
 filepath <- args[[1]]
+# filepath <- "/nfs/users/nfs_m/mc14/fvg_seq/REL-2014-01-09/v1_stats/fvg_no_multi_table_maf.txt"
 pop_name <- args[[2]]
+# pop_name <- "FVG"
 #chr <- args[[2]]
 
 #Upload data:
@@ -19,6 +21,7 @@ all_maf <- read.table(filepath,header=T,sep=' ', stringsAsFactors=F, comment.cha
 #FIXME: the best would be to have an headed file...
 #colnames(all_maf) <- c('CHROM','POS','ID','AN','AC','DP','AF','MAF')
 # colnames(all_maf) <- c('CHROM','POS','ID','AC','AN','AF','MAF')
+# colnames(all_maf) <- c('CHROM','POS','REF','ALT','MAF')
 #FIXME:different header for different format...maybe we could set up so sort of recognition for columns we want to use...
 ##################################################
 #BEST FIX: provide the header as a parameter!!!###
@@ -31,7 +34,7 @@ colnames(all_maf) <- c('rsid','pos','allele_A','allele_B','index','average_maxim
 write.table(summary(all_maf),file="complete_summary.txt",sep="\t",col.names=T,quote=F,row.names=F)
 
 #now plot maf density
-jpeg("maf_density_plot.jpg",width=1000, height=1000)
+jpeg(paste(pop_name,"maf_density_plot.jpg",sep="_"),width=1000, height=1000)
 par(lab=c(10,10,12),cex=2)
   plot(density(all_maf$MAF), main="Maf density distribution", xlab="Maf",ylab="Maf density")
 dev.off()
@@ -39,14 +42,19 @@ dev.off()
 #now split all maf in frequencies bins
 #this is a function that splits in bins of maf and writes some summaries
 source('/nfs/users/nfs_m/mc14/Work/r_scripts/maf_bins_splitter.r')
-maf_classes <- c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.3,0.4,0.5)
-# maf_classes <- c(0,0.02,0.05,0.1,0.2,0.3,0.4,0.5)
+# maf_classes <- c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.3,0.4,0.5)
+maf_classes <- c(0,0.02,0.05,0.1,0.2,0.3,0.4,0.5)
 
 all_maf_classes <- split_bins(maf_classes,all_maf,pop_name)
+# all_maf_classes <- split_bins(maf_classes,maf_table,pop_name)
 gc()
 #write a cute output
-sink('maf_bin_resume.txt')
+sink(paste(pop_name,'maf_bin_resume.txt',sep="_"))
 print(all_maf_classes)
 sink()
+
+jpeg(paste(pop_name,"site_count_plot.jpg",sep="_"),width=1000, height=1000)
+	barplot(as.matrix(all_maf_classes),names.arg=maf_classes[2:length(maf_classes)])
+dev.off()
 
 q(save='no')

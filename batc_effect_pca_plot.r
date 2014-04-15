@@ -48,7 +48,7 @@ geno <- "PRUNED_maf_ge01"
 geno <- "UNPRUNED"
 geno <- "UNPRUNED_maf_ge01"
 chr <- "20"
-#basefolder <- "/nfs/users/nfs_m/mc14/Work/SANGER/UK10K/BATCHEFF/"
+#basefolder <- "/lustre/scratch113/projects/uk10k/cohorts/REL-2012-06-02/v2/batch_effect/joint_NEW/PRUNED/MDS/GW/FILTERED_KLAUDIA"
 basefolder <- "/lustre/scratch113/projects/uk10k/cohorts/REL-2012-06-02/v2/batch_effect/PLOTS/UNPRUNED/"
 basefolder <- "/lustre/scratch113/projects/uk10k/cohorts/REL-2012-06-02/v2/batch_effect/PLOTS/PRUNED/"
 
