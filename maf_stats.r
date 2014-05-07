@@ -8,9 +8,16 @@ require(gplots)
 args <- commandArgs(trailing=TRUE)
 
 filepath <- args[[1]]
-# filepath <- "/lustre/scratch113/projects/fvg_seq/20140319/20140401_VQSR2.5_reapply_v138_excl/20140410_ANNOTATE/MAF/ALL.maf_table.snp.tab"
 pop_name <- args[[2]]
+
+#fixed parameters for pops
+#FVG
+# filepath <- "/lustre/scratch113/projects/fvg_seq/20140319/20140401_VQSR2.5_reapply_v138_excl/20140410_ANNOTATE/MAF/ALL.maf_table.snp.tab"
 # pop_name <- "FVG"
+
+#VBI
+# filepath <- "/lustre/scratch113/projects/esgi-vbseq/20140319/20140402_VQSR2.5_reapply_138_excl/20140410_ANNOTATE/MAF/ALL.maf_table.snp.tab"
+# pop_name <- "VBI"
 #chr <- args[[2]]
 
 #Upload data:
@@ -71,7 +78,8 @@ dev.off()
 #now split all maf in frequencies bins
 #this is a function that splits in bins of maf and writes some summaries
 source('/nfs/users/nfs_m/mc14/Work/r_scripts/maf_bins_splitter.r')
-maf_classes <- c(0,0.005,0.01,0.02,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5)
+# maf_classes <- c(0,0.005,0.01,0.02,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5)
+maf_classes <- c(0,0.01,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5)
 # maf_classes <- c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.3,0.4,0.5)
 # maf_classes <- c(0,0.02,0.05,0.1,0.2,0.3,0.4,0.5)
 
