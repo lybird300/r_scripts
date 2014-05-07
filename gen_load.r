@@ -167,9 +167,11 @@ dev.off()
 #use also here the relative frequency
 
 funk_cat <-read.csv("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/TABLES/consequences.list",header=F)
+funk_cat$V1 <- as.character(funk_cat$V1)
 
 chr <- "22"
 pop_is <- c("VBI","FVG")
+
 
 for (pop in pop_is) {
 
