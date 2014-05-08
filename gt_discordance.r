@@ -30,7 +30,7 @@ gc()
 colnames(ref_map_tbl) <- c("CHR","rsID","POS")
 #now merge this file to create a set that has to be used for set the reference allele in files from SEQ or 2.5M imputation
 merge_tbl <- merge(ref_allele_tbl,ref_map_tbl, by.x="SNP",by.y="rsID",sort=F)
-ref_tbl <- cbind(merge_tbl[,c(2)],merge_tbl[,c(6)],merge_tbl[,c(1)],merge_tbl[,c(3,4)])
+ref_tbl <- cbind(merge_tbl[,c(2)],merge_tbl[,c(6)],merge_tbl[,c(1)],as.character(merge_tbl[,c(3)]),merge_tbl[,c(4)])
 colnames(ref_tbl) <- c("CHR","POS","SNP","MAJOR","MAF")
 #write the ref table
 write.table(ref_tbl,file="ref_discordance_table.txt",sep="\t",col.names=T,quote=F,row.names=F)

@@ -202,16 +202,22 @@ for(i in c(0,1)){
   }
 }
 
-# res.all3 <- as.data.frame(res.all2[order(res.all2[,2]),])
-# res.all3$V1 <- as.numeric(as.character(res.all3$V1))
-# res.all3$V2 <- as.character(res.all3$V2)
-# res.all3$V3 <- c()
+res.all3 <- as.data.frame(res.all2[order(res.all2[,2]),])
+res.all3$V1 <- as.numeric(as.character(res.all3$V1))
+res.all3$V2 <- as.character(res.all3$V2)
+res.all3$V3 <- as.character(res.all3$V2)
+colnames(res.all3) <- c("n_sites","cat_code","pop")
 
-# for(i in 1:length(res.all3$V2)){
-#   cat <- res.all3$V2[i]
-#   print(grep(cat,res.all3$V2))
-#   res.all3[i,3] <- sum(res.all3[grep(cat,res.all3$V2),]$V1)
-# }
+for(i in 1:length(res.all3$cat_code)){
+  for(j in names(aree)){
+    cat <- res.all3$pop[i]
+    newcat <- sub(as.character(which(names(aree)==j)),paste(j,";",sep=""),cat)
+    res.all3$pop[i] <- newcat
+  }
+}
+
+#write the table:
+write.table(res.all3,file=paste("All_pop_intersect_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
 #find all indexes
 idx1=grep("1",res.all2[,2])
@@ -241,6 +247,7 @@ jpeg("all_pop_DAF_VENN.jpg",width=800, height=800,pointsize = 20)
 dev.off()
 
 
+
 ###########################################################################################
 #Plot 3 barplot for privte and shared variants for each INGI population by category
 #use also here the relative frequency
@@ -267,13 +274,15 @@ for (pop in pop_is) {
   for(cat in funk_cat$V1){
 
     current_grep <- pop_table[(grep(cat,pop_table$INFO)),]
+    current_cat_num <- dim(current_grep)[1]
 
     #merge the grepped data with the private
     current_grep_private <- merge(current_private,current_grep,by.x="POS",by.y="POS")
 
+    #merge the grepped data with the shared
     current_grep_shared <- merge(current_shared,current_grep,by.x="POS",by.y="POS")
 
-    current_conseq <- cbind(category=as.character(cat),private=length(current_grep_private$POS),shared=length(current_grep_shared$POS))
+    current_conseq <- cbind(category=as.character(cat),private=length(current_grep_private$POS),shared=length(current_grep_shared$POS),cat_count=current_cat_num)
     conseq_count_tot <- rbind(conseq_count_tot,current_conseq)
 
   }
@@ -284,6 +293,7 @@ for (pop in pop_is) {
   conseq_count_tot$shared <- as.numeric(as.character(conseq_count_tot$shared))
   conseq_count_tot$N_shared <- rep(length(current_shared$POS),length(conseq_count_tot$category))
   conseq_count_tot$N_private <- rep(length(current_private$POS),length(conseq_count_tot$category))
+  conseq_count_tot$cat_count <- as.numeric(as.character(conseq_count_tot$cat_count))
   # conseq_count_tot$N_shared <- as.numeric(as.character(conseq_count_tot$N_shared))
   # conseq_count_tot$N_private <- as.numeric(as.character(conseq_count_tot$N_private))
 
