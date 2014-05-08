@@ -140,26 +140,35 @@ dev.off()
 ###########################################################################################
 #Plot 2: venn diagram with overlap between all populations and categories
 
-require(venneuler)
-# v <- venneuler(c(FVG=length(merged_daf[which(merged_daf$FVG > 0),]$CHR),
-#   VBI=length(merged_daf[which(merged_daf$VBI > 0),]$CHR),
-#   "VBI&FVG"=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0),]$CHR)))
+# require(venneuler)
 
-# v <- draw.quad.venn(length(merged_daf[which(merged_daf$CEU > 0),]$CHR),
-v <- draw.pairwise.venn(length(merged_daf[which(merged_daf$CEU > 0),]$CHR),
-  length(merged_daf[which(merged_daf$TSI > 0),]$CHR),
-  length(merged_daf[which(merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR))
-  # length(merged_daf[which(merged_daf$VBI > 0),]$CHR),
-  # length(merged_daf[which(merged_daf$FVG > 0),]$CHR),  
-  # n12=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
-  # n13=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
-  # n14=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
-  # n1234=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
+# #we need to do all the cases for intersections
+# for(l in 1:length(pops)){
+#   pop_index <- grep(pops[l],colnames(merged_daf))
 
-# jpeg(paste("DAF.jpg",sep="_"),width=800, height=800,pointsize = 20)
-jpeg("VENN_DAF.jpg",width=800, height=800,pointsize = 20)
-  grid.draw(v)
-dev.off()
+#   current_gt0 <- merged_daf[which(merged_daf[,pop_index] > 0),]
+#   current_shared_all <- merged_daf[which(merged_daf[,pop_index] > 0 & merged_daf[,pop_index+1] > 0 & merged_daf[,pop_index+2] > 0 & merged_daf[,pop_index+3] > 0),]
+#   current_private <- merged_daf[which(merged_daf[,pop_index] > 0 & merged_daf[,pop_index+1] == 0 & merged_daf[,pop_index+2] == 0 & merged_daf[,pop_index+3] == 0),]
+# }
+# # v <- venneuler(c(FVG=length(merged_daf[which(merged_daf$FVG > 0),]$CHR),
+# #   VBI=length(merged_daf[which(merged_daf$VBI > 0),]$CHR),
+# #   "VBI&FVG"=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0),]$CHR)))
+
+# # v <- draw.quad.venn(length(merged_daf[which(merged_daf$CEU > 0),]$CHR),
+# v <- draw.pairwise.venn(length(merged_daf[which(merged_daf$CEU > 0),]$CHR),
+#   length(merged_daf[which(merged_daf$TSI > 0),]$CHR),
+#   length(merged_daf[which(merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR))
+#   # length(merged_daf[which(merged_daf$VBI > 0),]$CHR),
+#   # length(merged_daf[which(merged_daf$FVG > 0),]$CHR),  
+#   # n12=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
+#   # n13=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
+#   # n14=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
+#   # n1234=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
+
+# # jpeg(paste("DAF.jpg",sep="_"),width=800, height=800,pointsize = 20)
+# jpeg("VENN_DAF.jpg",width=800, height=800,pointsize = 20)
+#   grid.draw(v)
+# dev.off()
 
 
 ###########################################################################################
@@ -185,7 +194,7 @@ for (pop in pop_is) {
   current_private <- get(paste("pop",pop,"private",sep="_"))
   current_shared <- get(paste("pop",pop,"shared",sep="_"))
 
-  for(cat in funk_cat){
+  for(cat in funk_cat$V1){
 
     current_grep <- pop_table[(grep(cat,pop_table$INFO)),]
 
@@ -203,6 +212,21 @@ for (pop in pop_is) {
   conseq_count_tot$category <- as.character(conseq_count_tot$category)
   conseq_count_tot$private <- as.numeric(as.character(conseq_count_tot$private))
   conseq_count_tot$shared <- as.numeric(as.character(conseq_count_tot$shared))
+  conseq_count_tot$N_shared <- rep(length(current_shared$POS),length(conseq_count_tot$category))
+  conseq_count_tot$N_private <- rep(length(current_private$POS),length(conseq_count_tot$category))
+  # conseq_count_tot$N_shared <- as.numeric(as.character(conseq_count_tot$N_shared))
+  # conseq_count_tot$N_private <- as.numeric(as.character(conseq_count_tot$N_private))
+
+  #lets check if the differences are significative with a chisquare test
+  for(i in 1:length(conseq_count_tot$category)){
+    print(conseq_count_tot$category[i])
+    A=matrix(c(conseq_count_tot$shared[i], conseq_count_tot$N_shared[i], conseq_count_tot$private[i], conseq_count_tot$N_private[i]), nrow=2, ncol=2, byrow=T)
+    pippo=chisq.test(A)
+    conseq_count_tot$p[i] <- pippo$p.value
+  }
+
+  write.table(conseq_count_tot,file=paste(pop,"_consequences_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+
   all_barplot_conseq <- NULL
 
   for(i in 1:length(conseq_count_tot$category)){
@@ -214,7 +238,7 @@ for (pop in pop_is) {
 
   #we need to use the same expedient used for the maf count
   jpeg(paste(pop,"all_conseq_DAF.jpg",sep="_"),width=1800, height=800,pointsize = 20)
-    barplot(table(all_barplot_conseq[,2],all_barplot_conseq[,1]),beside=T,col=c("red","blue"), legend=c("Private","Shared"), main="DAF in private/shared sites for different consequences annotations", xlab="Annotations",ylab="Relative frequency")
+    barplot(table(all_barplot_conseq[,2],all_barplot_conseq[,1]),beside=T,col=c("red","blue"), legend=c("Private","Shared"), main="DAF in private/shared sites for different consequences annotations", xlab="Annotations",ylab="Relative frequency", las=2 )
   dev.off()
 }
 
@@ -225,7 +249,6 @@ for (pop in pop_is) {
 #Plot 5 SIFT Polyphen  https://faculty.washington.edu/wjs18/GS561/cSNPs_lab.html     [stratify for  genic/intergenic? functional categories?]
 
 ###########################################################################################
-#Plot 6
 
 
 #  <- merged_daf[which(merged_daf$VBI > 0 & merged_daf$TSI == 0 & merged_daf$CEU ==0),]
@@ -237,10 +260,10 @@ for (pop in pop_is) {
 
 #we need to extract all cases of sharing in order to do the venn diagram
 #CEU
-awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
-#TSI
-awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
-#VBI
-awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
-#FVG
-awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
+# awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
+# #TSI
+# awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
+# #VBI
+# awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
+# #FVG
+# awk '$6 != "na" && $5 != "na" && $7 != "na" && $7 > 0 && $6 >0 && $5 > 0'
