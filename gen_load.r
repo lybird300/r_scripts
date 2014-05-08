@@ -43,6 +43,15 @@ for(i in 1:length(all_pop_DAF$pop)){
   all_barplot_DAF <- rbind(all_barplot_DAF,current_row)  
 }
 
+
+all_barplot_DAF_rf <- NULL
+
+for(i in 1:length(all_pop_DAF$pop)){
+  current_row_rf <- cbind(rep(all_pop_DAF[i,1],all_pop_DAF[i,4]*100),rep(as.character(all_pop_DAF[i,3]),all_pop_DAF[i,4]*100))
+  
+  all_barplot_DAF_rf <- rbind(all_barplot_DAF_rf,current_row_rf)  
+}
+
 all_cols <- NULL
 
 for(i in 1:length(pops)){
@@ -54,8 +63,12 @@ jpeg("all_pop_DAF.jpg",width=1600, height=800,pointsize = 20)
   barplot(table(all_barplot_DAF[,2],all_barplot_DAF[,1]),beside=T,col=all_cols[,1], legend=all_cols[,2], main="DAF in all populations", xlab="DAF",ylab="Frequency")
 dev.off()
 
+jpeg("all_pop_DAF_rf.jpg",width=1600, height=800,pointsize = 20)
+  barplot(table(all_barplot_DAF_rf[,2],all_barplot_DAF_rf[,1]),beside=T,col=all_cols[,1], legend=all_cols[,2], main="DAF in all populations", xlab="DAF",ylab="Relative Frequency")
+dev.off()
+
 #now upload the private and shared plots and add them to the previous plot
-merged_daf <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/TABLES/INGI_chr22.merged_daf.tab",header=F)
+merged_daf <- read.table(paste0("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/TABLES/INGI_chr",chr,".merged_daf.tab"),header=F)
 colnames(merged_daf) <- c("CHR","POZ","POS","VT","CEU","TSI","VBI","FVG")
 
 merged_daf$CEU <- as.numeric(as.character(merged_daf$CEU))
@@ -100,19 +113,19 @@ pops_ingi <- c("VBI_p","FVG_p","VBI_s","FVG_s")
 pops_ingi_files <- c("pop_VBI_private","pop_FVG_private","pop_VBI_shared","pop_FVG_shared")
 
 for (k in 1:length(pops_ingi_files)){
-current_pop <- get(pops_ingi_files[k])
+  current_pop <- get(pops_ingi_files[k])
 
-current_hist <- hist(current_pop$DAF,plot=F)
+  current_hist <- hist(current_pop$DAF,plot=F)
 
-#added relative frequency sites per bin count/total variants number
-current_pop_DAF <- as.data.frame(cbind(breaks=current_hist$breaks[2:length(current_hist$breaks)],counts=current_hist$counts,pop=rep(pops_ingi[k],length(current_hist$counts)),rel_count=(current_hist$counts/length(pop_table$POS))))
-current_pop_DAF$breaks <- as.numeric(as.character(current_pop_DAF$breaks))
-current_pop_DAF$counts <- as.numeric(as.character(current_pop_DAF$counts))
-current_pop_DAF$rel_count <- as.numeric(as.character(current_pop_DAF$rel_count))
-current_pop_DAF$pop <- as.character(current_pop_DAF$pop)
+  #added relative frequency sites per bin count/total variants number
+  current_pop_DAF <- as.data.frame(cbind(breaks=current_hist$breaks[2:length(current_hist$breaks)],counts=current_hist$counts,pop=rep(pops_ingi[k],length(current_hist$counts)),rel_count=(current_hist$counts/length(pop_table$POS))))
+  current_pop_DAF$breaks <- as.numeric(as.character(current_pop_DAF$breaks))
+  current_pop_DAF$counts <- as.numeric(as.character(current_pop_DAF$counts))
+  current_pop_DAF$rel_count <- as.numeric(as.character(current_pop_DAF$rel_count))
+  current_pop_DAF$pop <- as.character(current_pop_DAF$pop)
 
-#add again to all_pop_DAF to have a complete plot
-all_pop_DAF <- rbind(all_pop_DAF,current_pop_DAF)
+  #add again to all_pop_DAF to have a complete plot
+  all_pop_DAF <- rbind(all_pop_DAF,current_pop_DAF)
   
 }
 
@@ -121,54 +134,111 @@ all_barplot_DAF_sp <- NULL
 
 for(i in 1:length(all_pop_DAF$pop)){
   current_row <- cbind(rep(all_pop_DAF[i,1],all_pop_DAF[i,2]),rep(as.character(all_pop_DAF[i,3]),all_pop_DAF[i,2]))
-  
   all_barplot_DAF_sp <- rbind(all_barplot_DAF_sp,current_row)  
 }
 
+all_barplot_DAF_sp_rf <- NULL
+
+for(i in 1:length(all_pop_DAF$pop)){
+  current_row <- cbind(rep(all_pop_DAF[i,1],all_pop_DAF[i,4]*100),rep(as.character(all_pop_DAF[i,3]),all_pop_DAF[i,4]*100))
+  all_barplot_DAF_sp_rf <- rbind(all_barplot_DAF_sp_rf,current_row)  
+}
+
+
 all_cols <- NULL
-pops2 <- c(pops,pops_ingi)
+pops2 <- sort(c(pops,pops_ingi))
 
 for(i in 1:length(pops2)){
-pop_col <- cbind(colors()[62+(i*10)],pops2[i])
-all_cols <- rbind(all_cols,pop_col)
+  pop_col <- cbind(colors()[62+(i*10)],pops2[i])
+  all_cols <- rbind(all_cols,pop_col)
 }
+
+#we need to sort everything in the same order by population
+all_barplot_DAF_sp <- all_barplot_DAF_sp[order(all_barplot_DAF_sp[,2]),]
+all_barplot_DAF_sp_rf <- all_barplot_DAF_sp_rf[order(all_barplot_DAF_sp_rf[,2]),]
 
 jpeg("all_pop_DAF_sp.jpg",width=1600, height=800,pointsize = 20)
   barplot(table(all_barplot_DAF_sp[,2],all_barplot_DAF_sp[,1]),beside=T,col=all_cols[,1], legend=all_cols[,2], main="DAF in all populations", xlab="DAF",ylab="Frequency")
 dev.off()
 
+jpeg("all_pop_DAF_sp_rf.jpg",width=1600, height=800,pointsize = 20)
+  barplot(table(all_barplot_DAF_sp_rf[,2],all_barplot_DAF_sp_rf[,1]),beside=T,col=all_cols[,1], legend=all_cols[,2], main="DAF in all populations", xlab="DAF",ylab="Relative Frequency")
+dev.off()
+
 ###########################################################################################
 #Plot 2: venn diagram with overlap between all populations and categories
 
-# require(venneuler)
+require(gplots)
+require(VennDiagram)
 
-# #we need to do all the cases for intersections
-# for(l in 1:length(pops)){
-#   pop_index <- grep(pops[l],colnames(merged_daf))
+merged_daf_diag=merged_daf[,-c(1:4)]
+merged_daf_diag[merged_daf_diag>0]=1
+aree=colSums(merged_daf_diag,na.rm=T)
 
-#   current_gt0 <- merged_daf[which(merged_daf[,pop_index] > 0),]
-#   current_shared_all <- merged_daf[which(merged_daf[,pop_index] > 0 & merged_daf[,pop_index+1] > 0 & merged_daf[,pop_index+2] > 0 & merged_daf[,pop_index+3] > 0),]
-#   current_private <- merged_daf[which(merged_daf[,pop_index] > 0 & merged_daf[,pop_index+1] == 0 & merged_daf[,pop_index+2] == 0 & merged_daf[,pop_index+3] == 0),]
-# }
-# # v <- venneuler(c(FVG=length(merged_daf[which(merged_daf$FVG > 0),]$CHR),
-# #   VBI=length(merged_daf[which(merged_daf$VBI > 0),]$CHR),
-# #   "VBI&FVG"=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0),]$CHR)))
+# #easy venn diagramm EVER
+# res.all <- list(which(merged_daf_diag[,1]>0),
+#   which(merged_daf_diag[,2]>0),
+#   which(merged_daf_diag[,3]>0),
+#   which(merged_daf_diag[,4]>0))
+# names(res.all) <- colnames(merged_daf_diag)
 
-# # v <- draw.quad.venn(length(merged_daf[which(merged_daf$CEU > 0),]$CHR),
-# v <- draw.pairwise.venn(length(merged_daf[which(merged_daf$CEU > 0),]$CHR),
-#   length(merged_daf[which(merged_daf$TSI > 0),]$CHR),
-#   length(merged_daf[which(merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR))
-#   # length(merged_daf[which(merged_daf$VBI > 0),]$CHR),
-#   # length(merged_daf[which(merged_daf$FVG > 0),]$CHR),  
-#   # n12=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
-#   # n13=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
-#   # n14=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
-#   # n1234=length(merged_daf[which(merged_daf$FVG > 0 & merged_daf$VBI > 0 & merged_daf$TSI > 0 & merged_daf$CEU > 0),]$CHR)),
-
-# # jpeg(paste("DAF.jpg",sep="_"),width=800, height=800,pointsize = 20)
-# jpeg("VENN_DAF.jpg",width=800, height=800,pointsize = 20)
-#   grid.draw(v)
+# jpeg("all_pop_DAF_VENN.jpg",width=1600, height=800,pointsize = 20)
+#   venn(res.all)
 # dev.off()
+
+
+#we need to do all the cases for intersections
+res.all2 <- NULL
+for(i in c(0,1)){
+  for(j in c(0,1)){
+    for(k in c(0,1)){
+      for(h in c(0,1)){
+        if(any(c(i,j,k,h)==1)){
+          res=length(which(merged_daf_diag$CEU==i & merged_daf_diag$TSI==j & merged_daf_diag$VBI==k & merged_daf_diag$FVG==h))
+          res.all2=rbind(res.all2,c(res,paste(which(c(i,j,k,h)==1),collapse="")))
+        }
+      }
+    }
+  }
+}
+
+# res.all3 <- as.data.frame(res.all2[order(res.all2[,2]),])
+# res.all3$V1 <- as.numeric(as.character(res.all3$V1))
+# res.all3$V2 <- as.character(res.all3$V2)
+# res.all3$V3 <- c()
+
+# for(i in 1:length(res.all3$V2)){
+#   cat <- res.all3$V2[i]
+#   print(grep(cat,res.all3$V2))
+#   res.all3[i,3] <- sum(res.all3[grep(cat,res.all3$V2),]$V1)
+# }
+
+#find all indexes
+idx1=grep("1",res.all2[,2])
+idx2=grep("2",res.all2[,2])
+idx3=grep("3",res.all2[,2])
+idx4=grep("4",res.all2[,2])
+
+v <- draw.quad.venn(area1=as.numeric(sum(as.numeric(res.all2[idx1,1]))),
+  area2=as.numeric(sum(as.numeric(res.all2[idx2,1]))),
+  area3=as.numeric(sum(as.numeric(res.all2[idx3,1]))),
+  area4=as.numeric(sum(as.numeric(res.all2[idx4,1]))),
+  n12=as.numeric(sum(as.numeric(res.all2[intersect(idx1,idx2),1]))),
+  n13=as.numeric(sum(as.numeric(res.all2[intersect(idx1,idx3),1]))),
+  n14=as.numeric(sum(as.numeric(res.all2[intersect(idx1,idx4),1]))),
+  n23=as.numeric(sum(as.numeric(res.all2[intersect(idx2,idx3),1]))),
+  n24=as.numeric(sum(as.numeric(res.all2[intersect(idx2,idx4),1]))),
+  n34=as.numeric(sum(as.numeric(res.all2[intersect(idx3,idx4),1]))),
+  n123=as.numeric(sum(as.numeric(res.all2[intersect(intersect(idx1,idx2),idx3),1]))),
+  n124=as.numeric(sum(as.numeric(res.all2[intersect(intersect(idx1,idx2),idx4),1]))),
+  n134=as.numeric(sum(as.numeric(res.all2[intersect(intersect(idx1,idx3),idx4),1]))),
+  n234=as.numeric(sum(as.numeric(res.all2[intersect(intersect(idx2,idx3),idx4),1]))),
+  n1234=as.numeric(sum(as.numeric(res.all2[intersect(intersect(intersect(idx1,idx2),idx3),idx4),1]))),
+  ind=FALSE, category=colnames(merged_daf_diag),fill=topo.colors(4))
+
+jpeg("all_pop_DAF_VENN.jpg",width=800, height=800,pointsize = 20)
+  grid.draw(v)
+dev.off()
 
 
 ###########################################################################################
@@ -230,15 +300,24 @@ for (pop in pop_is) {
   all_barplot_conseq <- NULL
 
   for(i in 1:length(conseq_count_tot$category)){
-    for(j in 2:length(colnames(conseq_count_tot))){
-      current_row <- cbind(rep(as.character(conseq_count_tot[i,1]),conseq_count_tot[i,j]),rep(colnames(conseq_count_tot)[j],conseq_count_tot[i,j]))
+    for(j in 2:(length(colnames(conseq_count_tot))-3)){
+      current_row <- cbind(rep(as.character(conseq_count_tot[i,1]),conseq_count_tot[i,j]),
+                            rep(colnames(conseq_count_tot)[j],conseq_count_tot[i,j]))
       all_barplot_conseq <- rbind(all_barplot_conseq,current_row)  
     }
   }
 
   #we need to use the same expedient used for the maf count
   jpeg(paste(pop,"all_conseq_DAF.jpg",sep="_"),width=1800, height=800,pointsize = 20)
-    barplot(table(all_barplot_conseq[,2],all_barplot_conseq[,1]),beside=T,col=c("red","blue"), legend=c("Private","Shared"), main="DAF in private/shared sites for different consequences annotations", xlab="Annotations",ylab="Relative frequency", las=2 )
+    par(oma=c(7,3,3,3))
+    barplot(table(all_barplot_conseq[,2],all_barplot_conseq[,1]),
+      beside=T,
+      col=c("red","blue"),
+      legend=c("Private","Shared"),
+      main="DAF in private/shared sites for different consequences annotations",
+      xlab="",las=2,
+      ylab="Frequency")
+      mtext(1, text = "Annotations", line = 9)
   dev.off()
 }
 
