@@ -18,7 +18,7 @@ ref_map_file <- args[[2]]
 #sed -i 's/ \+/        /g' biallelic_overl.SNP.unfilt.geno.seq.VB.frq
 
 #now we read the map file to join position and rsid and minor allele column
-ref_allele_tbl <- read.table(ref_alt_file, sep="\t",header=T, stringsAsFactors=F, comment.char="")
+ref_allele_tbl <- read.table(ref_alt_file, sep="\t",header=T, stringsAsFactors=F, comment.char="",colClasses=c('numeric','character','character','character','numeric','numeric'))
 ref_map_tbl <- read.table(ref_map_file, sep="\t",header=F, stringsAsFactors=F, comment.char="")
 #now we can remove useless columns from ref_allele
 ref_allele_tbl$A1 <- NULL
