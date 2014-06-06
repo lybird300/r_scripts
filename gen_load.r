@@ -675,33 +675,48 @@ rm(list=ls())
 #isolates
 population <- "FVG"
 population <- "VBI"
-i_pops <- c("FVG","VBI")
 #outbred
-population <- "UK10K"
+population <- "TSI"
 population <- "TGP"
-o_pops <- c("UK10K","TGP")
+o_pops <- c("TSI","CEU")
+i_pops <- c("FVG","VBI")
 all_pops <- c(i_pops,o_pops)
 
 chr <- "22"
-for (pop in all_pops){
-  # file_path <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/INPUT_FILES/CHR",chr,"/",pop,".missense_variant.",chr,".tab.gz",sep="")
-  file_path <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/INPUT_FILES/CHR",chr,"/",pop,".intergenic_variant.",chr,".tab.gz",sep="")
-  file_name <- paste(pop,".intergenic_variant.",chr,".tab.gz",sep="")
-  pop_table <- read.table(file_path,header=T,stringsAsFactors=F, comment.char="")
-  pop_table$DAC <- as.numeric(as.character(pop_table$DAC))
-  pop_table$MAC <- as.numeric(as.character(pop_table$MAC))
-  pop_table$DAF <- as.numeric(as.character(pop_table$DAF))
-  pop_table$MAF <- as.numeric(as.character(pop_table$MAF))
-  
-  #remove sites without the DAF info
-  dim(pop_table)
-  pop_table_no_na <- pop_table[-which(is.na(pop_table$DAF)),]
-  dim(pop_table_no_na)
-  summary(pop_table_no_na)
-  pop_table_no_mono <- pop_table_no_na[-which(pop_table_no_na$DAF ==1 | pop_table_no_na$DAF == 0),]
-  source('/nfs/users/nfs_m/mc14/Work/r_scripts/maf_bins_splitter.r')
-  maf_classes <- c(0,0.01,0.02,0.05,0.10,0.20,0.30,0.4,0.5,0.6,0.7,0.8,0.9,1)
-  all_maf_classes <- split_bins(maf_classes,pop_table_no_mono,file_name)
+source('/nfs/users/nfs_m/mc14/Work/r_scripts/maf_bins_splitter.r')
+# maf_classes <- c(0,0.01,0.02,0.05,0.10,0.20,0.30,0.4,0.5,0.6,0.7,0.8,0.9,1)
+maf_classes <- c(0,0.05,0.10,0.20,0.30,0.4,0.5,0.6,0.7,0.8,0.9,1)
+conseq_classes <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/INPUT_FILES/consequences.list"
+conseq <- read.table(conseq_classes,header=F)
+for (cons in conseq) {
+  for (pop in all_pops){
+    # file_path <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/INPUT_FILES/CHR",chr,"/",pop,".missense_variant.",chr,".tab.gz",sep="")
+    file_path <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/INPUT_FILES/CHR",chr,"/",pop,".intergenic_variant.",chr,".tab.gz",sep="")
+    file_name <- paste(pop,".",cons,".",chr,".tab.gz",sep="")
+    pop_table <- read.table(file_path,header=T,stringsAsFactors=F, comment.char="")
+    pop_table$DAC <- as.numeric(as.character(pop_table$DAC))
+    pop_table$MAC <- as.numeric(as.character(pop_table$MAC))
+    pop_table$DAF <- as.numeric(as.character(pop_table$DAF))
+    pop_table$MAF <- as.numeric(as.character(pop_table$MAF))
+    
+    #write a cute output
+    outdir <- paste(pop,"_",chr,sep="")
+    system(paste("mkdir -p ",pop,"_",chr,sep=""))
+
+    #remove sites without the DAF info
+    dim(pop_table)
+    pop_table_no_na <- pop_table[-which(is.na(pop_table$DAF)),]
+    dim(pop_table_no_na)
+    summary(pop_table_no_na)
+    pop_table_no_mono <- pop_table_no_na[-which(pop_table_no_na$DAF ==1 | pop_table_no_na$DAF == 0),]
+    all_maf_classes <- split_bins(maf_classes,pop_table_no_mono,file_name,"DAF",outdir)
+    gc()
+    
+    sink(paste(outdir,"/",file_name,'_maf_bin_resume.txt',sep=""))
+    print(all_maf_classes)
+    sink()
+
+  }
   
 }
 

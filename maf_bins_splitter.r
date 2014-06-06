@@ -11,12 +11,12 @@
 #N_SNPS for freq in (0.3,0.4]
 #N_SNPS for freq in (0.4,0.5]
 
-split_bins <- function(maf_classes,snp_set,population,col_name){
+split_bins <- function(maf_classes,snp_set,population,col_name,outdir){
 
   #snp_set <- dataframe of snps. We assume there is a column named MAF
   #
   column <- which(colnames(snp_set) %in% col_name)
-  
+
   total_maf_count <- NULL
   # snp_set$MAF <- as.numeric(as.character(snp_set$MAF))
   snp_set[,column] <- as.numeric(as.character(snp_set[,column]))
@@ -53,8 +53,8 @@ split_bins <- function(maf_classes,snp_set,population,col_name){
     #if(chr != NULL){
     #  write.table(summary(class_maf_count),file=paste(class_maf_name,'chr',chr,'summary.txt',sep='_'), sep="\t", row.names=FALSE, col.names=TRUE, quote=F)
     #}else{
-      write.table(summary(class_maf_count),file=paste(class_maf_name,'summary.txt',sep='_'), sep="\t", row.names=FALSE, col.names=TRUE, quote=F)
-      write.table(class_maf_count,file=paste(class_maf_name,'table.txt',sep='_'), sep="\t", row.names=FALSE, col.names=TRUE, quote=F)
+      write.table(summary(class_maf_count),file=paste(outdir,"/",class_maf_name,'_summary.txt',sep=''), sep="\t", row.names=FALSE, col.names=TRUE, quote=F)
+      write.table(class_maf_count,file=paste(outdir,"/",class_maf_name,'_table.txt',sep=''), sep="\t", row.names=FALSE, col.names=TRUE, quote=F)
 
     #}
 
