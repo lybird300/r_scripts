@@ -390,7 +390,7 @@ for(i in 1:length(cats)){
 }
 
 #write the table:
-write.table(res.all3,file=paste(base_folder,"RESULTS/DAF/All_pop_intersect_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(res.all3,file=paste(base_folder,"RESULTS/VENN/All_pop_intersect_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
 #find all indexes
 idx1=grep("1",res.all2[,2])
@@ -415,17 +415,16 @@ v <- draw.quad.venn(area1=as.numeric(sum(as.numeric(res.all2[idx1,1]))),
   n1234=as.numeric(sum(as.numeric(res.all2[intersect(intersect(intersect(idx1,idx2),idx3),idx4),1]))),
   ind=FALSE, category=colnames(merged_daf_diag),fill=all_cols[,1])
 
-jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/2_all_pop_DAF_VENN.jpg",width=800, height=800,pointsize = 20)
+jpeg(paste(base_folder,"PLOTS/2_all_pop_DAF_VENN.jpg",sep=""),width=800, height=800,pointsize = 20)
   grid.draw(v)
 dev.off()
-
 
 
 ###########################################################################################
 #Plot 3 barplot for privte and shared variants for each INGI population by category
 #use also here the relative frequency
 
-funk_cat <-read.csv("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/NEW_TABLES/consequences.list",header=F)
+funk_cat <-read.csv(paste(base_folder,"INPUT_FILES/consequences.list",sep=""),header=F)
 funk_cat$V1 <- as.character(funk_cat$V1)
 
 chr <- "22"
@@ -435,10 +434,10 @@ for (pop in pop_is) {
 
   conseq_count_tot <- NULL
 
-  pop_table_file <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/NEW_TABLES/",pop,".chr",chr,".tab",sep="")
+  pop_table_file <- paste(base_folder,"INPUT_FILES/",pop,".chr",chr,".tab.gz",sep="")
 
-  pop_table <- read.table(pop_table_file,header=T)
-  # colnames(pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","INFO","REC","ALC","DAC","MAC","DAF","MAF")
+  pop_table <- read.table(pop_table_file,header=F,skip=1)
+  colnames(pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","INFO","REC","ALC","DAC","MAC","DAF","MAF")
   pop_table$DAF <- as.numeric(as.character(pop_table$DAF))
   current_private <- get(paste("pop",pop,"private",sep="_"))
   current_shared <- get(paste("pop",pop,"shared",sep="_"))
@@ -476,7 +475,7 @@ for (pop in pop_is) {
   }
 
 
-  write.table(conseq_count_tot,file=paste(pop,"_consequences_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+  write.table(conseq_count_tot,file=paste(base_folder,"RESULTS/CONSEQUENCES/",pop,"_consequences_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
   
   #site count
   barplot1 <- as.matrix(t(conseq_count_tot[-which(conseq_count_tot$private == 0 & conseq_count_tot$shared == 0),c(2:3)]))
@@ -484,7 +483,7 @@ for (pop in pop_is) {
   #relative site count
   barplot2 <- as.matrix(t(conseq_count_tot[-which(conseq_count_tot$private == 0 & conseq_count_tot$shared == 0),c(6:7)]))
 
-  jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/3_",pop,"_all_conseq_DAF.jpg",sep=""),width=1800, height=800)
+  jpeg(paste(base_folder,"PLOTS/3_",pop,"_all_conseq_DAF.jpg",sep=""),width=1800, height=800)
     par(oma=c(9,3,3,3),cex=1.4)
     barplot(barplot1,
       beside=T,
@@ -498,7 +497,7 @@ for (pop in pop_is) {
       mtext(2, text = "Frequency", line = 4)
   dev.off()
 
-  jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/3_",pop,"_all_conseq_DAF_rf.jpg",sep=""),width=1800, height=800)
+  jpeg(paste(base_folder,"PLOTS/3_",pop,"_all_conseq_DAF_rf.jpg",sep=""),width=1800, height=800)
     par(oma=c(9,3,3,3),cex=1.4)
     barplot(barplot2,
       beside=T,
@@ -603,7 +602,7 @@ for (pop in pops) {
 }
 
 # jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/6_roh.jpg",sep=""),width=800, height=800)
-jpeg(paste("6_roh.jpg",sep=""),width=800, height=800)
+jpeg(paste(base_folder,"PLOTS/6_roh_all.jpg",sep=""),width=800, height=800)
   par(lwd=2)
   plot(M_CEU,CEU_tot_roh$ROH_tot,main="",xlab="Total ROH homozigosity", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
   lines(M_FVG,FVG_tot_roh$ROH_tot,col="red", verticals=TRUE, pch=46)
@@ -612,16 +611,16 @@ jpeg(paste("6_roh.jpg",sep=""),width=800, height=800)
   legend("bottomright",pch =c(rep(19,length(pops))),legend=c("CEU","FVG","TSI","VBI"),col=c("black","red","green","blue"),ncol=4)
 dev.off()
 
-jpeg(paste("6_roh.jpg",sep=""),width=800, height=800)
-  plot(M_FVG,FVG_tot_roh$ROH_tot,main="",xlab="Total ROH homozigosity",col="red")
-  lines(M_VBI,VBI_tot_roh$ROH_tot,col="blue")
+jpeg(paste(base_folder,"PLOTS/6_roh_iso.jpg",sep=""),width=800, height=800)
+  plot(M_FVG,FVG_tot_roh$ROH_tot,verticals=TRUE, pch=46,main="",xlab="Total ROH homozigosity",col="red")
+  lines(M_VBI,VBI_tot_roh$ROH_tot,verticals=TRUE, pch=46,col="blue")
   legend("bottomright",pch =c(rep(19,length(pops))),legend=c("FVG","VBI"),col=c("red","blue"),ncol=4)
 dev.off()
 
 
 
 # jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/7_roh.jpg",sep=""),width=800, height=800)
-jpeg(paste("7_roh.jpg",sep=""),width=800, height=800)
+jpeg(paste(base_folder,"PLOTS/7_roh.jpg",sep=""),width=800, height=800)
   plot(density(VBI_tot_roh$ROH_tot),main="",xlab="Total ROH homozigosity", col="blue")
   lines(density(FVG_tot_roh$ROH_tot),col="red")
   lines(density(TSI_tot_roh$ROH_tot),col="green")
@@ -678,7 +677,7 @@ for (pop in pops) {
 }
 
 # jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/6_roh.jpg",sep=""),width=800, height=800)
-jpeg(paste("7_ibd.jpg",sep=""),width=800, height=800)
+jpeg(paste(base_folder,"PLOTS/8_ibd.jpg",sep=""),width=800, height=800)
   par(lwd=2)
   plot(M_ibd_CEU,CEU_tot_ibd$IBD_tot,main="",xlab="IBD segments length per couple", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
   lines(M_ibd_FVG,FVG_tot_ibd$IBD_tot,col="red", verticals=TRUE, pch=46)
@@ -695,6 +694,7 @@ dev.off()
 # PLOT 8: DAF spectrum for different functional annotations
 
 rm(list=ls())
+base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/"
 #outbred
 o_pops <- c("TSI","CEU")
 #isolates
@@ -705,17 +705,22 @@ chr <- "22"
 source('/nfs/users/nfs_m/mc14/Work/r_scripts/maf_bins_splitter.r')
 # maf_classes <- c(0,0.01,0.02,0.05,0.10,0.20,0.30,0.4,0.5,0.6,0.7,0.8,0.9,1)
 maf_classes <- c(0,0.05,0.10,0.20,0.30,0.4,0.5,0.6,0.7,0.8,0.9,1)
-conseq_classes <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/INPUT_FILES/consequences.list"
+conseq_classes <- paste(base_folder,"INPUT_FILES/consequences.list",sep="")
 conseq <- read.table(conseq_classes,header=F)
 conseq$V1 <- as.character(conseq$V1)
 # conseq <- c("missense_variant","synonymous_variant")
+# cons <- conseq$V1[1]
+# pop <- "FVG"
 
 # for (cons in conseq) {
 for (cons in conseq$V1) {
-  for (pop in all_pops){
-    file_path <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/INPUT_FILES/CHR",chr,"/",pop,"/",sep="")
+  for (pop in o_pops){
+    file_path <- paste(base_folder,"INPUT_FILES/CHR",chr,"_no_fixed/",pop,"/",sep="")
     file_name <- paste(pop,".",cons,".",chr,".tab.gz",sep="")
     pop_table <- read.table(paste(file_path,file_name,sep=""),header=T,stringsAsFactors=F, comment.char="")
+    #replace header because we know already how it is and we need to have a column called "CHROM", it's MANDATORY!
+    colnames(pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
+
     if(length(pop_table$DAF) > 0) {
 
       pop_table$DAC <- as.numeric(as.character(pop_table$DAC))
@@ -746,11 +751,38 @@ for (cons in conseq$V1) {
 }
 
 
+########################################
+#Plot 9: some check stats on kinship data
+i_pops <- c("FVG","VBI")
 
+for (i_pop in i_pops){
+  if(i_pop == "FVG"){
+    new_kinship <- read.table("/lustre/scratch113/projects/fvg_seq/20140319/20140401_VQSR2.5_reapply_v138_excl/20140517_RELEASE/PLINK/KINSHIP/FVG_20140517.all.no_1st_deg.vcf.ibs0",header=T)
+  }else if (i_pop == "VBI"){
+    new_kinship <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140319/20140402_VQSR2.5_reapply_138_excl/20140518_RELEASE/PLINK/KINSHIP/VBI_20140518.all.no_1st_deg.vcf.ibs0",header=T)
+  }
 
+  #check how many 1st degree samples we have still
+  head(new_kinship[order(new_kinship$Kinship,decreasing=T),])
 
+  # summaries
+  summary(new_kinship)
 
+  #boxplot for kinship
+  jpeg(paste(base_folder,"PLOTS/9_kinship_",i_pop,".jpg",sep=""),width=800, height=800)
+    par(lwd=2)
+    boxplot(new_kinship$Kinship)
+    # plot(M_ibd_CEU,CEU_tot_ibd$IBD_tot,main="",xlab="IBD segments length per couple", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
+    # lines(M_ibd_FVG,FVG_tot_ibd$IBD_tot,col="red", verticals=TRUE, pch=46)
+    # lines(M_ibd_TSI,TSI_tot_ibd$IBD_tot,col="green", verticals=TRUE, pch=46)
+    # lines(M_ibd_VBI,VBI_tot_ibd$IBD_tot,col="blue", verticals=TRUE, pch=46)
+    # legend("bottomright",pch =c(rep(19,length(pops))),legend=c("CEU","FVG","TSI","VBI"),col=c("black","red","green","blue"),ncol=4)
+  dev.off()
 
+  #plot also a heatmap
+
+  
+}
 
 
 

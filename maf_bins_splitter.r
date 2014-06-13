@@ -33,10 +33,12 @@ split_bins <- function(maf_classes,snp_set,population,col_name,outdir){
     class_maf_name <- paste(population,'_maf_lte_',maf_classes[i],sep='')
     
     if (maf_classes[i - 1] == maf_classes[length(maf_classes)]){
-      if (maf_classes[length(maf_classes)] != 0.5) {
+      if (maf_classes[length(maf_classes)] == 0.5 || maf_classes[length(maf_classes)] == 1) {
+        break
+      }else{
         class_maf_count <- snp_set[snp_set[,column] > maf_classes[i-1],]
         class_maf_name <- paste(population,'_maf_gte_',maf_classes[i-1],sep='')
-      }else{ break}
+      }
     }else{
       if(maf_classes[i] == maf_classes[2]){
         class_maf_count <- snp_set[snp_set[,column] <= maf_classes[i],]
