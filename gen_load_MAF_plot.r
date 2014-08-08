@@ -220,7 +220,7 @@ jpeg(paste(base_folder,"/1_all_pop_all_MAF_plotrix.jpg",sep=""),width=1800, heig
   par(oma=c(3,3,3,3),cex=1.4)
   multhist(all_pop_all_MAF,
    col=all_cols$color,
-   density=all_cols$density,
+   density=all_cols$density*20,
    freq=FALSE,
    ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
    xlab="MAF",
