@@ -9,6 +9,7 @@ base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATE
 #PLOT 1A: same as plot 1 but based on MAF: for the DAF categories, we plot the maf spectrum
 #upload data for each population:
 # chr <- "22"
+#the order of all pops is due to the merge order
 pops <- c("CEU","TSI","VBI","FVG","CARL")
 #wrapped in this for-loop, I'll write a table for each chr, so we can easily import the thing to plot, after...
 all_pop_MAF <- NULL
@@ -53,6 +54,16 @@ for (pop in pops) {
 }
 
 pop_col <- col_pop(pops)
+
+all_pop_hist <- multhist(all_pop_MAF,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+
+all_pop_MAF_table <- as.data.frame(cbind((all_pop_hist[[1]]$mids),t(all_pop_hist[[2]])))
+colnames(all_pop_MAF_table) <- c("breaks",pops)
+
+write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
   
 require(plotrix)
 base_folder <- getwd()
@@ -68,8 +79,6 @@ jpeg(paste(base_folder,"/1_all_pop_MAF_plotrix.jpg",sep=""),width=1800, height=8
    main="MAF in all populations")
   legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
 dev.off()
-
-
 
   # all_pop_MAF$breaks <- as.numeric(as.character(all_pop_MAF$breaks))
   # all_pop_MAF$counts <- as.numeric(as.character(all_pop_MAF$counts))
@@ -89,7 +98,7 @@ dev.off()
   # all_pop_MAF_table <- as.data.frame(all_pop_MAF_table)
   # colnames(all_pop_MAF_table) <- all_pop_MAF_table_names
 
-write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+# write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
   # write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count_no_MAC1_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
 # }
@@ -121,7 +130,7 @@ write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count_chr",chr,".txt",sep=
 #now we need to create the table with the relative count
 #we can do it strait away
 #print the table, too!!
-write.table(all_chr,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+# write.table(all_chr,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 # all_pop_MAF_table <- cbind(breaks=all_chr$breaks,all_chr[,c(grep("tot_count",colnames(all_chr)))],(all_chr[,c(grep("tot_count",colnames(all_chr)))]/all_chr[,c(grep("tot_length",colnames(all_chr)))])*100)
 
 #absolute count(even columns)
@@ -175,6 +184,7 @@ write.table(all_chr,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.name
 ACTUALLY
 ################################################################################################################
 #WE NEED TO UPLOAD DATA ALSO FOR NOVEL SITES from here:
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 base_novel_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/enza/NOVEL"
 pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
 pops_ingi <- c("VBI","FVG","CAR")
@@ -200,9 +210,20 @@ for (pop in pops_ingi) {
   all_pop_novel_MAF <- append(all_pop_novel_MAF,list(current_pop_novel[,current_pop_col]))
 
 }
+pop_col <- col_pop(pops_ingi_novel)
+base_folder <- getwd()
+
+novel_hist <- multhist(all_pop_novel_MAF,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+
+all_pop_novel_MAF_table <- as.data.frame(cbind((novel_hist[[1]]$mids),t(novel_hist[[2]])))
+colnames(all_pop_novel_MAF_table) <- c("breaks",pops_ingi_novel)
+
+write.table(all_pop_novel_MAF_table,file=paste("all_ingi_pop_MAF_novel_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
 require(plotrix)
-base_folder <- getwd()
 jpeg(paste(base_folder,"/1_all_INGI_novel_MAF_plotrix.jpg",sep=""),width=1800, height=800)
   par(oma=c(3,3,3,3),cex=1.4)
   multhist(all_pop_novel_MAF,
@@ -213,7 +234,7 @@ jpeg(paste(base_folder,"/1_all_INGI_novel_MAF_plotrix.jpg",sep=""),width=1800, h
    breaks=20,
    ylim=c(0, 40),
    main="MAF in all populations")
-  legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
+  legend("topright",pch =c(rep(22,length(pop_col[,1]))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[,1],col=c(rep('black',length(pops_ingi_novel))),legend=pop_col[,2], ncol=2,bty="n")
 dev.off()
 
 ################################################################################################################
@@ -225,14 +246,44 @@ dev.off()
 # merged_daf$TSI <- as.numeric(as.character(merged_daf$TSI))
 # merged_daf$VBI <- as.numeric(as.character(merged_daf$VBI))
 # merged_daf$FVG <- as.numeric(as.character(merged_daf$FVG))
-
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 #we need to use the files with MAF info, but created after filtering by DAF: we need to put all chr together
-pop_VBI_private <- NULL
-pop_FVG_private <- NULL
-pop_CARL_private <- NULL
-pop_VBI_shared <- NULL
-pop_FVG_shared <- NULL
-pop_CARL_shared <- NULL
+pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
+pops_ingi <- c("VBI","FVG","CAR")
+pops_ingi_files <- c("pop_VBI_private","pop_FVG_private","pop_CARL_private","pop_VBI_shared","pop_FVG_shared","pop_CARL_shared")
+var_class <- c("private","shared")
+all_pop_private_MAF <- NULL
+all_pop_shared_MAF <- NULL
+
+for (type in var_class) {
+  print(type)
+  all_pop_current_type <- NULL
+
+  for (pop in pops_ingi) {
+    print(pop)
+    current_pop_current_type <- NULL
+    for (chr in 1:22) {
+      print(chr)
+      #read the current file for this population and this chromosome
+      base_type_folder <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/INPUT_FILES/FIVE_POPS/WG/CHR",chr,sep="")
+      current_filename <- paste(base_type_folder,"/INGI_chr",chr,".merged_maf.tab.gz.",pop,".",type,".tab.gz",sep="")
+      current_chr_current_type <- read.table(current_filename, sep="\t",header=F)
+      colnames(current_chr_current_type) <- c("CHROM","POZ","POS","TYPE","CEU","TSI","VBI","FVG","CAR")
+      current_pop_col <- grep(pop,colnames(current_chr_current_type))
+      current_chr_current_type <- current_chr_current_type[which(current_chr_current_type[,current_pop_col] != 0),]
+      
+      current_pop_current_type <-rbind(current_pop_current_type,current_chr_current_type[,c(1,2,3,4,current_pop_col)])
+    }
+    
+    current_pop_col <- grep(pop,colnames(current_pop_current_type))
+    all_pop_current_type <- append(all_pop_current_type,list(current_pop_current_type[,current_pop_col]))
+
+  }
+  all_pop_current_type_table_name <- paste("all_pop_MAF_",type,sep=0)
+  assign(all_pop_current_type_table_name,all_pop_current_type)
+  
+}
+
 
 for (chr in 1:22) {
 # for (chr in 18:22) {
@@ -387,47 +438,6 @@ barplot6 <- as.matrix(t(cbind(all_pop_MAF_table_sp[,seq(3, ncol(all_pop_MAF_tabl
 #relative count but only for private sites
 # barplot7 <- as.matrix(t(all_pop_MAF_table_sp[,c(3,5,9,11,13,15)]))
 barplot7 <- as.matrix(t(cbind(all_pop_MAF_table_sp[,c(3,7,11)],(all_pop_MAF_old[,c(grep("tot_length",colnames(all_pop_MAF_old)))]/all_pop_MAF_old[,c(grep("tot_count",colnames(all_pop_MAF_old)))]))))
-
-all_cols <- NULL
-pops2 <- sort(c(pops,pops_ingi))
-
-for(i in 1:length(pops2)){
-  if(pops2[i] == "CEU"){
-    cur_col <- colors()[130]
-  }
-  if(pops2[i] == "FVG"){
-    cur_col <- colors()[517]
-  }
-  if(pops2[i] == "FVG_p"){
-    cur_col <- colors()[50]
-  }
-  if(pops2[i] == "FVG_s"){
-    cur_col <- colors()[81]
-  }
-  if(pops2[i] == "TSI"){
-    cur_col <- colors()[30]
-  }
-  if(pops2[i] == "VBI"){
-    cur_col <- colors()[421]
-  }
-  if(pops2[i] == "VBI_p"){
-    cur_col <- colors()[33]
-  }
-  if(pops2[i] == "VBI_s"){
-    cur_col <- colors()[36]
-  }
-    if(pops2[i] == "CARL"){
-    cur_col <- colors()[95]
-  }
-  if(pops2[i] == "CARL_p"){
-    cur_col <- colors()[98]
-  }
-  if(pops2[i] == "CARL_s"){
-    cur_col <- colors()[99]
-  }
-  pop_col <- cbind(cur_col,pops2[i])
-  all_cols <- rbind(all_cols,pop_col)
-}
 
 # no MAC=1
 base_folder_res <- getwd()
