@@ -1,23 +1,24 @@
 #r script to plot for enza
 rm(list=ls())
-
+# source("/home/max/Work/script/r_scripts/col_pop.r")
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/"
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/FIVE_POPS"
 
 ########################################################################
 #PLOT 1A: same as plot 1 but based on MAF: for the DAF categories, we plot the maf spectrum
 #upload data for each population:
-chr <- "22"
-
+# chr <- "22"
 pops <- c("CEU","TSI","VBI","FVG","CARL")
-
 #wrapped in this for-loop, I'll write a table for each chr, so we can easily import the thing to plot, after...
-for (chr in 1:22) {
-  base_folder <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/INPUT_FILES/FIVE_POPS/WG/CHR",chr,sep="")
+all_pop_MAF <- NULL
+for (pop in pops) {
+  print(pop)
+  all_chr_MAF <- NULL
+  for (chr in 1:22) {
+  # for (chr in 20:22) {
   print(chr)
-  all_pop_MAF <- NULL
-
-  for (pop in pops) {
+  base_folder <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/INPUT_FILES/FIVE_POPS/WG/CHR",chr,sep="")
 
     # pop_table_file <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/TABLES/",pop,".chr",chr,".tab",sep="")
     pop_table_file <- paste(base_folder,"/",pop,".chr",chr,".tab.gz",sep="")
@@ -25,16 +26,17 @@ for (chr in 1:22) {
     # pop_table_file <- paste(pop,".chr",chr,".not_fixed.not_MAC1.tab.gz",sep="")
 
     pop_table <- read.table(pop_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
+    # pop_table <- read.table(pop_table_file,header=F,skip=1,nrows=100000,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
     colnames(pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
-    pop_table$DAF <- as.numeric(as.character(pop_table$DAF))
+    pop_table$MAF <- as.numeric(as.character(pop_table$MAF))
 
     #remove nas
     #we want to keep the NA's because those are the novel variants!
     # pop_table <- pop_table[which(!is.na(pop_table$DAF)),]
     
     #remove fixed variants (the ones with DAF == 0 or == 1) ---> those are also the ones with MAF 0, basically!
-    pop_table <- pop_table[which(pop_table$DAF != 0),]
-    pop_table <- pop_table[which(pop_table$DAF != 1),]
+    pop_table <- pop_table[which(pop_table$MAF != 0),]
+    pop_table <- pop_table[which(pop_table$MAF != 1),]
 
     #remove MAC = 1
     # pop_table <- pop_table[which(pop_table$MAC > 1),]
@@ -44,106 +46,77 @@ for (chr in 1:22) {
     # #use relative frequency sites per bin count/total variants number
     # current_pop_MAF <- as.data.frame(cbind(breaks=current_hist$breaks[2:length(current_hist$breaks)],counts=current_hist$counts,pop=rep(pop,length(current_hist$counts)),rel_count=(current_hist$counts/length(pop_table$POS)),chr_length=(length(pop_table$POS))))
     
-    # all_pop_MAF <- rbind(all_pop_MAF,current_pop_MAF)
-    all_pop_MAF <- list(all_pop_MAF,pop_table$MAF)
+    all_chr_MAF <- rbind(all_chr_MAF,pop_table)
 
   }
+  all_pop_MAF <- append(all_pop_MAF,list(all_chr_MAF$MAF))
+}
 
-  #################################################################TEST TO PLOT##########################
-   base_folder <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/INPUT_FILES/FIVE_POPS/WG/CHR",chr,sep="")
-   all_pop_MAF <- NULL
-
-    # pop_table_file <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/TABLES/",pop,".chr",chr,".tab",sep="")
-    VBI_table_file <- paste(base_folder,"/","VBI",".chr",chr,".tab.gz",sep="")
-    FVG_table_file <- paste(base_folder,"/","FVG",".chr",chr,".tab.gz",sep="")
-    CARL_table_file <- paste(base_folder,"/","CARL",".chr",chr,".tab.gz",sep="")
-    CEU_table_file <- paste(base_folder,"/","CARL",".chr",chr,".tab.gz",sep="")
-    TSI_table_file <- paste(base_folder,"/","CARL",".chr",chr,".tab.gz",sep="")
-    # for files with not mac=1
-    # pop_table_file <- paste(pop,".chr",chr,".not_fixed.not_MAC1.tab.gz",sep="")
-
-    VBI_pop_table <- read.table(VBI_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
-    FVG_pop_table <- read.table(FVG_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
-    CARL_pop_table <- read.table(CARL_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
-    colnames(VBI_pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
-    colnames(FVG_pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
-    colnames(CARL_pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
-    VBI_pop_table$DAF <- as.numeric(as.character(VBI_pop_table$DAF))
-    FVG_pop_table$DAF <- as.numeric(as.character(FVG_pop_table$DAF))
-    CARL_pop_table$DAF <- as.numeric(as.character(CARL_pop_table$DAF))
-
-    #remove nas
-    #we want to keep the NA's because those are the novel variants!
-    # pop_table <- pop_table[which(!is.na(pop_table$DAF)),]
-    
-    #remove fixed variants (the ones with DAF == 0 or == 1) ---> those are also the ones with MAF 0, basically!
-    VBI_pop_table <- VBI_pop_table[which(VBI_pop_table$DAF != 0),]
-    FVG_pop_table <- FVG_pop_table[which(FVG_pop_table$DAF != 0),]
-    CARL_pop_table <- CARL_pop_table[which(CARL_pop_table$DAF != 0),]
-    VBI_pop_table <- VBI_pop_table[which(VBI_pop_table$DAF != 1),]
-    FVG_pop_table <- FVG_pop_table[which(FVG_pop_table$DAF != 1),]
-    CARL_pop_table <- CARL_pop_table[which(CARL_pop_table$DAF != 1),]
-
-    #remove MAC = 1
-    all_pop_MAF <- list(VBI_pop_table$MAF,FVG_pop_table$MAF,CARL_pop_table$MAF)
+pop_col <- col_pop(pops)
+  
+require(plotrix)
+base_folder <- getwd()
+jpeg(paste(base_folder,"/1_all_pop_MAF_plotrix.jpg",sep=""),width=1800, height=800)
+  par(oma=c(3,3,3,3),cex=1.4)
+  multhist(all_pop_MAF,
+   col=pop_col$color,
+   freq=FALSE,
+   ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
+   xlab="MAF",
+   breaks=20,
+   ylim=c(0, 40),
+   main="MAF in all populations")
+  legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
+dev.off()
 
 
 
-  require(plotrix)
-  base_folder <- getwd()
-  jpeg(paste(base_folder,"/1_all_pop_MAF_plotrix.jpg",sep=""),width=1800, height=800)
-  multhist(all_pop_MAF, col=c("purple", "green", "red" ), freq=FALSE, ylab="relative frequency",xlab="MAF", breaks=20, ylim=c(0, 40), main="Novel Sites ") 
-  legend ("topright", c("CAR", "FVG", "VBI") , ncol=3 ,  col=c("purple", "green", "red" ), pch=16 , bty='n') 
-  dev.off()
+  # all_pop_MAF$breaks <- as.numeric(as.character(all_pop_MAF$breaks))
+  # all_pop_MAF$counts <- as.numeric(as.character(all_pop_MAF$counts))
+  # all_pop_MAF$rel_count <- as.numeric(as.character(all_pop_MAF$rel_count))
+  # all_pop_MAF$chr_length <- as.numeric(as.character(all_pop_MAF$chr_length))
+  # all_pop_MAF$pop <- as.character(all_pop_MAF$pop)
 
-##################################################################################################################
+  # all_pop_MAF_table <- all_pop_MAF[which(all_pop_MAF$pop == "CEU"),1]
+  # all_pop_MAF_table_names <- c("breaks")
 
-  all_pop_MAF$breaks <- as.numeric(as.character(all_pop_MAF$breaks))
-  all_pop_MAF$counts <- as.numeric(as.character(all_pop_MAF$counts))
-  all_pop_MAF$rel_count <- as.numeric(as.character(all_pop_MAF$rel_count))
-  all_pop_MAF$chr_length <- as.numeric(as.character(all_pop_MAF$chr_length))
-  all_pop_MAF$pop <- as.character(all_pop_MAF$pop)
+  # for(pop_i in pops){
+  #   actual_pop <- all_pop_MAF[which(all_pop_MAF$pop == pop_i),]
+  #   all_pop_MAF_table_names <- c(all_pop_MAF_table_names,paste(pop_i,"count",sep="_"),paste(pop_i,"rel_count",sep="_"),paste(pop_i,"chr_length",sep="_"))
 
-  all_pop_MAF_table <- all_pop_MAF[which(all_pop_MAF$pop == "CEU"),1]
-  all_pop_MAF_table_names <- c("breaks")
+  #   all_pop_MAF_table <- cbind(all_pop_MAF_table,cbind(actual_pop$counts,actual_pop$rel_count*100,actual_pop$chr_length))
+  # }
+  # all_pop_MAF_table <- as.data.frame(all_pop_MAF_table)
+  # colnames(all_pop_MAF_table) <- all_pop_MAF_table_names
 
-  for(pop_i in pops){
-    actual_pop <- all_pop_MAF[which(all_pop_MAF$pop == pop_i),]
-    all_pop_MAF_table_names <- c(all_pop_MAF_table_names,paste(pop_i,"count",sep="_"),paste(pop_i,"rel_count",sep="_"),paste(pop_i,"chr_length",sep="_"))
-
-    all_pop_MAF_table <- cbind(all_pop_MAF_table,cbind(actual_pop$counts,actual_pop$rel_count*100,actual_pop$chr_length))
-  }
-  all_pop_MAF_table <- as.data.frame(all_pop_MAF_table)
-  colnames(all_pop_MAF_table) <- all_pop_MAF_table_names
-
-  write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
   # write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count_no_MAC1_chr",chr,".txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
-}
+# }
 #In order to plot the genomewide spectrum, we need to upload each file and sum things together
-all_chr <- NULL
-for (chrom in 1:22) {
-  current_file <- paste("all_pop_MAF_count_chr",chrom,".txt",sep="")
-  current_chr <- read.table(current_file,sep="\t",header=T)
-  #remove the relative count
-  current_chr <- current_chr[,c(grep("rel_count",colnames(current_chr),invert=T))]
-  # colnames(current_chr)[which(colnames(current_chr) != "breaks")]
-  all_chr <- as.data.frame(c(all_chr,current_chr))
-}
+# all_chr <- NULL
+# for (chrom in 1:22) {
+#   current_file <- paste("all_pop_MAF_count_chr",chrom,".txt",sep="")
+#   current_chr <- read.table(current_file,sep="\t",header=T)
+#   #remove the relative count
+#   current_chr <- current_chr[,c(grep("rel_count",colnames(current_chr),invert=T))]
+#   # colnames(current_chr)[which(colnames(current_chr) != "breaks")]
+#   all_chr <- as.data.frame(c(all_chr,current_chr))
+# }
 
 #remove all unnecessary breaks 
-all_chr <- all_chr[,c(grep("breaks.",colnames(all_chr),invert=T))]
+# all_chr <- all_chr[,c(grep("breaks.",colnames(all_chr),invert=T))]
 
 #now sum all together the count and the total length for each population
-for (pop in pops) {
-all_chr$current_pop_tot_count <- apply(all_chr[,c(grep(paste(pop,"_count",sep=""),colnames(all_chr)))],1,sum)
-all_chr$current_pop_tot_length <- apply(all_chr[,c(grep(paste(pop,"_chr_length",sep=""),colnames(all_chr)))],1,sum)
-colnames(all_chr)[which(colnames(all_chr)=="current_pop_tot_count")] <- paste(pop,"_tot_count",sep="")
-colnames(all_chr)[which(colnames(all_chr)=="current_pop_tot_length")] <- paste(pop,"_tot_length",sep="")
-}
+# for (pop in pops) {
+#   all_chr$current_pop_tot_count <- apply(all_chr[,c(grep(paste(pop,"_count",sep=""),colnames(all_chr)))],1,sum)
+#   all_chr$current_pop_tot_length <- apply(all_chr[,c(grep(paste(pop,"_chr_length",sep=""),colnames(all_chr)))],1,sum)
+#   colnames(all_chr)[which(colnames(all_chr)=="current_pop_tot_count")] <- paste(pop,"_tot_count",sep="")
+#   colnames(all_chr)[which(colnames(all_chr)=="current_pop_tot_length")] <- paste(pop,"_tot_length",sep="")
+# }
 
 #now we want to keep only the tot count stuff and the breaks column
-all_chr <- cbind(breaks=all_chr$breaks,all_chr[,c(grep("tot_count",colnames(all_chr)))],all_chr[,c(grep("tot_length",colnames(all_chr)))])
+# all_chr <- cbind(breaks=all_chr$breaks,all_chr[,c(grep("tot_count",colnames(all_chr)))],all_chr[,c(grep("tot_length",colnames(all_chr)))])
 
 #now we need to create the table with the relative count
 #we can do it strait away
@@ -154,77 +127,95 @@ write.table(all_chr,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.name
 #absolute count(even columns)
 # barplot3 <- as.matrix(t(all_pop_MAF_table[,c(2,4,6,8,10)]))
 # barplot3 <- as.matrix(t(all_pop_MAF_table[,seq(2, ncol(all_pop_MAF_table), by = 2)]))
-barplot3 <- as.matrix(t(all_chr[,c(grep("tot_count",colnames(all_chr)))]))
+# barplot3 <- as.matrix(t(all_chr[,c(grep("tot_count",colnames(all_chr)))]))
 
 #relative site count (odd columns)
 # barplot4 <- as.matrix(t(all_pop_MAF_table[,c(3,5,7,9,11)]))
 # barplot4 <- as.matrix(t(all_pop_MAF_table[,seq(3, ncol(all_pop_MAF_table), by = 2)]))
-all_chr_rel <- (all_chr[,c(grep("tot_count",colnames(all_chr)))]/all_chr[,c(grep("tot_length",colnames(all_chr)))])*100)
-colnames(all_chr_rel) <- gsub("tot_count","rel_freq",colnames(all_chr_rel))
+# all_chr_rel <- (all_chr[,c(grep("tot_count",colnames(all_chr)))]/all_chr[,c(grep("tot_length",colnames(all_chr)))])*100)
+# colnames(all_chr_rel) <- gsub("tot_count","rel_freq",colnames(all_chr_rel))
 
-barplot4 <- as.matrix(t(all_chr_rel))
+# barplot4 <- as.matrix(t(all_chr_rel))
 
-all_cols <- col_pop(pops)
+# all_cols <- col_pop(pops)
 
-base_folder <-getwd()
+# base_folder <-getwd()
 
-# jpeg(paste(base_folder,"/1_all_pop_MAF_",chr,".jpg",sep=""),width=1800, height=800)
-jpeg(paste(base_folder,"/1_all_pop_MAF.jpg",sep=""),width=1800, height=800)
-# jpeg(paste(base_folder,"PLOTS/1_all_pop_MAF_no_MAC1.jpg",sep=""),width=1800, height=800)
-  par(oma=c(3,3,3,3),cex=1.4)
-  barplot(barplot3,
-    beside=T,
-    main="MAF in all populations",
-    # names.arg=all_pop_MAF_table$breaks,
-    names.arg=all_chr$breaks,
-    xlab="",
-    ylab="",col=all_cols[,1])
-    legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
-    mtext(1, text = "MAF", line = 4,cex=1.4)
-    mtext(2, text = "Site count", line = 4,cex=1.4)
-dev.off()
+# # jpeg(paste(base_folder,"/1_all_pop_MAF_",chr,".jpg",sep=""),width=1800, height=800)
+# jpeg(paste(base_folder,"/1_all_pop_MAF.jpg",sep=""),width=1800, height=800)
+# # jpeg(paste(base_folder,"PLOTS/1_all_pop_MAF_no_MAC1.jpg",sep=""),width=1800, height=800)
+#   par(oma=c(3,3,3,3),cex=1.4)
+#   barplot(barplot3,
+#     beside=T,
+#     main="MAF in all populations",
+#     # names.arg=all_pop_MAF_table$breaks,
+#     names.arg=all_chr$breaks,
+#     xlab="",
+#     ylab="",col=all_cols[,1])
+#     legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
+#     mtext(1, text = "MAF", line = 4,cex=1.4)
+#     mtext(2, text = "Site count", line = 4,cex=1.4)
+# dev.off()
 
-# jpeg(paste(base_folder,"/1_all_pop_MAF_rf_",chr,".jpg",sep=""),width=1800, height=800)
-jpeg(paste(base_folder,"/1_all_pop_MAF_rf.jpg",sep=""),width=1800, height=800)
-# jpeg(paste(base_folder,"PLOTS/1_all_pop_MAF_rf_no_MAC1.jpg",sep=""),width=1800, height=800)
-  par(oma=c(3,3,3,3),cex=1.4)
-  barplot(barplot4,
-    beside=T,
-    main="MAF in all populations",
-    # names.arg=all_pop_MAF_table$breaks,
-    names.arg=all_chr$breaks,
-    xlab="",
-    ylab="",col=all_cols[,1])
-    legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
-    mtext(1, text = "MAF", line = 4,cex=1.4)
-    mtext(2, text = "Relative Frequency (N sites/Tot sites in freq bin)(%)", line = 4,cex=1.4)
-dev.off()
+# # jpeg(paste(base_folder,"/1_all_pop_MAF_rf_",chr,".jpg",sep=""),width=1800, height=800)
+# jpeg(paste(base_folder,"/1_all_pop_MAF_rf.jpg",sep=""),width=1800, height=800)
+# # jpeg(paste(base_folder,"PLOTS/1_all_pop_MAF_rf_no_MAC1.jpg",sep=""),width=1800, height=800)
+#   par(oma=c(3,3,3,3),cex=1.4)
+#   barplot(barplot4,
+#     beside=T,
+#     main="MAF in all populations",
+#     # names.arg=all_pop_MAF_table$breaks,
+#     names.arg=all_chr$breaks,
+#     xlab="",
+#     ylab="",col=all_cols[,1])
+#     legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
+#     mtext(1, text = "MAF", line = 4,cex=1.4)
+#     mtext(2, text = "Relative Frequency (N sites/Tot sites in freq bin)(%)", line = 4,cex=1.4)
+# dev.off()
 ACTUALLY
 ################################################################################################################
 #WE NEED TO UPLOAD DATA ALSO FOR NOVEL SITES from here:
 base_novel_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/enza/NOVEL"
 pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
-pops_ingi <- c("VBI","FVG","CARL")
+pops_ingi <- c("VBI","FVG","CAR")
 
 #we work by chr and by population
 #upload data for each population about novel sites
+all_pop_novel_MAF <- NULL
 for (pop in pops_ingi) {
+  print(pop)
   current_pop_novel <- NULL
   for (chr in 1:22) {
+    print(chr)
     #read the current file for this population and this chromosome
     current_chr_novel <- read.table(paste(base_novel_folder,"/",pop,".",chr,".n.maf",sep=""), sep="\t",header=F)
-    colnames(current_chr_novel) <- c("CHROM","POZ","POS","TYPE","CEU","TSI","VBI","FVG","CARL")
-    current_pop_novel <-rbind(current_pop_novel,current_chr_novel)
-  }
-
- current_hist <- hist(pop_table$MAF,plot=F,breaks=20)
-
- #use relative frequency sites per bin count/total variants number
- current_pop_MAF <- as.data.frame(cbind(breaks=current_hist$breaks[2:length(current_hist$breaks)],counts=current_hist$counts,pop=rep(pop,length(current_hist$counts)),rel_count=(current_hist$counts/length(pop_table$POS)),chr_length=(length(pop_table$POS))))
+    colnames(current_chr_novel) <- c("CHROM","POZ","POS","TYPE","CEU","TSI","VBI","FVG","CAR")
+    current_pop_col <- grep(pop,colnames(current_chr_novel))
+    current_chr_novel <- current_chr_novel[which(current_chr_novel[,current_pop_col] != 0),]
     
- all_pop_MAF <- rbind(all_pop_MAF,current_pop_MAF)
+    current_pop_novel <-rbind(current_pop_novel,current_chr_novel[,c(1,2,3,4,current_pop_col)])
+  }
+  
+  current_pop_col <- grep(pop,colnames(current_pop_novel))
+  all_pop_novel_MAF <- append(all_pop_novel_MAF,list(current_pop_novel[,current_pop_col]))
 
 }
+
+require(plotrix)
+base_folder <- getwd()
+jpeg(paste(base_folder,"/1_all_INGI_novel_MAF_plotrix.jpg",sep=""),width=1800, height=800)
+  par(oma=c(3,3,3,3),cex=1.4)
+  multhist(all_pop_novel_MAF,
+   col=pop_col$color,
+   freq=FALSE,
+   ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
+   xlab="MAF",
+   breaks=20,
+   ylim=c(0, 40),
+   main="MAF in all populations")
+  legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(pops))),legend=all_cols[,2], ncol=2,bty="n")
+dev.off()
+
 ################################################################################################################
 #now upload the private and shared plots and add them to the previous plot
 # merged_daf <- read.table(paste0(base_folder,"INPUT_FILES/INGI_chr",chr,".merged_daf.tab.gz"),skip=1,header=F)
@@ -495,3 +486,43 @@ jpeg(paste(base_folder_res,"/1_all_pop_3MAF_p_rf.jpg",sep=""),width=1800, height
     legend("top",pch =c(rep(19,length(all_cols[c(2,6,10,6,8,9,5,1),1]))),col=all_cols[c(2,6,10,6,8,9,5,1),1],legend=all_cols[c(2,6,10,6,8,9,5,1),2], ncol=6)
     # legend("top",pch =c(rep(19,3)),col=all_cols[c(1,3,5),1],legend=all_cols[c(1,3,5),2], ncol=6)
 dev.off()
+
+#################################################################TEST TO PLOT##########################
+   # base_folder <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/INPUT_FILES/FIVE_POPS/WG/CHR",chr,sep="")
+   # all_pop_MAF <- NULL
+
+   #  # pop_table_file <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/TABLES/",pop,".chr",chr,".tab",sep="")
+   #  VBI_table_file <- paste(base_folder,"/","VBI",".chr",chr,".tab.gz",sep="")
+   #  FVG_table_file <- paste(base_folder,"/","FVG",".chr",chr,".tab.gz",sep="")
+   #  CARL_table_file <- paste(base_folder,"/","CARL",".chr",chr,".tab.gz",sep="")
+   #  CEU_table_file <- paste(base_folder,"/","CARL",".chr",chr,".tab.gz",sep="")
+   #  TSI_table_file <- paste(base_folder,"/","CARL",".chr",chr,".tab.gz",sep="")
+   #  # for files with not mac=1
+   #  # pop_table_file <- paste(pop,".chr",chr,".not_fixed.not_MAC1.tab.gz",sep="")
+
+   #  VBI_pop_table <- read.table(VBI_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
+   #  FVG_pop_table <- read.table(FVG_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
+   #  CARL_pop_table <- read.table(CARL_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
+   #  colnames(VBI_pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
+   #  colnames(FVG_pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
+   #  colnames(CARL_pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
+   #  VBI_pop_table$DAF <- as.numeric(as.character(VBI_pop_table$DAF))
+   #  FVG_pop_table$DAF <- as.numeric(as.character(FVG_pop_table$DAF))
+   #  CARL_pop_table$DAF <- as.numeric(as.character(CARL_pop_table$DAF))
+
+   #  #remove nas
+   #  #we want to keep the NA's because those are the novel variants!
+   #  # pop_table <- pop_table[which(!is.na(pop_table$DAF)),]
+    
+   #  #remove fixed variants (the ones with DAF == 0 or == 1) ---> those are also the ones with MAF 0, basically!
+   #  VBI_pop_table <- VBI_pop_table[which(VBI_pop_table$DAF != 0),]
+   #  FVG_pop_table <- FVG_pop_table[which(FVG_pop_table$DAF != 0),]
+   #  CARL_pop_table <- CARL_pop_table[which(CARL_pop_table$DAF != 0),]
+   #  VBI_pop_table <- VBI_pop_table[which(VBI_pop_table$DAF != 1),]
+   #  FVG_pop_table <- FVG_pop_table[which(FVG_pop_table$DAF != 1),]
+   #  CARL_pop_table <- CARL_pop_table[which(CARL_pop_table$DAF != 1),]
+
+   #  #remove MAC = 1
+   #  all_pop_MAF <- list(VBI_pop_table$MAF,FVG_pop_table$MAF,CARL_pop_table$MAF)
+
+##################################################################################################################

@@ -18,6 +18,9 @@ col_pop <- function(pops){
   if(pops[i] == "FVG_s"){
     cur_col <- "#5A5E61"
   }
+  if(pops[i] == "FVG_n"){
+    cur_col <- "#5A5E61"
+  }
   if(pops[i] == "Erto"){
     cur_col <- "#96D4CA"
   }
@@ -39,6 +42,9 @@ col_pop <- function(pops){
   if(pops[i] == "VBI_s"){
     cur_col <- "#DF5E5E"
   }
+  if(pops[i] == "VBI_n"){
+    cur_col <- "#DF5E5E"
+  }
    if(pops[i] == "CARL"){
     cur_col <- "#F7A6A6"
   }
@@ -46,6 +52,9 @@ col_pop <- function(pops){
     cur_col <- "#F7A6A6"
   }
   if(pops[i] == "CARL_s"){
+    cur_col <- "#F7A6A6"
+  }
+  if(pops[i] == "CARL_n"){
     cur_col <- "#F7A6A6"
   }
   pop_col <- cbind(cur_col,pops[i])
