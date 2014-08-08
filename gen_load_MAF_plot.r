@@ -202,7 +202,7 @@ jpeg(paste(base_folder,"/1_all_INGI_private_shared_MAF_plotrix.jpg",sep=""),widt
    breaks=20,
    ylim=c(0, 50),
    main="MAF in all populations")
-  legend("topright",pch =c(rep(22,length(pop_col[,1]))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[,1],col=c(rep('black',length(pops_ingi_novel))),legend=pop_col[,2], ncol=2,bty="n")
+  legend("topright",pch =c(rep(22,length(pop_col[,1]))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[,1],col=c(rep('black',length(pops_ingi_class))),legend=pop_col[,2], ncol=2,bty="n")
 dev.off()
 
 #now we need to put all together to plot the complete spectum for all classes!
@@ -211,3 +211,21 @@ all_pop_all_MAF <- append(append(all_pop_MAF,all_pop_novel_MAF),all_pop_MAF_priv
 
 #we need pops in the same order as the list
 all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
+
+all_cols <- col_pop(all_pops)
+require(plotrix)
+
+# now plot everything together
+jpeg(paste(base_folder,"/1_all_pop_all_MAF_plotrix.jpg",sep=""),width=1800, height=800)
+  par(oma=c(3,3,3,3),cex=1.4)
+  multhist(all_pop_all_MAF,
+   col=all_cols$color,
+   density=all_cols$density,
+   freq=FALSE,
+   ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
+   xlab="MAF",
+   breaks=20,
+   ylim=c(0, 50),
+   main="MAF in all populations")
+  legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_pops))),legend=all_cols[,2], ncol=2,bty="n")
+dev.off()

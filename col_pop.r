@@ -82,7 +82,7 @@ all_cols <- as.data.frame(all_cols)
 colnames(all_cols) <- c("color","pop","density")
 all_cols$color <- as.character(all_cols$color)
 all_cols$pop <- as.character(all_cols$pop)
-all_cols$density <- as.character(all_cols$density)
+all_cols$density <- as.numeric(as.character(all_cols$density))
 
 
 return (all_cols)
