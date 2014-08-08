@@ -1,20 +1,61 @@
-'ESSENTIAL_SPLICE_SITE'  => 'In the first 2 or the last 2 basepairs of an intron',
-'STOP_GAINED'            => 'In coding sequence, resulting in the gain of a stop codon',
-'STOP_LOST'              => 'In coding sequence, resulting in the loss of a stop codon',
-'COMPLEX_INDEL'          => 'Insertion or deletion that spans an exon/intron or coding sequence/UTR border',
-'FRAMESHIFT_CODING'      => 'In coding sequence, resulting in a frameshift',
-'NON_SYNONYMOUS_CODING'  => 'In coding sequence and results in an amino acid change in the encoded peptide sequence',
-'SPLICE_SITE'            => '1-3 bps into an exon or 3-8 bps into an intron',
-'PARTIAL_CODON'          => 'Located within the final, incomplete codon of a transcript whose end coordinate is unknown',
-'SYNONYMOUS_CODING'      => 'In coding sequence, not resulting in an amino acid change (silent mutation)',
-'REGULATORY_REGION'      => 'In regulatory region annotated by Ensembl',
-'WITHIN_MATURE_miRNA'    => 'Located within a microRNA',
-'5PRIME_UTR'             => 'In 5 prime untranslated region',
-'3PRIME_UTR'             => 'In 3 prime untranslated region',
-'INTRONIC'               => 'In intron',
-'NMD_TRANSCRIPT'         => 'Located within a transcript predicted to undergo nonsense-mediated decay',
-'WITHIN_NON_CODING_GENE' => 'Located within a gene that does not code for a protein',
-'UPSTREAM'               => 'Within 5 kb upstream of the 5 prime end of a transcript',
-'DOWNSTREAM'             => 'Within 5 kb downstream of the 3 prime end of a transcript',
-'HGMD_MUTATION'          => 'Mutation from the HGMD database - consequence unknown',
-'INTERGENIC'             => 'More than 5 kb either upstream or downstream of a transcript',
+#define function for population colors in plots
+col_pop <- function(pops){
+  all_cols <- NULL
+
+  for(i in 1:length(pops)){
+  if(pops[i] == "CEU"){
+    cur_col <- "#E8D0A9"
+  }
+  if(pops[i] == "TSI"){
+    cur_col <- "#B7AFA3"
+  }
+  if(pops[i] == "FVG"){
+    cur_col <- "#5A5E61"
+  }
+  if(pops[i] == "FVG_p"){
+    cur_col <- "#5A5E61"
+  }
+  if(pops[i] == "FVG_s"){
+    cur_col <- "#5A5E61"
+  }
+  if(pops[i] == "Erto"){
+    cur_col <- "#96D4CA"
+  }
+  if(pops[i] == "Illegio"){
+    cur_col <- "#95C0BB"
+  }
+  if(pops[i] == "Resia"){
+    cur_col <- "#85C0E7"
+  }
+  if(pops[i] == "Sauris"){
+    cur_col <- "#66939E"
+  }
+  if(pops[i] == "VBI"){
+    cur_col <- "#DF5E5E"
+  }
+  if(pops[i] == "VBI_p"){
+    cur_col <- "#DF5E5E"
+  }
+  if(pops[i] == "VBI_s"){
+    cur_col <- "#DF5E5E"
+  }
+   if(pops[i] == "CARL"){
+    cur_col <- "#F7A6A6"
+  }
+  if(pops[i] == "CARL_p"){
+    cur_col <- "#F7A6A6"
+  }
+  if(pops[i] == "CARL_s"){
+    cur_col <- "#F7A6A6"
+  }
+  pop_col <- cbind(cur_col,pops[i])
+  all_cols <- rbind(all_cols,pop_col)
+}
+all_cols <- as.data.frame(all_cols)
+colnames(all_cols) <- c("color","pop")
+all_cols$color <- as.character(all_cols$color)
+all_cols$pop <- as.character(all_cols$pop)
+
+
+return (all_cols)
+}
