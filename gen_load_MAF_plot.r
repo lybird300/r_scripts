@@ -215,17 +215,181 @@ all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
 all_cols <- col_pop(all_pops)
 require(plotrix)
 
+all_pop_MAF_count_rel <- NULL
+for(i in 1:length(all_pops)){
+  current_pop <- all_pops[i]
+  current_pop_MAF_hist <- hist(all_pop_all_MAF[[i]],
+    breaks=20,
+    plot=F)
+  assign(paste(current_pop,"_maf_hist",sep=""),current_pop_MAF_hist)
+  all_pop_MAF_count_rel <- cbind(all_pop_MAF_count_rel,current_pop_MAF_hist$counts) 
+}
+
+all_pop_MAF_count_rel <- as.data.frame(all_pop_MAF_count_rel)
+#add colnames (we can use the same order of the population data)
+colnames(all_pop_MAF_count_rel) <- all_pops
+#add a column for breaks
+all_pop_MAF_count_rel$breaks <- CEU_maf_hist$breaks[2:length(CEU_maf_hist$breaks)]
+
+all_ingi_MAF_not_all <- NULL
+#we need to add also the column with all - the sum of categories, for the ingi pops
+for(inpop in pops_ingi){
+  current_pop_col <- grep(inpop,colnames(all_pop_MAF_count_rel))
+  current_pop_not_all <- all_pop_MAF_count_rel[current_pop_col[1]] - apply(all_pop_MAF_count_rel[current_pop_col[2:length(current_pop_col)]],1,sum)
+  all_ingi_MAF_not_all <- c(all_ingi_MAF_not_all,current_pop_not_all)
+}
+all_ingi_MAF_not_all <- as.data.frame(all_ingi_MAF_not_all)
+colnames(all_ingi_MAF_not_all) <- paste(colnames(all_ingi_MAF_not_all),"no_all",sep="_")
+
+#add this set to the complete set
+all_pop_MAF_count_rel <- cbind(all_pop_MAF_count_rel,all_ingi_MAF_not_all)
+
+#now create a relatove freq set
+all_pop_MAF_count_rel_rf <- NULL
+#we need to add also the column with all - the sum of categories, for the ingi pops
+for(inpop in pops_ingi){
+  current_pop_col_rf <- grep(inpop,colnames(all_pop_MAF_count_rel))
+  current_pop_not_all_rf <- ((all_pop_MAF_count_rel[current_pop_col_rf[2:length(current_pop_col_rf)]])/sum(all_pop_MAF_count_rel[current_pop_col_rf[1]]))*100
+  all_pop_MAF_count_rel_rf <- c(all_pop_MAF_count_rel_rf,current_pop_not_all_rf)
+}
+all_pop_MAF_count_rel_rf <- as.data.frame(all_pop_MAF_count_rel_rf)
+
+#add CEU and TSI to this
+all_pop_MAF_count_rel_rf <- cbind(all_pop_MAF_count_rel_rf,CEU=(all_pop_MAF_count_rel$CEU/sum(all_pop_MAF_count_rel$CEU))*100,TSI=(all_pop_MAF_count_rel$TSI/sum(all_pop_MAF_count_rel$TSI))*100)
+
+all_pop_MAF_count_rel_rf <- as.data.frame(all_pop_MAF_count_rel_rf)
+
+barplot1 <- as.matrix(t(all_pop_MAF_count_rel_rf[,c(13,14,3,7,11,2,6,10,1,5,9)]))
+
+all_cols <- col_pop(rownames(barplot1))
+all_pop_no_INGI_MAF <- list(all_pop_all_MAF[[1]],all_pop_all_MAF[[2]],all_pop_all_MAF[[6]],all_pop_all_MAF[[7]],all_pop_all_MAF[[8]],all_pop_all_MAF[[9]],all_pop_all_MAF[[10]],all_pop_all_MAF[[11]],all_pop_all_MAF[[12]],all_pop_all_MAF[[13]],all_pop_all_MAF[[14]])
+
+# all_cols <- col_pop(all_pops)
+
+
 # now plot everything together
-jpeg(paste(base_folder,"/1_all_pop_all_MAF_plotrix.jpg",sep=""),width=1800, height=800)
+# jpeg(paste(base_folder,"/1_all_pop_all_MAF_plotrix.jpg",sep=""),width=1800, height=800)
+# jpeg(paste(base_folder,"/1_all_pop_all_MAF_plotrix_texture.jpg",sep=""),width=1800, height=800)
+jpeg(paste(base_folder,"/1_all_pop_all_MAF_plotrix_texture_no_INGI.jpg",sep=""),width=1800, height=800)
   par(oma=c(3,3,3,3),cex=1.4)
-  multhist(all_pop_all_MAF,
+  multhist(all_pop_no_INGI_MAF,
+  # multhist(all_pop_all_MAF,
+  # multhist(all_pop_all_MAF_cat,
+  # multhist(barplot1,
+  # barplot(barplot1,
    col=all_cols$color,
    density=all_cols$density*20,
    freq=FALSE,
+   names.arg=all_pop_MAF_count_rel$breaks,
    ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
    xlab="MAF",
    breaks=20,
    ylim=c(0, 50),
-   main="MAF in all populations")
-  legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_pops))),legend=all_cols[,2], ncol=2,bty="n")
+   main="MAF in all populations",beside=T)
+  legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_pops))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
 dev.off()
+
+#################################################################################
+#PLOT 1B: same as plot 1 but based on MAF: for the consequences categories, we plot the maf spectrum
+#upload data for each population:
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/maf_bins_splitter.r")
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+
+pops <- c("CEU","TSI","VBI","FVG","CARL")
+
+base_conseq_maf_folder <- '/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/MAF'
+
+# conseq <- system('for i in `ls -d /lustre/scratch113/projects/esgi-vbseq/20140430_purging/enza/listsites/*/`;do echo \"${i%*/}\"| awk \'BEGIN{FS=\"/\"};{print $(NF)}\';done',intern=T)
+# conseq <- c("condel","sift","polyphen")
+conseq <- c("syn","miss","gerp")
+
+for (con in conseq){
+  current_con_path <- paste(base_conseq_maf_folder,con,sep="/")
+  #we assume all files are splitted by chr
+  if (con == "condel"){
+    subcats <- c("deleterious","neutral")
+  } else if (con == "polyphen"){
+    subcats <- c("benign","possibly_damaging","probably_damaging")
+  } else if (con == "sift"){
+    subcats <- c("deleterious","tolerated")
+  } else if (con == "gerp"){
+    # those don't have subcategories
+    subcats <- NULL
+  } else if (con == "miss"){
+    # those don't have subcategories
+    subcats <- NULL
+  } else if (con == "syn"){
+    # those don't have subcategories
+    subcats <- NULL
+  }
+
+  if (!is.null(subcats)){
+
+    for(subcat in subcats){
+      all_pop_current_consec_current_subcat <- NULL
+      for (pop in pops) {
+        current_pop_current_consec_current_subcat <- NULL
+        for (chr in 1:22){
+          current_chr <- read.table(paste(current_con_path,"/",con,".",subcat,".",chr,".list.maf_file",sep=""),header=F)
+          colnames(current_chr) <- c("CHROM","POS","TYPE","CEU","TSI","VBI","FVG","CARL")
+          current_pop_col <- grep(pop,colnames(current_chr))
+          current_chr <- current_chr[which(current_chr[,current_pop_col] != 0),]
+          current_pop_current_consec_current_subcat <-rbind(current_pop_current_consec_current_subcat,current_chr[,c(1,2,3,current_pop_col)])
+        }
+        
+        current_pop_col <- grep(pop,colnames(current_pop_current_consec_current_subcat))
+        all_pop_current_consec_current_subcat <- append(all_pop_current_consec_current_subcat,list(current_pop_current_consec_current_subcat[,current_pop_col]))
+      }
+      all_cols <- col_pop(pops)
+      require(plotrix)
+
+      # now plot everything together
+      jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",subcat,"_",con,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
+        par(oma=c(3,3,3,3),cex=1.4)
+        multhist(all_pop_current_consec_current_subcat,
+         col=all_cols$color,
+         density=all_cols$density*20,
+         freq=FALSE,
+         ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
+         xlab="MAF",
+         breaks=20,
+         ylim=c(0, 40),
+         main=paste("MAF in all populations for ",con," ",subcat))
+        legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
+      dev.off()
+
+    }
+  }else{
+    all_pop_current_consec_current_subcat <- NULL
+    for (pop in pops) {
+      current_pop_current_consec_current_subcat <- NULL
+      for (chr in 1:22){
+        current_chr <- read.table(paste(current_con_path,"/",con,".",chr,".list.maf_file",sep=""),header=F)
+        colnames(current_chr) <- c("CHROM","POS","TYPE","CEU","TSI","VBI","FVG","CARL")
+        current_pop_col <- grep(pop,colnames(current_chr))
+        current_chr <- current_chr[which(current_chr[,current_pop_col] != 0),]
+        current_pop_current_consec_current_subcat <-rbind(current_pop_current_consec_current_subcat,current_chr[,c(1,2,3,current_pop_col)])
+      }
+      
+      current_pop_col <- grep(pop,colnames(current_pop_current_consec_current_subcat))
+      all_pop_current_consec_current_subcat <- append(all_pop_current_consec_current_subcat,list(current_pop_current_consec_current_subcat[,current_pop_col]))
+    }
+    all_cols <- col_pop(pops)
+    require(plotrix)
+
+    # now plot everything together
+    jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",con,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
+      par(oma=c(3,3,3,3),cex=1.4)
+      multhist(all_pop_current_consec_current_subcat,
+       col=all_cols$color,
+       density=all_cols$density*20,
+       freq=FALSE,
+       ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
+       xlab="MAF",
+       breaks=20,
+       ylim=c(0, 40),
+       main=paste("MAF in all populations for",con,sep=" "))
+      legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
+    dev.off()
+  }
+}
