@@ -3,9 +3,9 @@
 col_pop <- function(pops){
   all_cols <- NULL
   CAR_col = "#F54E4E"
-  CAR_p_col = "#F54E4E"
-  CAR_s_col = "#F54E4E"
-  CAR_n_col = "#F54E4E"
+  CAR_p_col = "#F77171"
+  CAR_s_col = "#F99595"
+  CAR_n_col = "#FBB8B8"
   CEU_col = "#13256F"
   Erto_col = "#10DFBC"
   FVG_col ="#505E69"
@@ -17,9 +17,9 @@ col_pop <- function(pops){
   Sauris_col = "#00631F"
   TSI_col = "#619FE0"
   VBI_col = "#CA8A1A"
-  VBI_p_col = "#CA8A1A"
-  VBI_s_col = "#CA8A1A"
-  VBI_n_col = "#CA8A1A"
+  VBI_p_col = "#D5A148"
+  VBI_s_col = "#DFB976"
+  VBI_n_col = "#EAD0A3"
 
   for(i in 1:length(pops)){
   if(pops[i] == "CEU"){
