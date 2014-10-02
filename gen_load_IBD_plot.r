@@ -7,9 +7,10 @@ rm(list=ls())
 #Same as roh, but we consider samples's pairs:
 # input_format <- "PLINK"
 chr <- "10"
-pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+# pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
 LOD <- 5
-
+setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
 # base_folder <- getwd() #only if we're lazy
 input_format <- "BEAGLE"
 xmax <- NULL
@@ -130,9 +131,10 @@ dev.off()
 ###############################################################################
 #Same as roh, but we consider samples's pairs:
 # input_format <- "PLINK"
-pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+# pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
 LOD <- 5
-
+setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
 # base_folder <- getwd() #only if we're lazy
 input_format <- "BEAGLE"
 xmax <- NULL
@@ -263,24 +265,27 @@ summary_Resia_ibd <- summary(Resia_tot_ibd$IBD_tot)
 # summary_Illegio_ibd 49.36 176.4 256.8 261 320 1101
 # summary_Resia_ibd 89.86 247.4 292.5 301.8 336.6 2521
 
-
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 pop_colors <- col_pop(pops)
 base_folder <- getwd()
-jpeg(paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1500.jpg",sep=""),width=1000, height=1000)
+# jpeg(paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1500.jpg",sep=""),width=1000, height=1000)
+jpeg(paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1500_NO_FVG.jpg",sep=""),width=1000, height=1000)
   par(lwd=4,cex=1.5)
   # plot(M_ibd_CEU,CEU_tot_ibd$IBD_tot,main="",xlab="IBD segments length per couple (Mb)", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
-  plot(M_ibd_CEU,CEU_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "CEU"),1],main="",xlab="IBD segments length per couple (Mb)", xlim=c(0,1000), verticals=TRUE, pch=46,col.01line='black',yaxs='i')
+  plot(M_ibd_CEU,CEU_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "CEU"),1],main="",xlab="IBD segments length per couple (Mb)",ylab="Pairs(%)", xlim=c(0,1000), verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_TSI,TSI_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "TSI"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_VBI,VBI_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "VBI"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
-  lines(M_ibd_FVG,FVG_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "FVG"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
+  # lines(M_ibd_FVG,FVG_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "FVG"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_CARL,CARL_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "CARL"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_Erto,Erto_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "Erto"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_Illegio,Illegio_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "Illegio"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_Resia,Resia_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "Resia"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_Sauris,Sauris_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "Sauris"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   abline(h=0.95,col='grey',lty='dashed')
-  leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "FVG"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
-  bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "FVG"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
+  # leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "FVG"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
+  leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
+  # bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "FVG"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
+  bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
   legend("bottomright",pch =c(rep(22,length(pops))),legend=leg_txt, pt.lwd=2,pt.cex=2,pt.bg=bkg,col=c(rep('black',length(pops))),ncol=4,bty="n")
 dev.off()
 

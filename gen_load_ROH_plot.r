@@ -165,8 +165,9 @@ dev.off()
 #Plot 6_A_ROH GENOMEWIDE BY POPULATION
 ###########################################################################################
 
-pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
-
+# pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 # input_format <- "PLINK"
 input_format <- "BEAGLE"
 xmax <- NULL
@@ -210,13 +211,6 @@ for (pop in pops) {
   
   assign(paste("M",pop,sep="_"),ecdf(tot_roh$ROH_tot))
   xmax <- c(xmax,summary(ecdf(tot_roh$ROH_tot))[6])
-  # jpeg(paste("6_roh_",pop".jpg",sep=""),width=800, height=800)
-  # plot(M_CEU,CEU_tot_roh$ROH_tot,main="",xlab="Total ROH homozigosity")
-  # lines(M_FVG,FVG_tot_roh$ROH_tot,col="red")
-  # lines(M_TSI,TSI_tot_roh$ROH_tot,col="green")
-  # lines(M_VBI,VBI_tot_roh$ROH_tot,col="blue")
-  # legend("bottomright",pch =c(rep(19,length(pops))),legend=c("CEU","FVG","TSI","VBI"),col=c("black","red","green","blue"),ncol=4)
-  # dev.off()
 
 }
 
@@ -337,13 +331,14 @@ pop_colors <- col_pop(pops)
 base_folder <- getwd()
 
 # jpeg(paste(base_folder,"/6_roh_all_5POP",chr,".jpg",sep=""),width=1000, height=1000)
-jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5.WG.jpg",sep=""),width=1000, height=1000)
+# jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5.WG.jpg",sep=""),width=1000, height=1000)
+jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5_no_FVG.WG.jpg",sep=""),width=1000, height=1000)
   par(lwd=4,cex=1.5)
   # plot(M_CEU,CEU_tot_roh$ROH_tot,main="",xlab="Total ROH homozigosity (Mb)", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
-  plot(M_CEU,CEU_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "CEU"),1],main="",xlab="Total ROH homozigosity (Mb)", xlim=c(0,450), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  plot(M_CEU,CEU_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "CEU"),1],main="",xlab="Total ROH homozigosity (Mb)",ylab="Pairs (%)", xlim=c(0,450), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
   lines(M_TSI,TSI_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "TSI"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
   lines(M_VBI,VBI_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "VBI"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_FVG,FVG_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "FVG"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  # lines(M_FVG,FVG_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "FVG"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
   lines(M_CARL,CARL_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "CARL"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
   lines(M_Erto,Erto_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "Erto"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
   lines(M_Illegio,Illegio_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "Illegio"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
@@ -352,8 +347,10 @@ jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5.WG.jpg",sep=""),width=1000, heigh
   abline(h=0.95,col='grey',lty='dashed')
   #define parameters for legend
   
-  leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "FVG"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
-  bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "FVG"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
+  # leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "FVG"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
+  # bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "FVG"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
+  leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
+  bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
 
   legend("bottomright",pch =c(rep(22,length(pops))),legend=leg_txt, pt.lwd=2,pt.cex=2,pt.bg=bkg,col=c(rep('black',length(pops))),ncol=4,bty="n")
 dev.off()

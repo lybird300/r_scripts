@@ -100,6 +100,48 @@ for(chr in 1:22 ){
   dev.off()  
 }
 
+
+#Plot 2a: WGS vs GWAS maf
+#first upload two dataset with mafs
+# pop <- "FVG"
+# gwas_data <- read.table("/lustre/scratch113/teams/soranzo/users/mc14/INGI_FVG/SEQ_CALLING/MERGED/AUTO/GW_SEQ_OVER/FVG_seq_subset_MERGED_sorted_auto_overlap_right_sex.sorted_filter_cleaned_freq.frq",header=T)
+# wgs_data <- read.table("/lustre/scratch113/projects/fvg_seq/20140319/20140401_VQSR2.5_reapply_v138_excl/20140503_COMPARISON/PLINK/WGS_GWAS/wgs_all_chr_cleaned_no_mismatch_freq.frq",header=T)
+pop <- "VBI"
+gwas_data <- read.table("/lustre/scratch113/teams/soranzo/users/mc14/INGI_VB/ARRAY/300700_overlap/SEQ_OVERLAP/gwas_all_chr_flipped_no_triallelic_geno_hwe_filt_freq.frq",header=T)
+wgs_data <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140319/20140402_VQSR2.5_reapply_138_excl/20140502_COMPARISON/PLINK/GWAS_OVERLAP/wgs_all_chr_updated_no_triallelic_freq.frq",header=T)
+
+#merge data by snp id: keep only what is in both dataset
+merged <- merge(gwas_data,wgs_data,by="SNP", sort=FALSE)
+
+#plot GWAS vs WGS
+jpeg(paste(pop,"GWAS_vs_WGS_MAF.jpg",sep="_"),width=800, height=800,pointsize = 10)
+par(cex=1.6)
+  # plot(merged$MAF.x,merged$MAF.y,main=paste("GWAS vs WGS MAF in",pop,sep=" "),xlab="GWAS",ylab="WGS",col='red')
+  plot(merged$MAF.x,merged$MAF.y,main=paste("GWAS vs WGS MAF in",pop,sep=" "),xlab="GWAS",ylab="WGS",col='blue')
+dev.off()  
+
+
+#Plot 2b: WGS vs Exome maf
+#first upload two dataset with mafs
+# pop <- "FVG"
+# exome_data <- read.table("/lustre/scratch113/teams/soranzo/users/mc14/INGI_FVG/EXOME_CHIP/CONS_FILES/SEQ_OVERLAP/FINAL_OVERLAP/FVG_exome_all_chr_CLEANED_ALL_freq.frq",header=T)
+# wgs_data <- read.table("/lustre/scratch113/projects/fvg_seq/20140319/20140401_VQSR2.5_reapply_v138_excl/20140503_COMPARISON/PLINK/WGS_EXOME/FVG_wgs_all_chr_cleaned_amb_excl_no_tri_freq.frq",header=T)
+
+pop <- "VBI"
+exome_data <- read.table("/lustre/scratch113/teams/soranzo/users/mc14/INGI_VB/EXOME_CHIP/UPDATED_DATA/SEQ_OVERLAP/FINAL_OVERLAP/VBI_exome_all_chr_flipped_updated_no_triallelic_no_mismatch_geno_hew_filt_freq.frq",header=T)
+wgs_data <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140319/20140402_VQSR2.5_reapply_138_excl/20140502_COMPARISON/PLINK/WGS_EXOME/VBI_wgs_all_chr_cleaned_no_triallelic_no_mismatch_freq.frq",header=T)
+
+#merge data by snp id: keep only what is in both dataset
+merged <- merge(exome_data,wgs_data,by="SNP", sort=FALSE)
+
+#plot GWAS vs WGS
+jpeg(paste(pop,"EXOME_vs_WGS_MAF.jpg",sep="_"),width=800, height=800,pointsize = 10)
+par(cex=1.6)
+  # plot(merged$MAF.x,merged$MAF.y,main=paste("Exome chip vs WGS MAF in",pop,sep=" "),xlab="Exome chip",ylab="WGS",col='red')
+  plot(merged$MAF.x,merged$MAF.y,main=paste("Exome chip vs WGS MAF in",pop,sep=" "),xlab="Exome chip",ylab="WGS",col='blue')
+dev.off()  
+
+
 #Pie chart plot for different sites category:
 library(plotrix)
 # library(ggplot2)
