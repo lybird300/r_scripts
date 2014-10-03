@@ -361,4 +361,62 @@ jpeg(paste(base_folder,"PLOTS/10_conseq_daf.jpg",sep=""),width=800, height=800)
 dev.off()
 
 
+###############################################################
+# PLOT 8b: count load of mutation for each sample by category
 
+rm(list=ls())
+
+# pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+# chr <- "10"
+# pop <- "CARL"
+#INGI
+# pops <- c("VBI","FVG","CARL")
+# categs <- c("private","shared","all")
+#OUTBRED
+pops <- c("CEU","TSI","VBI","FVG","CARL")
+categs <- c("all")
+csqs <- c("miss","syn")
+
+for(csq in csqs){
+  for(cat in categs){
+    print(cat)
+    print(csq)
+    base_folder <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/CONSEQUENCES/",csq,"/",cat,"/VCF",sep="")
+    print(base_folder)
+    setwd(base_folder)
+    #upload files with format: CHR POS REF ALT AC AN [SAMPLES/GT]
+    # we need to convert all genotypes to 1 0 2, we can create a function to apply to our data for genotype conversion...
+    for (pop in pops) {
+      current_region_current_current_pop <- NULL
+      for(chr in 1:22) {
+        if (cat == "all"){
+          current_region_file <- paste(base_folder,"/",chr,".",pop,".chr",chr,".tab.gz.",csq,".regions.vcf.gz.tab",sep="")
+        }else{
+          # 1.INGI_chr1.merged_maf.tab.gz.VBI.shared.tab.gz.miss.regions.vcf.gz.tab
+          current_region_file <- paste(base_folder,"/",chr,".INGI_chr",chr,".merged_maf.tab.gz.",pop,".",cat,".tab.gz.",csq,".regions.vcf.gz.tab",sep="")
+        }
+        print(current_region_file)
+        current_region_current_chr_current_pop <- read.table(current_region_file,header=T)
+        #we need to convert our genotypes, now!
+        for(j in 7:length(colnames(current_region_current_chr_current_pop))){
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|0"] <- "0" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|1"] <- "1" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|0"] <- "1" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|1"] <- "1" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|0"] <- "1" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|2"] <- "1" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|1"] <- "1" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|2"] <- "1" 
+          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|2"] <- "1" 
+          current_region_current_chr_current_pop[,j] <- as.numeric(as.character(current_region_current_chr_current_pop[,j]))
+        }
+        # EGAN00001172162
+        current_region_current_chr_current_pop_samples <- current_region_current_chr_current_pop[,7:length(colnames(current_region_current_chr_current_pop))]
+        current_region_current_current_pop <- rbind(current_region_current_current_pop,current_region_current_chr_current_pop_samples)
+      }
+      current_pop_current_cat_current_type <- apply(current_region_current_current_pop,2,sum)
+      assign(paste(pop,"_",cat,"_",csq,sep=""),current_pop_current_cat_current_type)
+      write.table(current_pop_current_cat_current_type,file=paste(base_folder,pop,"_",cat,"_",csq,sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+    }
+  }
+}
