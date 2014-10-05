@@ -78,19 +78,19 @@ col_pop <- function(pops){
     cur_col <- VBI_n_col
     density <- 1
   }
-   if(pops[i] == "CARL"){
+   if(pops[i] == "CARL" || pops[i] == "CAR" ){
     cur_col <- CAR_col
     density <- 8
   }
-  if(pops[i] == "CARL_p"){
+  if(pops[i] == "CARL_p" || pops[i] == "CAR_p"){
     density <- 3
     cur_col <- CAR_p_col
   }
-  if(pops[i] == "CARL_s"){
+  if(pops[i] == "CARL_s" || pops[i] == "CAR_s"){
     density <- 2
     cur_col <- CAR_s_col
   }
-  if(pops[i] == "CARL_n"){
+  if(pops[i] == "CARL_n" || pops[i] == "CAR_n"){
     cur_col <- CAR_n_col
     density <- 1
   }

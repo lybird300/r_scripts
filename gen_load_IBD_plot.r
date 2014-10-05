@@ -132,7 +132,9 @@ dev.off()
 #Same as roh, but we consider samples's pairs:
 # input_format <- "PLINK"
 # pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
-pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
+rm(list=ls())
+pops <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
+pops <- c("CEU","TSI","CARL","VBI","FVE","FVI","FVR","FVS")
 LOD <- 5
 setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
 # base_folder <- getwd() #only if we're lazy
