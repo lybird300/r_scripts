@@ -110,7 +110,7 @@ for (pop in pops_ingi) {
     
     current_pop_novel <-rbind(current_pop_novel,current_chr_novel[,c(1,2,3,4,current_pop_col)])
   }
-  
+  all_pop_MAF_private_shared
   current_pop_col <- grep(pop,colnames(current_pop_novel))
   all_pop_novel_MAF <- append(all_pop_novel_MAF,list(current_pop_novel[,current_pop_col]))
 
@@ -416,9 +416,9 @@ require(reshape2)
 all_cols <-col_pop(all_pops)
 
 
-ylab <- "Relative Frequency (N sites/Tot sites in freq bin)(%)"
+ylab <- "Proportion of sites"
 xlab <- "MAF"
-main <- "MAF in all populations"
+# main <- "MAF in all populations"
 
 all_pop_MAF_table_reshaped <- melt(all_pop_MAF_table, id='breaks')
 all_pop_MAF_private_shared_table_reshaped <- melt(all_pop_MAF_private_shared_table, id='breaks')

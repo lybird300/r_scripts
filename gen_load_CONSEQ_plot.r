@@ -365,16 +365,18 @@ dev.off()
 # PLOT 8b: count load of mutation for each sample by category
 
 rm(list=ls())
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 
 # pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
 # chr <- "10"
 # pop <- "CARL"
 #INGI
-# pops <- c("VBI","FVG","CARL")
-# categs <- c("private","shared","all")
+# pops <- sort(c("VBI","FVG","CARL"))
+categs <- c("private","shared","novel")
 #OUTBRED
-pops <- c("CEU","TSI","VBI","FVG","CARL")
-categs <- c("all")
+pops <- sort(c("CEU","TSI","VBI","FVG","CARL"))
+unsorted_pops <- c("CEU","TSI","VBI","FVG","CARL")
+# categs <- c("all")
 csqs <- c("miss","syn")
 
 for(csq in csqs){
@@ -393,30 +395,251 @@ for(csq in csqs){
           current_region_file <- paste(base_folder,"/",chr,".",pop,".chr",chr,".tab.gz.",csq,".regions.vcf.gz.tab",sep="")
         }else{
           # 1.INGI_chr1.merged_maf.tab.gz.VBI.shared.tab.gz.miss.regions.vcf.gz.tab
+          if (pop == "CARL" && cat == "novel"){
+            pop <- "CAR"
+          }
+          print(pop)
           current_region_file <- paste(base_folder,"/",chr,".INGI_chr",chr,".merged_maf.tab.gz.",pop,".",cat,".tab.gz.",csq,".regions.vcf.gz.tab",sep="")
         }
         print(current_region_file)
-        current_region_current_chr_current_pop <- read.table(current_region_file,header=T)
-        #we need to convert our genotypes, now!
-        for(j in 7:length(colnames(current_region_current_chr_current_pop))){
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|0"] <- "0" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|1"] <- "1" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|0"] <- "1" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|1"] <- "1" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|0"] <- "1" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|2"] <- "1" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|1"] <- "1" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|2"] <- "1" 
-          levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|2"] <- "1" 
-          current_region_current_chr_current_pop[,j] <- as.numeric(as.character(current_region_current_chr_current_pop[,j]))
+        if (file.exists(current_region_file)){
+          current_region_current_chr_current_pop <- read.table(current_region_file,header=T)
+          if (dim(current_region_current_chr_current_pop)[1] > 0 ){
+            #we need to convert our genotypes, now!
+            for(j in 7:length(colnames(current_region_current_chr_current_pop))){
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|0"] <- "0" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|1"] <- "1" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|0"] <- "1" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|1"] <- "2" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|0"] <- "1" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "0|2"] <- "1" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|1"] <- "1" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "1|2"] <- "1" 
+                levels(current_region_current_chr_current_pop[,j])[levels(current_region_current_chr_current_pop[,j]) == "2|2"] <- "2" 
+                current_region_current_chr_current_pop[,j] <- as.numeric(as.character(current_region_current_chr_current_pop[,j]))
+                
+            }
+            # EGAN00001172162
+            current_region_current_chr_current_pop_samples <- current_region_current_chr_current_pop[,7:length(colnames(current_region_current_chr_current_pop))]
+            current_region_current_current_pop <- rbind(current_region_current_current_pop,current_region_current_chr_current_pop_samples)
+          }
         }
-        # EGAN00001172162
-        current_region_current_chr_current_pop_samples <- current_region_current_chr_current_pop[,7:length(colnames(current_region_current_chr_current_pop))]
-        current_region_current_current_pop <- rbind(current_region_current_current_pop,current_region_current_chr_current_pop_samples)
       }
-      current_pop_current_cat_current_type <- apply(current_region_current_current_pop,2,sum)
-      assign(paste(pop,"_",cat,"_",csq,sep=""),current_pop_current_cat_current_type)
-      write.table(current_pop_current_cat_current_type,file=paste(base_folder,pop,"_",cat,"_",csq,sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+      if (!is.null(current_region_current_current_pop)){
+        current_pop_current_cat_current_type <- apply(current_region_current_current_pop,2,sum)
+        #   FORMAT IN THIS WAY: sample num pop
+        current_pop_current_cat_current_type_df <- as.data.frame(current_pop_current_cat_current_type)
+        current_pop_current_cat_current_type_df$samples <- row.names(current_pop_current_cat_current_type_df)
+        if (pop == "CARL"){
+          current_pop_current_cat_current_type_df$pop <- "CAR"
+        }else{
+          current_pop_current_cat_current_type_df$pop <- pop
+        }
+        if(csq == "miss") {
+          current_pop_current_cat_current_type_df$cons <-"Missense"
+        }else{
+          current_pop_current_cat_current_type_df$cons <- "Synonymous"
+            
+        }
+        current_pop_current_cat_current_type_df$cat <- cat
+        colnames(current_pop_current_cat_current_type_df)[1] <- "value"
+        row.names(current_pop_current_cat_current_type_df) <- NULL
+
+        if (pop == "CAR"){
+            pop <- "CARL"
+        }
+        assign(paste(pop,"_",cat,"_",csq,"_df",sep=""),current_pop_current_cat_current_type_df)
+        assign(paste(pop,"_",cat,"_",csq,sep=""),current_pop_current_cat_current_type)
+        write.table(current_pop_current_cat_current_type_df,file=paste(base_folder,pop,"_",cat,"_",csq,sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+      }
     }
   }
 }
+
+#box plot
+###### REPLOT with ggplot
+require(ggplot2)
+require(reshape2)
+all_cols <-col_pop(pops)
+
+ylab <- "Number of mutations per individual"
+
+#for ALL the variant classes together
+# all_pop_merged <- NULL
+# for(pop in pops){
+#   current_syn <- get(paste(pop,"_all_syn_df",sep=''))
+#   current_miss <- get(paste(pop,"_all_miss_df",sep=''))
+#   current_merged <- rbind(current_miss,current_syn)
+#   assign(paste(pop,"_all_merged_df",sep=""),current_merged)
+#   all_pop_merged <- rbind(all_pop_merged,current_merged)
+# }
+
+#for splitted variant classes
+shared_private_all_pop_merged <- NULL
+
+for(pop in pops){
+  all_csq_all_cat_current_pop <- NULL
+  for (cat in categs){
+    all_csq_current_cat_current_pop <- NULL
+    for(csq in csqs){
+      # if (pop == "CARL" && cat == "novel"){
+      #   pop <- "CAR"
+      # }
+      all_obj_name <- paste(pop,"_",cat,"_",csq,"_df",sep="")
+      # alt_obj_name <- paste(pop,"_alt_",cat,"_",csq,"_df",sep="")
+      if(exists(all_obj_name)){
+        current_csq_current_cat_current_pop <- get(all_obj_name)
+        # current_csq_current_cat_current_pop_alt <- get(alt_obj_name)
+        #merge them and sum value columns
+        # current_csq_current_cat_current_pop <- merge(current_csq_current_cat_current_pop_ref,current_csq_current_cat_current_pop_alt[,c(1,2)],by="samples",sort=F)
+        #now sum values
+        # current_csq_current_cat_current_pop$value <- current_csq_current_cat_current_pop$value.x + current_csq_current_cat_current_pop$value.y
+        all_csq_current_cat_current_pop <- rbind(all_csq_current_cat_current_pop,current_csq_current_cat_current_pop)
+      }
+    }
+    all_csq_all_cat_current_pop <- rbind(all_csq_all_cat_current_pop,all_csq_current_cat_current_pop)
+  }
+  assign(paste(pop,"_all_csq_all_cat_merged_df",sep=""),all_csq_all_cat_current_pop)
+  shared_private_all_pop_merged <- rbind(shared_private_all_pop_merged,all_csq_all_cat_current_pop)
+}
+
+data_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/CONSEQUENCES/"
+write.table(shared_private_all_pop_merged,file=paste(data_folder,"shared_private_all_pop_merged.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+
+# sort_test <- shared_private_all_pop_merged
+# sort_test$upop <- reorder(sort_test$pop,unsorted_pops)
+
+# shared_private_all_pop_merged$upop <- reorder(shared_private_all_pop_merged$pop,unsorted_pops)
+# all_pop_merged_reshaped <- melt(all_pop_merged, id='pop')
+# pl <- ggplot(all_pop_merged)
+pl <- ggplot(shared_private_all_pop_merged)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + ylab(ylab)
+pl <- pl + xlab("")
+pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + theme_bw(18)
+pl <- pl + facet_grid(cat~cons, scales="free")
+ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+
+########################################################
+#alternative plot with sum private and novel
+pops_ingi <- sort(c("VBI","FVG","CARL"))
+shared_private_plus_novel_all_pop_merged <- NULL
+
+for(pop in pops){
+  all_csq_all_cat_current_pop <- NULL
+  # for (cat in categs){
+    # all_csq_current_cat_current_pop <- NULL
+    for(csq in csqs){
+      shared_obj_name <- paste(pop,"_shared_",csq,"_df",sep="")
+      private_obj_name <- paste(pop,"_private_",csq,"_df",sep="")
+      novel_obj_name <- paste(pop,"_novel_",csq,"_df",sep="")
+      # alt_obj_name <- paste(pop,"_alt_",cat,"_",csq,"_df",sep="")
+      if(exists(shared_obj_name)){
+        current_csq_current_shared_current_pop <- get(shared_obj_name)
+      }
+      if(exists(private_obj_name)){
+        current_csq_current_private_current_pop <- get(private_obj_name)
+      }
+      if(exists(novel_obj_name)){
+        current_csq_current_novel_current_pop <- get(novel_obj_name)
+      }
+      if (exists(private_obj_name) && exists(novel_obj_name)){
+        #merge private and novel and sum value columns
+        current_csq_current_private_novel_current_pop <- merge(current_csq_current_private_current_pop,current_csq_current_novel_current_pop[,c(1,2)],by="samples",sort=F)
+        #now sum values and remove useless columns
+        current_csq_current_private_novel_current_pop$value <- current_csq_current_private_novel_current_pop$value.x + current_csq_current_private_novel_current_pop$value.y
+        current_csq_current_private_novel_current_pop$value.x <- NULL
+        current_csq_current_private_novel_current_pop$value.y <- NULL
+        current_csq_current_private_novel_current_pop$cat <- "private+novel"
+      }else{
+        current_csq_current_private_novel_current_pop <- NULL
+      }
+      #now rbind shared and private+novel
+      current_csq_current_cat_current_pop <- rbind(current_csq_current_shared_current_pop,current_csq_current_private_novel_current_pop)
+      all_csq_all_cat_current_pop <- rbind(all_csq_all_cat_current_pop,current_csq_current_cat_current_pop)
+      # }
+    }
+    # all_csq_all_cat_current_pop <- rbind(all_csq_all_cat_current_pop,all_csq_current_cat_current_pop)
+  # }
+  assign(paste(pop,"_all_csq_all_cat_merged_df",sep=""),all_csq_all_cat_current_pop)
+  shared_private_plus_novel_all_pop_merged <- rbind(shared_private_plus_novel_all_pop_merged,all_csq_all_cat_current_pop)
+}
+
+
+data_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/CONSEQUENCES/"
+write.table(shared_private_plus_novel_all_pop_merged,file=paste(data_folder,"shared_private_plus_novel_all_pop_merged.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+
+# sort_test <- shared_private_all_pop_merged
+# sort_test$upop <- reorder(sort_test$pop,unsorted_pops)
+
+# shared_private_all_pop_merged$upop <- reorder(shared_private_all_pop_merged$pop,unsorted_pops)
+# all_pop_merged_reshaped <- melt(all_pop_merged, id='pop')
+# pl <- ggplot(all_pop_merged)
+pl <- ggplot(shared_private_plus_novel_all_pop_merged)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + ylab(ylab)
+pl <- pl + xlab("")
+pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + theme_bw(18)
+pl <- pl + facet_grid(cat~cons, scales="free")
+# pl <- pl + geom_rect(data = shared_private_all_pop_merged,aes(fill = factor(cat)),xmin = -Inf,xmax = Inf,ymin = -Inf,ymax = Inf,alpha = 0.3) 
+# pl <- pl + theme(panel.background=element_rect(fill=factor(cat)))
+# pl <- pl + facet_wrap(~cons)
+# ggsave(filename=paste(data_folder,"/8b_all_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(data_folder,"/8b_shared_private_plus_novel_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+###############################################
+#we should split all villages in fvg
+#read keeplist, than change population name and replot
+fvg_pops <- c("Erto","Illegio","Resia","Sauris")
+pop_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop"
+shared_private_plus_novel_all_pop_merged_fvg_split <- shared_private_plus_novel_all_pop_merged
+shared_private_all_pop_merged_fvg_split <- shared_private_all_pop_merged
+
+for(f_pop in fvg_pops){
+  current_pop_list <- read.table(paste(pop_folder,"/",f_pop,"_unrelated.list",sep=""))
+  colnames(current_pop_list) <- c("samples")
+  if (f_pop =="Resia"){
+    current_pop_list$samples <- gsub("(^\\d+)","X\\1",current_pop_list$samples)
+  }
+  if(f_pop=="Illegio"){ c_pop <- "FVI"}
+  if(f_pop=="Resia"){ c_pop <- "FVR"}
+  if(f_pop=="Erto"){ c_pop <- "FVE"}
+  if(f_pop=="Sauris"){ c_pop <- "FVS"}
+  shared_private_all_pop_merged_fvg_split[which(shared_private_all_pop_merged_fvg_split$samples %in% current_pop_list$samples),]$pop <- c_pop
+  shared_private_plus_novel_all_pop_merged_fvg_split[which(shared_private_plus_novel_all_pop_merged_fvg_split$samples %in% current_pop_list$samples),]$pop <- c_pop
+}
+
+all_pops <- sort(c("CEU","CARL","TSI","VBI","Erto","Illegio","Resia","Sauris"))
+all_cols <-col_pop(all_pops)
+#first plot
+pl <- ggplot(shared_private_all_pop_merged_fvg_split)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + ylab(ylab)
+pl <- pl + xlab("")
+pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + theme_bw(18)
+pl <- pl + facet_grid(cat~cons, scales="free")
+ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+#second plot
+pl <- ggplot(shared_private_plus_novel_all_pop_merged_fvg_split)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + ylab(ylab)
+pl <- pl + xlab("")
+pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + theme_bw(18)
+pl <- pl + facet_grid(cat~cons, scales="free")
+ggsave(filename=paste(data_folder,"/8b_shared_private_plus_novel_pop_conseq_carriers_fvg_split_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+

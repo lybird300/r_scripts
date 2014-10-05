@@ -46,19 +46,19 @@ col_pop <- function(pops){
     cur_col <- FVG_n_col
     density <- 1
   }
-  if(pops[i] == "Erto"){
+  if(pops[i] == "Erto" || pops[i] == "FVE"){
     cur_col <- Erto_col
     density <- 8
   }
-  if(pops[i] == "Illegio"){
+  if(pops[i] == "Illegio" || pops[i] == "FVI"){
     cur_col <- Illegio_col
     density <- 8
   }
-  if(pops[i] == "Resia"){
+  if(pops[i] == "Resia" || pops[i] == "FVR"){
     cur_col <- Resia_col
     density <- 8
   }
-  if(pops[i] == "Sauris"){
+  if(pops[i] == "Sauris" || pops[i] == "FVS"){
     cur_col <- Sauris_col
     density <- 8
   }
