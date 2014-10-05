@@ -30,6 +30,22 @@ col_pop <- function(pops){
     cur_col <- TSI_col
     density <- 8
   }
+   if(pops[i] == "CARL" || pops[i] == "CAR" ){
+    cur_col <- CAR_col
+    density <- 8
+  }
+  if(pops[i] == "CARL_p" || pops[i] == "CAR_p"){
+    density <- 3
+    cur_col <- CAR_p_col
+  }
+  if(pops[i] == "CARL_s" || pops[i] == "CAR_s"){
+    density <- 2
+    cur_col <- CAR_s_col
+  }
+  if(pops[i] == "CARL_n" || pops[i] == "CAR_n"){
+    cur_col <- CAR_n_col
+    density <- 1
+  }
   if(pops[i] == "FVG"){
     cur_col <- FVG_col
     density <- 8
@@ -78,22 +94,6 @@ col_pop <- function(pops){
     cur_col <- VBI_n_col
     density <- 1
   }
-   if(pops[i] == "CARL" || pops[i] == "CAR" ){
-    cur_col <- CAR_col
-    density <- 8
-  }
-  if(pops[i] == "CARL_p" || pops[i] == "CAR_p"){
-    density <- 3
-    cur_col <- CAR_p_col
-  }
-  if(pops[i] == "CARL_s" || pops[i] == "CAR_s"){
-    density <- 2
-    cur_col <- CAR_s_col
-  }
-  if(pops[i] == "CARL_n" || pops[i] == "CAR_n"){
-    cur_col <- CAR_n_col
-    density <- 1
-  }
   pop_col <- cbind(cur_col,pops[i],density)
   all_cols <- rbind(all_cols,pop_col)
 }
@@ -103,6 +103,8 @@ all_cols$color <- as.character(all_cols$color)
 all_cols$pop <- as.character(all_cols$pop)
 all_cols$density <- as.numeric(as.character(all_cols$density))
 
+cols <- c(all_cols$color)
+names(cols) <- all_cols$pop
 
-return (all_cols)
+return (cols)
 }

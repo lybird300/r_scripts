@@ -616,12 +616,16 @@ for(f_pop in fvg_pops){
   shared_private_plus_novel_all_pop_merged_fvg_split[which(shared_private_plus_novel_all_pop_merged_fvg_split$samples %in% current_pop_list$samples),]$pop <- c_pop
 }
 
-all_pops <- sort(c("CEU","CARL","TSI","VBI","Erto","Illegio","Resia","Sauris"))
+all_pops <- c("CEU","TSI","CAR","VBI","FVE","FVI","FVR","FVS")
 all_cols <-col_pop(all_pops)
+
+shared_private_all_pop_merged_fvg_split$pop2 <- factor(shared_private_all_pop_merged_fvg_split$pop,all_pops)
+shared_private_plus_novel_all_pop_merged_fvg_split$pop2 <- factor(shared_private_plus_novel_all_pop_merged_fvg_split$pop,all_pops)
+
 #first plot
 pl <- ggplot(shared_private_all_pop_merged_fvg_split)
 pl <- pl + geom_boxplot()
-pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
@@ -633,7 +637,7 @@ ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_
 #second plot
 pl <- ggplot(shared_private_plus_novel_all_pop_merged_fvg_split)
 pl <- pl + geom_boxplot()
-pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
