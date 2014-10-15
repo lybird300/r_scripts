@@ -134,7 +134,7 @@ dev.off()
 # pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
 rm(list=ls())
 pops <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
-pops <- c("CEU","TSI","CARL","VBI","FVE","FVI","FVR","FVS")
+pops_c <- c("CEU","TSI","CARL","VBI","FVE","FVI","FVR","FVS")
 LOD <- 5
 setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
 # base_folder <- getwd() #only if we're lazy
@@ -174,9 +174,9 @@ for (pop in pops) {
   tot_ibd$IBD_tot <- as.numeric(as.character(tot_ibd$IBD_tot))
   tot_ibd$IBD_tot <- tot_ibd$IBD_tot/1000000
 
-  assign(paste(pop,"tot_ibd",sep="_"),tot_ibd)
+  assign(paste(pop_c,"tot_ibd",sep="_"),tot_ibd)
   
-  assign(paste("M_ibd",pop,sep="_"),ecdf(tot_ibd$IBD_tot))
+  assign(paste("M_ibd",pop_c,sep="_"),ecdf(tot_ibd$IBD_tot))
   xmax <- c(xmax,summary(ecdf(tot_ibd$IBD_tot))[6])
 
 }

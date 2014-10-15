@@ -3,8 +3,8 @@ rm(list=ls())
 # source("/home/max/Work/script/r_scripts/col_pop.r")
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 in_folder <- getwd()
-base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/"
-base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/FIVE_POPS"
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/"
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/FIVE_POPS"
 
 ########################################################################
 #PLOT 1A: same as plot 1 but based on MAF: for the DAF categories, we plot the maf spectrum
@@ -413,8 +413,43 @@ for (con in conseq){
 ###### REPLOT with ggplot
 require(ggplot2)
 require(reshape2)
-all_cols <-col_pop(all_pops)
+pops <- c("CEU","TSI","VBI","FVG","CARL")
+pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
+pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
 
+all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
+
+load('all_pop_MAF.RData')
+load('all_pop_novel_MAF.RData')
+load('all_pop_MAF_private_shared.RData')
+#To do after uploading the RData
+require(plotrix)
+#all
+all_pop_hist <- multhist(all_pop_MAF,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+all_pop_MAF_table <- as.data.frame(cbind((all_pop_hist[[1]]$mids),t(all_pop_hist[[2]])))
+colnames(all_pop_MAF_table) <- c("breaks",pops)
+
+#novel
+novel_hist <- multhist(all_pop_novel_MAF,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+all_pop_novel_MAF_table <- as.data.frame(cbind((novel_hist[[1]]$mids),t(novel_hist[[2]])))
+colnames(all_pop_novel_MAF_table) <- c("breaks",pops_ingi_novel)
+
+#classes
+all_pop_MAF_private_shared_hist <- multhist(all_pop_MAF_private_shared,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+all_pop_MAF_private_shared_table <- as.data.frame(cbind((all_pop_MAF_private_shared_hist[[1]]$mids),t(all_pop_MAF_private_shared_hist[[2]])))
+colnames(all_pop_MAF_private_shared_table) <- c("breaks",pops_ingi_class)
+
+
+all_cols <-col_pop(all_pops)
 
 ylab <- "Proportion of sites"
 xlab <- "MAF"
@@ -443,22 +478,26 @@ all_pop_all_MAF_table_reshaped_2 <- all_pop_all_MAF_table_reshaped[which(all_pop
 # pl <- ggplot(all_pop_all_MAF_table_reshaped_1)
 pl <- ggplot(all_pop_all_MAF_table_reshaped_2)
 # pl <- ggplot(all_pop_all_MAF_table_reshaped_14)
-pl <- pl + geom_bar(stat="identity",position="dodge",colour="black")
-# pl <- pl + geom_bar(stat="identity",position="dodge",colour="white")
+# pl <- pl + geom_bar(stat="identity",position="dodge",colour="black")
+# pl <- pl + geom_bar(stat="identity",colour="black")
+pl <- pl + geom_bar(stat="identity",position=position_dodge(width = 0.5),colour="black")
 pl <- pl + aes(x = factor(breaks), y = value, fill=variable)
+# pl <- pl + aes(x = factor(breaks), y = value, fill=cat)
 pl <- pl + xlab(xlab)
 pl <- pl + ylab(ylab)
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
 # pl <- pl + scale_x_continuous(breaks=c(all_pop_all_MAF_table_reshaped_1$breaks,all_pop_all_MAF_table_reshaped_4$breaks),limits=c(0,0.1,0.4,0.5))
-pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
-pl <- pl + ggtitle(main)
+# pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
+# pl <- pl + ggtitle(main)
 pl <- pl + theme_bw()
 # pl <- pl + facet_wrap(~cats)
   
 # jpeg(paste(base_folder,"/",chr,"_point_dens.jpg",sep=""),width=1800, height=800)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_stacked.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_14.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)

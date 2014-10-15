@@ -46,7 +46,8 @@ for (i_pop in i_pops){
 # 1) Kinship heatmap
 
 kinship_file <- "/lustre/scratch113/projects/carl_seq/20140410/20140410_VQSR2.5_reapply_138_excl/20140710_RELEASE/PLINK/KINSHIP/CARL_20140710.all.ibs0"
-kinship_file <- "/lustre/scratch113/projects/carl_seq/20140410/20140410_VQSR2.5_reapply_138_excl/20140710_RELEASE/PLINK/KINSHIP/CARL_20140710.all.no1stdeg.ibs0"
+kinship_file <- "/lustre/scratch113/projects/carl_seq/20140410/20140410_VQSR2.5_reapply_138_excl/20140710_RELEASE/PLINK/KINSHIP/CARL_20140710.all.ibs0"
+kinship_file <- "/lustre/scratch113/teams/soranzo/users/mc14/INGI_CARL/ARRAY/KINSHIP/CARL_all_carl_complete_recoded.bed.ibs0"
 current_gkin <- read.table(kinship_file,header=T)
 
 current_gkin$FID1 <- as.character(current_gkin$FID1)
@@ -67,10 +68,12 @@ rownames(current_matrix) <- colnames(current_matrix) <- current_samples
 current_matrix[cbind(factor(current_gkin$ID1,levels=sort(unique(c(current_gkin$ID1, current_gkin$ID2)))),factor(current_gkin$ID2,levels=sort(unique(c(current_gkin$ID1, current_gkin$ID2)))))] <- current_gkin$Kinship
 current_matrix <- current_matrix + t(current_matrix)
 #first check that the diagonal is all zeros, than assign 0.5 to reflect the kinship with himself
+diag(current_matrix)
 diag(current_matrix) <- 0.5
 
 plot_path <- getwd() 
 plot_name <- "CARL_geno_relatedness_heatmap_no1stdeg.jpg"
+plot_name <- "CARL_geno_relatedness_heatmap.jpg"
 # jpeg(paste("/lustre/scratch113/teams/soranzo/users/mc14/INGI_VB/ARRAY/300700_overlap/SEQ_OVERLAP/KINSHIP/VBI_geno_relatedness_heatmap.jpg",sep="_"),width=10000, height=10000,)
 library(pheatmap)
 

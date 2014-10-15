@@ -367,17 +367,13 @@ dev.off()
 rm(list=ls())
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 
-# pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
-# chr <- "10"
-# pop <- "CARL"
 #INGI
 # pops <- sort(c("VBI","FVG","CARL"))
 categs <- c("private","shared","novel")
 #OUTBRED
-pops <- sort(c("CEU","TSI","VBI","FVG","CARL"))
-unsorted_pops <- c("CEU","TSI","VBI","FVG","CARL")
+pops <- c("CEU","TSI","CAR","VBI","FVG")
 # categs <- c("all")
-csqs <- c("miss","syn")
+csqs <- c("CHR22","miss","syn")
 
 for(csq in csqs){
   for(cat in categs){
@@ -395,8 +391,8 @@ for(csq in csqs){
           current_region_file <- paste(base_folder,"/",chr,".",pop,".chr",chr,".tab.gz.",csq,".regions.vcf.gz.tab",sep="")
         }else{
           # 1.INGI_chr1.merged_maf.tab.gz.VBI.shared.tab.gz.miss.regions.vcf.gz.tab
-          if (pop == "CARL" && cat == "novel"){
-            pop <- "CAR"
+          if (pop == "CAR" && cat != "novel"){
+            pop <- "CARL"
           }
           print(pop)
           current_region_file <- paste(base_folder,"/",chr,".INGI_chr",chr,".merged_maf.tab.gz.",pop,".",cat,".tab.gz.",csq,".regions.vcf.gz.tab",sep="")
@@ -437,16 +433,19 @@ for(csq in csqs){
         }
         if(csq == "miss") {
           current_pop_current_cat_current_type_df$cons <-"Missense"
-        }else{
+        }else if(csq == "syn"){
           current_pop_current_cat_current_type_df$cons <- "Synonymous"
             
+        }else if(csq=="CHR22"){
+          current_pop_current_cat_current_type_df$cons <- csq
+          
         }
         current_pop_current_cat_current_type_df$cat <- cat
         colnames(current_pop_current_cat_current_type_df)[1] <- "value"
         row.names(current_pop_current_cat_current_type_df) <- NULL
 
-        if (pop == "CAR"){
-            pop <- "CARL"
+        if (pop == "CARL"){
+            pop <- "CAR"
         }
         assign(paste(pop,"_",cat,"_",csq,"_df",sep=""),current_pop_current_cat_current_type_df)
         assign(paste(pop,"_",cat,"_",csq,sep=""),current_pop_current_cat_current_type)
@@ -489,11 +488,6 @@ for(pop in pops){
       # alt_obj_name <- paste(pop,"_alt_",cat,"_",csq,"_df",sep="")
       if(exists(all_obj_name)){
         current_csq_current_cat_current_pop <- get(all_obj_name)
-        # current_csq_current_cat_current_pop_alt <- get(alt_obj_name)
-        #merge them and sum value columns
-        # current_csq_current_cat_current_pop <- merge(current_csq_current_cat_current_pop_ref,current_csq_current_cat_current_pop_alt[,c(1,2)],by="samples",sort=F)
-        #now sum values
-        # current_csq_current_cat_current_pop$value <- current_csq_current_cat_current_pop$value.x + current_csq_current_cat_current_pop$value.y
         all_csq_current_cat_current_pop <- rbind(all_csq_current_cat_current_pop,current_csq_current_cat_current_pop)
       }
     }
@@ -506,19 +500,15 @@ for(pop in pops){
 data_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/CONSEQUENCES/"
 write.table(shared_private_all_pop_merged,file=paste(data_folder,"shared_private_all_pop_merged.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
-# sort_test <- shared_private_all_pop_merged
-# sort_test$upop <- reorder(sort_test$pop,unsorted_pops)
+shared_private_all_pop_merged$pop2 <- factor(shared_private_all_pop_merged$pop,all_pops)
 
-# shared_private_all_pop_merged$upop <- reorder(shared_private_all_pop_merged$pop,unsorted_pops)
-# all_pop_merged_reshaped <- melt(all_pop_merged, id='pop')
-# pl <- ggplot(all_pop_merged)
 pl <- ggplot(shared_private_all_pop_merged)
 pl <- pl + geom_boxplot()
-pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
-pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
 pl <- pl + theme_bw(18)
 pl <- pl + facet_grid(cat~cons, scales="free")
 ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
@@ -573,25 +563,18 @@ for(pop in pops){
 data_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/CONSEQUENCES/"
 write.table(shared_private_plus_novel_all_pop_merged,file=paste(data_folder,"shared_private_plus_novel_all_pop_merged.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
-# sort_test <- shared_private_all_pop_merged
-# sort_test$upop <- reorder(sort_test$pop,unsorted_pops)
+#sort factors for plot in right order
+shared_private_plus_novel_all_pop_merged$pop2 <- factor(shared_private_plus_novel_all_pop_merged$pop,pops)
 
-# shared_private_all_pop_merged$upop <- reorder(shared_private_all_pop_merged$pop,unsorted_pops)
-# all_pop_merged_reshaped <- melt(all_pop_merged, id='pop')
-# pl <- ggplot(all_pop_merged)
 pl <- ggplot(shared_private_plus_novel_all_pop_merged)
 pl <- pl + geom_boxplot()
-pl <- pl + aes(x = factor(pop), y = value, fill=pop)
+pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
-pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
 pl <- pl + theme_bw(18)
 pl <- pl + facet_grid(cat~cons, scales="free")
-# pl <- pl + geom_rect(data = shared_private_all_pop_merged,aes(fill = factor(cat)),xmin = -Inf,xmax = Inf,ymin = -Inf,ymax = Inf,alpha = 0.3) 
-# pl <- pl + theme(panel.background=element_rect(fill=factor(cat)))
-# pl <- pl + facet_wrap(~cons)
-# ggsave(filename=paste(data_folder,"/8b_all_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 ggsave(filename=paste(data_folder,"/8b_shared_private_plus_novel_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 ###############################################
@@ -629,7 +612,7 @@ pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
-pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
 pl <- pl + theme_bw(18)
 pl <- pl + facet_grid(cat~cons, scales="free")
 ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
@@ -641,7 +624,7 @@ pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
-pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
 pl <- pl + theme_bw(18)
 pl <- pl + facet_grid(cat~cons, scales="free")
 ggsave(filename=paste(data_folder,"/8b_shared_private_plus_novel_pop_conseq_carriers_fvg_split_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
