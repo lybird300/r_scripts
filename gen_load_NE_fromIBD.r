@@ -6,9 +6,10 @@
 # 
 rm(list=ls())
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
-
-# pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
-pops <- c("ALL")
+require(ggplot2)
+require(reshape2)
+pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+# pops <- c("ALL")
 base_folder <- getwd()
 minDens <- 75
 
@@ -25,7 +26,8 @@ for (chr in seq(1,22)){
   print(chr)
 
   for (pop in pops){
-    current_chr_current_pop_path <- paste(current_shared_path,"/",pop,".",chr,".non_missing.match.",minDens,".shareDens",sep="")
+    # current_chr_current_pop_path <- paste(current_shared_path,"/",pop,".",chr,".non_missing.match.",minDens,".shareDens",sep="")
+    current_chr_current_pop_path <- paste(current_shared_path,"/",pop,".",chr,".non_missing.match.shareDens",sep="")
     # current_chr_current_pop_path <- paste(current_shared_path,"/",pop,".",chr,".non_missing.filtered.match.shareDens",sep="")
     current_chr_current_pop <- read.table(current_chr_current_pop_path,header=F)
     current_chr_current_pop$cohort <- pop
@@ -92,6 +94,7 @@ for (chr in seq(1,22)){
     }
     reg_to_keep$cohort <- NULL
     write.table(reg_to_keep,file=paste(current_chr_current_pop_path,".to_include",sep=""),sep="\t",col.names=F,quote=F,row.names=F)
+  
   }
 
   pl <- ggplot(current_chr_all_pop) + aes(x = bin, y = share,col=cohort) + geom_point(size = 3) + xlab(xlab) + ylab(ylab) + ggtitle(main) + facet_wrap(~cohort)
@@ -220,3 +223,6 @@ summary(plateau_reg$V4)
      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
 0.0005622 0.0119700 0.0149300 0.0200600 0.0197800 0.0584000 
 > 
+
+####PLOT SHARING DENSITY BY POPULATION for each CHROMOSOME to highlight plateau
+pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
