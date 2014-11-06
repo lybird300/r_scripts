@@ -392,7 +392,7 @@ for(csq in csqs){
       for(chr in 1:22) {
         if (cat == "all"){
           current_region_file <- paste(base_folder,"/",chr,".",pop,".chr",chr,".tab.gz.",csq,".regions.vcf.gz.tab",sep="")
-        }else{
+        } else {
           # 1.INGI_chr1.merged_maf.tab.gz.VBI.shared.tab.gz.miss.regions.vcf.gz.tab
           if (pop == "CAR" && cat != "novel"){
             pop <- "CARL"
@@ -420,15 +420,15 @@ for(csq in csqs){
             }
             # EGAN00001172162
             current_region_current_chr_current_pop_samples <- current_region_current_chr_current_pop[,7:length(colnames(current_region_current_chr_current_pop))]
-            #we want this count normalized by sample relatively to that population's category total number
-            #so, for that chr, that population, that category,we need to retrieve the total number of variants for all chr
-            current_chr_current_pop_current_conseq_total <- read.table()
             current_region_current_current_pop <- rbind(current_region_current_current_pop,current_region_current_chr_current_pop_samples)
           }
         }
       }
+      #current_region_current_current_pop contains ALL SNP variants for that category for each sample across all chromosome
+      #so if I want to caculate the frequency instead of a simple count, I need to divide by this number of variants
 
       if (!is.null(current_region_current_current_pop)){
+        #sum across al variants on all chromosomes
         current_pop_current_cat_current_type <- apply(current_region_current_current_pop,2,sum)
         #   FORMAT IN THIS WAY: sample num pop
         current_pop_current_cat_current_type_df <- as.data.frame(current_pop_current_cat_current_type)
@@ -439,7 +439,7 @@ for(csq in csqs){
           current_pop_current_cat_current_type_df$pop <- pop
         }
         if(csq == "miss") {
-          current_pop_current_cat_current_type_df$cons <-"Missense"
+          current_pop_current_cat_current_type_df$cons <- "Missense"
         }else if(csq == "syn"){
           current_pop_current_cat_current_type_df$cons <- "Synonymous"
             
@@ -451,6 +451,10 @@ for(csq in csqs){
         colnames(current_pop_current_cat_current_type_df)[1] <- "value"
         row.names(current_pop_current_cat_current_type_df) <- NULL
 
+        #since I want a frequecy, now I've to divide all samples count by the number of variants for that category
+        tot_current_cat_var_num <- dim(current_region_current_current_pop)[1]
+        current_pop_current_cat_current_type_df$freq <- current_pop_current_cat_current_type_df$value/tot_current_cat_var_num
+        
         if (pop == "CARL"){
             pop <- "CAR"
         }
@@ -512,14 +516,16 @@ shared_private_all_pop_merged$pop2 <- factor(shared_private_all_pop_merged$pop,p
 
 pl <- ggplot(shared_private_all_pop_merged)
 pl <- pl + geom_boxplot()
-pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
+# pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
+pl <- pl + aes(x = factor(pop2), y = freq, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
 pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
 pl <- pl + theme_bw(18)
 pl <- pl + facet_grid(cat~cons, scales="free")
-ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_ggplot_freq.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 
 ########################################################
@@ -605,19 +611,34 @@ for(f_pop in fvg_pops){
   if(f_pop=="Erto"){ c_pop <- "FVE"}
   if(f_pop=="Sauris"){ c_pop <- "FVS"}
   shared_private_all_pop_merged_fvg_split[which(shared_private_all_pop_merged_fvg_split$samples %in% current_pop_list$samples),]$pop <- c_pop
-  shared_private_plus_novel_all_pop_merged_fvg_split[which(shared_private_plus_novel_all_pop_merged_fvg_split$samples %in% current_pop_list$samples),]$pop <- c_pop
+  # shared_private_plus_novel_all_pop_merged_fvg_split[which(shared_private_plus_novel_all_pop_merged_fvg_split$samples %in% current_pop_list$samples),]$pop <- c_pop
 }
 
 all_pops <- c("CEU","TSI","CAR","VBI","FVE","FVI","FVR","FVS")
 all_cols <-col_pop(all_pops)
 
+csqs1 <- c("CHR22","Missense","Synonymous")
+csqs2 <- c("CHR22","Missense","polyphen.possibly.damaging","polyphen.probably.damaging","sift.deleterious","Synonymous","polyphen.benign","sift.tolerated")
+csqs3 <- c("polyphen.benign","polyphen.possibly.damaging","polyphen.probably.damaging","sift.deleterious","sift.tolerated")
+
 shared_private_all_pop_merged_fvg_split$pop2 <- factor(shared_private_all_pop_merged_fvg_split$pop,all_pops)
-shared_private_plus_novel_all_pop_merged_fvg_split$pop2 <- factor(shared_private_plus_novel_all_pop_merged_fvg_split$pop,all_pops)
+
+#extract data for different categories
+shared_private_all_pop_merged_fvg_split_csqs1 <- shared_private_all_pop_merged_fvg_split[shared_private_all_pop_merged_fvg_split$cons %in% csqs1,]
+shared_private_all_pop_merged_fvg_split_csqs2 <- shared_private_all_pop_merged_fvg_split[shared_private_all_pop_merged_fvg_split$cons %in% csqs2,]
+shared_private_all_pop_merged_fvg_split_csqs3 <- shared_private_all_pop_merged_fvg_split[shared_private_all_pop_merged_fvg_split$cons %in% csqs3,]
+
+#fix the factor order
+shared_private_all_pop_merged_fvg_split_csqs1$pop2 <- factor(shared_private_all_pop_merged_fvg_split_csqs1$pop,all_pops)
+shared_private_all_pop_merged_fvg_split_csqs2$pop2 <- factor(shared_private_all_pop_merged_fvg_split_csqs2$pop,all_pops)
+shared_private_all_pop_merged_fvg_split_csqs3$pop2 <- factor(shared_private_all_pop_merged_fvg_split_csqs3$pop,all_pops)
+# shared_private_plus_novel_all_pop_merged_fvg_split$pop2 <- factor(shared_private_plus_novel_all_pop_merged_fvg_split$pop,all_pops)
 
 #first plot
 pl <- ggplot(shared_private_all_pop_merged_fvg_split)
 pl <- pl + geom_boxplot()
-pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
+# pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
+pl <- pl + aes(x = factor(pop2), y = freq, fill=pop2)
 pl <- pl + ylab(ylab)
 pl <- pl + xlab("")
 pl <- pl + guides(fill=guide_legend(title="Cohorts"))
@@ -627,7 +648,28 @@ pl <- pl + facet_grid(cat~cons, scales="free")
 pl <- pl + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 # ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_chr22.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_others.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_others.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_chr22_freq.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_others_freq.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+#plot for the different set of categories
+for(i in 1:3){
+  current_to_plot <- get(paste("shared_private_all_pop_merged_fvg_split_csqs",i,sep=""))
+  pl <- ggplot(current_to_plot)
+  pl <- pl + geom_boxplot()
+  # pl <- pl + aes(x = factor(pop2), y = value, fill=pop2)
+  pl <- pl + aes(x = factor(pop2), y = freq, fill=pop2)
+  pl <- pl + ylab(ylab)
+  pl <- pl + xlab("")
+  pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+  pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
+  pl <- pl + theme_bw(18)
+  pl <- pl + facet_grid(cat~cons, scales="free")
+  pl <- pl + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_freq_csqs",i,".jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+  
+}
+
 
 #second plot
 pl <- ggplot(shared_private_plus_novel_all_pop_merged_fvg_split)
