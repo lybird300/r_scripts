@@ -10,7 +10,7 @@ chr <- "10"
 # pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
 pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
 LOD <- 5
-setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
+# setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
 # base_folder <- getwd() #only if we're lazy
 input_format <- "BEAGLE"
 xmax <- NULL
@@ -133,10 +133,13 @@ dev.off()
 # input_format <- "PLINK"
 # pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
 rm(list=ls())
+require(ggplot2)
+require(reshape2)
+
 pops <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
-pops_c <- c("CEU","TSI","CARL","VBI","FVE","FVI","FVR","FVS")
+pops_c <- c("CEU","TSI","CAR","VBI","FVE","FVI","FVR","FVS")
 LOD <- 5
-setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
+# setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
 # base_folder <- getwd() #only if we're lazy
 input_format <- "BEAGLE"
 xmax <- NULL
@@ -174,16 +177,16 @@ for (pop in pops) {
   tot_ibd$IBD_tot <- as.numeric(as.character(tot_ibd$IBD_tot))
   tot_ibd$IBD_tot <- tot_ibd$IBD_tot/1000000
 
-  assign(paste(pop_c,"tot_ibd",sep="_"),tot_ibd)
+  assign(paste(pop,"tot_ibd",sep="_"),tot_ibd)
   
-  assign(paste("M_ibd",pop_c,sep="_"),ecdf(tot_ibd$IBD_tot))
+  assign(paste("M_ibd",pop,sep="_"),ecdf(tot_ibd$IBD_tot))
   xmax <- c(xmax,summary(ecdf(tot_ibd$IBD_tot))[6])
 
 }
 
+# q_FVG_ibd <- quantile(FVG_tot_ibd$IBD_tot,c(.95))
 q_CEU_ibd <- quantile(CEU_tot_ibd$IBD_tot,c(.95))
 q_TSI_ibd <- quantile(TSI_tot_ibd$IBD_tot,c(.95))
-q_FVG_ibd <- quantile(FVG_tot_ibd$IBD_tot,c(.95))
 q_VBI_ibd <- quantile(VBI_tot_ibd$IBD_tot,c(.95))
 q_CARL_ibd <- quantile(CARL_tot_ibd$IBD_tot,c(.95))
 q_Sauris_ibd <- quantile(Sauris_tot_ibd$IBD_tot,c(.95))
@@ -192,16 +195,15 @@ q_Illegio_ibd <- quantile(Illegio_tot_ibd$IBD_tot,c(.95))
 q_Resia_ibd <- quantile(Resia_tot_ibd$IBD_tot,c(.95))
 
 
+# summary_FVG_ibd <- summary(FVG_tot_ibd$IBD_tot)
 summary_CEU_ibd <- summary(CEU_tot_ibd$IBD_tot)
 summary_TSI_ibd <- summary(TSI_tot_ibd$IBD_tot)
-summary_FVG_ibd <- summary(FVG_tot_ibd$IBD_tot)
 summary_VBI_ibd <- summary(VBI_tot_ibd$IBD_tot)
 summary_CARL_ibd <- summary(CARL_tot_ibd$IBD_tot)
 summary_Sauris_ibd <- summary(Sauris_tot_ibd$IBD_tot)
 summary_Erto_ibd <- summary(Erto_tot_ibd$IBD_tot)
 summary_Illegio_ibd <- summary(Illegio_tot_ibd$IBD_tot)
 summary_Resia_ibd <- summary(Resia_tot_ibd$IBD_tot)
-
 
 #W24 (Beagle RefinedIBD, filtered at LOD = 5)
 # CEU: 95% -> 1.49898 
@@ -268,16 +270,16 @@ summary_Resia_ibd <- summary(Resia_tot_ibd$IBD_tot)
 # summary_Resia_ibd 89.86 247.4 292.5 301.8 336.6 2521
 
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
-pop_colors <- col_pop(pops)
+pop_colors <- col_pop(pops_c)
 base_folder <- getwd()
 # jpeg(paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1500.jpg",sep=""),width=1000, height=1000)
 jpeg(paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1500_NO_FVG.jpg",sep=""),width=1000, height=1000)
   par(lwd=4,cex=2)
   # plot(M_ibd_CEU,CEU_tot_ibd$IBD_tot,main="",xlab="IBD segments length per couple (Mb)", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
+  # lines(M_ibd_FVG,FVG_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "FVG"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   plot(M_ibd_CEU,CEU_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "CEU"),1],main="",xlab="IBD  genome per pair of individuals (Mb)",ylab="Cumulative frequency", xlim=c(0,1000), verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_TSI,TSI_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "TSI"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_VBI,VBI_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "VBI"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
-  # lines(M_ibd_FVG,FVG_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "FVG"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_CARL,CARL_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "CARL"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_Erto,Erto_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "Erto"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
   lines(M_ibd_Illegio,Illegio_tot_ibd$IBD_tot,col=pop_colors[which(pop_colors$pop == "Illegio"),1], verticals=TRUE, pch=46,col.01line='black',yaxs='i')
@@ -291,6 +293,31 @@ jpeg(paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1500_NO_FVG.jpg",sep=""),width
   legend("bottomright",pch =c(rep(22,length(pops))),legend=leg_txt, pt.lwd=2,pt.cex=2,pt.bg=bkg,col=c(rep('black',length(pops))),ncol=4,bty="n")
 dev.off()
 
+#Replot everything with a ggplot function
+#Create a data frame with Ibd values
+ibd_all_cum <- data.frame(IBD_tot=c(CEU_tot_ibd$IBD_tot,TSI_tot_ibd$IBD_tot,VBI_tot_ibd$IBD_tot,CARL_tot_ibd$IBD_tot,Erto_tot_ibd$IBD_tot,Illegio_tot_ibd$IBD_tot,Resia_tot_ibd$IBD_tot,Sauris_tot_ibd$IBD_tot),
+ pop=rep(pops_c,rep(length(knots(M_ibd_Illegio)),8)))
+
+# ibd_val=c(knots(M_ibd_CEU),knots(M_ibd_TSI),knots(M_ibd_VBI),knots(M_ibd_CARL),knots(M_ibd_Erto),knots(M_ibd_Illegio),knots(M_ibd_Resia),knots(M_ibd_Sauris)),
+#manually calculate ecdf (no ecdf function used)
+ibd_all_cum <- ibd_all_cum[order(ibd_all_cum$IBD_tot),]
+ibd_all_cum$ecdf <- ave(ibd_all_cum$IBD_tot, ibd_all_cum$pop, FUN=function(IBD_tot) seq_along(IBD_tot)/length(IBD_tot))
+
+#plot 
+pl <- ggplot(ibd_all_cum)
+pl <- pl + aes(x = IBD_tot, y = ecdf, colour=pop)
+pl <- pl + geom_line(size=1.2)
+pl <- pl + geom_hline(aes(yintercept=0.95), linetype=2,colour="Lightgrey",size=1.2)
+pl <- pl + theme_bw()
+pl <- pl + xlab("") + ylab("")
+pl <- pl + scale_fill_manual("Cohorts", values=pop_colors)
+pl <- pl + scale_x_continuous(limits=c(0,1000))
+pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + theme(axis.title.y = element_text(size = rel(1.2), angle = 90))
+pl <- pl + theme(axis.text= element_text(size=rel (1.5)))
+pl <- pl + theme (legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)) )
+  
+ggsave(filename=paste(base_folder,"/test_IBD_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 # jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/7_roh.jpg",sep=""),width=800, height=800)
 jpeg(paste(base_folder,"PLOTS/7_roh_density.jpg",sep=""),width=800, height=800)

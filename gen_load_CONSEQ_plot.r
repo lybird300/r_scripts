@@ -632,6 +632,11 @@ shared_private_all_pop_merged_fvg_split_csqs3 <- shared_private_all_pop_merged_f
 shared_private_all_pop_merged_fvg_split_csqs1$pop2 <- factor(shared_private_all_pop_merged_fvg_split_csqs1$pop,all_pops)
 shared_private_all_pop_merged_fvg_split_csqs2$pop2 <- factor(shared_private_all_pop_merged_fvg_split_csqs2$pop,all_pops)
 shared_private_all_pop_merged_fvg_split_csqs3$pop2 <- factor(shared_private_all_pop_merged_fvg_split_csqs3$pop,all_pops)
+
+#fix the freq by dividing by 2
+shared_private_all_pop_merged_fvg_split_csqs1$freq <- (shared_private_all_pop_merged_fvg_split_csqs1$freq)/2
+shared_private_all_pop_merged_fvg_split_csqs2$freq <- (shared_private_all_pop_merged_fvg_split_csqs2$freq)/2
+shared_private_all_pop_merged_fvg_split_csqs3$freq <- (shared_private_all_pop_merged_fvg_split_csqs3$freq)/2
 # shared_private_plus_novel_all_pop_merged_fvg_split$pop2 <- factor(shared_private_plus_novel_all_pop_merged_fvg_split$pop,all_pops)
 
 #first plot
@@ -653,6 +658,7 @@ ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_
 ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_others_freq.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 #plot for the different set of categories
+ylab <- "Frequency of mutations per individual"
 for(i in 1:3){
   current_to_plot <- get(paste("shared_private_all_pop_merged_fvg_split_csqs",i,sep=""))
   pl <- ggplot(current_to_plot)
@@ -663,12 +669,141 @@ for(i in 1:3){
   pl <- pl + xlab("")
   pl <- pl + guides(fill=guide_legend(title="Cohorts"))
   pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
-  pl <- pl + theme_bw(18)
+  pl <- pl + theme_bw(14)
   pl <- pl + facet_grid(cat~cons, scales="free")
   pl <- pl + theme(axis.text.x = element_text(angle = 45, hjust = 1))
   ggsave(filename=paste(data_folder,"/8b_shared_private_novel_pop_conseq_carriers_fvg_split_ggplot_freq_csqs",i,".jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
   
 }
+
+# VBI
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),])
+
+# syn
+vbi_novels_s <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),]
+vbi_private_s <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),]
+
+merged_vbi_np_s <- merge(vbi_novels_s,vbi_private_s,by="samples")
+merged_vbi_np_s$np_c <- merged_vbi_np_s$value.x + merged_vbi_np_s$value.y
+summary(merged_vbi_np_s)
+
+# miss
+vbi_novels_m <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),]
+vbi_private_m <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),]
+
+merged_vbi_np_m <- merge(vbi_novels_m,vbi_private_m,by="samples")
+merged_vbi_np_m$np_c <- merged_vbi_np_m$value.x + merged_vbi_np_m$value.y
+summary(merged_vbi_np_m)
+
+# chr22
+vbi_novels_22 <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),]
+vbi_private_22 <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "VBI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),]
+
+merged_vbi_np_22 <- merge(vbi_novels_22,vbi_private_22,by="samples")
+merged_vbi_np_22$np_c <- merged_vbi_np_22$value.x + merged_vbi_np_22$value.y
+summary(merged_vbi_np_22)
+
+# CAR
+car_novels <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),]
+car_private <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),]
+
+merged_car_np <- merge(car_novels,car_private,by="samples")
+merged_car_np$np_c <- merged_car_np$value.x + merged_car_np$value.y
+summary(merged_car_np)
+
+car_novels_m <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),]
+car_private_m <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),]
+
+merged_car_np_m <- merge(car_novels_m,car_private_m,by="samples")
+merged_car_np_m$np_c <- merged_car_np_m$value.x + merged_car_np_m$value.y
+summary(merged_car_np_m)
+
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),])
+
+# chr22
+car_novels_22 <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),]
+car_private_22 <- shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CAR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),]
+
+merged_car_np_22 <- merge(car_novels_22,car_private_22,by="samples")
+merged_car_np_22$np_c <- merged_car_np_22$value.x + merged_car_np_22$value.y
+summary(merged_car_np_22)
+
+# FVG
+summary(rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),]))
+
+summary(rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),]))
+
+summary(rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),]))
+
+# syn
+fvg_novels_s <- rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),])
+
+fvg_private_s <- rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),])
+
+
+merged_fvg_np_s <- merge(fvg_novels_s,fvg_private_s,by="samples")
+merged_fvg_np_s$np_c <- merged_fvg_np_s$value.x + merged_fvg_np_s$value.y
+summary(merged_fvg_np_s)
+
+# miss
+fvg_novels_m <- rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),])
+
+fvg_private_m <- rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),])
+
+merged_fvg_np_m <- merge(fvg_novels_m,fvg_private_m,by="samples")
+merged_fvg_np_m$np_c <- merged_fvg_np_m$value.x + merged_fvg_np_m$value.y
+summary(merged_fvg_np_m)
+
+# chr22
+fvg_novels_22 <- rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="novel" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),])
+
+fvg_private_22 <- rbind(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVE" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVR" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),],
+shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "FVS" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="private" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),])
+
+
+merged_fvg_np_22 <- merge(fvg_novels_22,fvg_private_22,by="samples")
+merged_fvg_np_22$np_c <- merged_fvg_np_22$value.x + merged_fvg_np_22$value.y
+summary(merged_fvg_np_22)
+
+# CEU
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CEU" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CEU" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "CEU" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),])
+
+# TSI
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "TSI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Synonymous"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "TSI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="Missense"),])
+summary(shared_private_all_pop_merged_fvg_split_csqs1[which(shared_private_all_pop_merged_fvg_split_csqs1$pop == "TSI" & shared_private_all_pop_merged_fvg_split_csqs1$cat=="shared" & shared_private_all_pop_merged_fvg_split_csqs1$cons=="CHR22"),])
 
 
 #second plot
