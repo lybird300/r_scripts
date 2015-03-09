@@ -165,9 +165,16 @@ dev.off()
 #Plot 6_A_ROH GENOMEWIDE BY POPULATION
 ###########################################################################################
 
+rm(list=ls())
+require(ggplot2)
+require(reshape2)
+
 # pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
-pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
+# pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+pops <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
+pops_c <- c("CEU","TSI","CAR","VBI","FVE","FVI","FVR","FVS")
+
 # input_format <- "PLINK"
 input_format <- "BEAGLE"
 xmax <- NULL
@@ -214,9 +221,9 @@ for (pop in pops) {
 
 }
 
+# q_FVG <- quantile(FVG_tot_roh$ROH_tot,c(.95))
 q_CEU <- quantile(CEU_tot_roh$ROH_tot,c(.95))
 q_TSI <- quantile(TSI_tot_roh$ROH_tot,c(.95))
-q_FVG <- quantile(FVG_tot_roh$ROH_tot,c(.95))
 q_VBI <- quantile(VBI_tot_roh$ROH_tot,c(.95))
 q_CARL <- quantile(CARL_tot_roh$ROH_tot,c(.95))
 q_Sauris <- quantile(Sauris_tot_roh$ROH_tot,c(.95))
@@ -224,9 +231,9 @@ q_Erto <- quantile(Erto_tot_roh$ROH_tot,c(.95))
 q_Illegio <- quantile(Illegio_tot_roh$ROH_tot,c(.95))
 q_Resia <- quantile(Resia_tot_roh$ROH_tot,c(.95))
 
+# summary_FVG <- summary(FVG_tot_roh$ROH_tot)
 summary_CEU <- summary(CEU_tot_roh$ROH_tot)
 summary_TSI <- summary(TSI_tot_roh$ROH_tot)
-summary_FVG <- summary(FVG_tot_roh$ROH_tot)
 summary_VBI <- summary(VBI_tot_roh$ROH_tot)
 summary_CARL <- summary(CARL_tot_roh$ROH_tot)
 summary_Sauris <- summary(Sauris_tot_roh$ROH_tot)
@@ -327,23 +334,62 @@ summary_Resia <- summary(Resia_tot_roh$ROH_tot)
 # jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/6_roh.jpg",sep=""),width=800, height=800)
 # jpeg(paste(base_folder,"PLOTS/6_roh_all_IBDseq.jpg",sep=""),width=800, height=800)
 # jpeg(paste(base_folder,"PLOTS/6_roh_all.jpg",sep=""),width=800, height=800)
-pop_colors <- col_pop(pops)
+pop_colors <- col_pop(pops_c)
 base_folder <- getwd()
 
 # jpeg(paste(base_folder,"/6_roh_all_5POP",chr,".jpg",sep=""),width=1000, height=1000)
 # jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5.WG.jpg",sep=""),width=1000, height=1000)
-jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5_no_FVG.WG.jpg",sep=""),width=1000, height=1000)
+# jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod4_no_FVG.WG.jpg",sep=""),width=1000, height=1000)
+jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5_no_FVG.WG.",format(Sys.time(), '%d_%m_%Y'),".jpg",sep=""),width=1000, height=1000)
   par(lwd=4,cex=2)
   # plot(M_CEU,CEU_tot_roh$ROH_tot,main="",xlab="Total ROH homozigosity (Mb)", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
-  plot(M_CEU,CEU_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "CEU"),1],main="",xlab="Total length of ROH per individual (Mb) ",ylab="Cumulative frequency", xlim=c(0,450), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_TSI,TSI_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "TSI"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_VBI,VBI_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "VBI"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  # plot(M_CEU,CEU_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["CEU",],main="",xlab="Total length of ROH per individual (Mb) ",ylab="Cumulative frequency", xlim=c(0,450), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  plot(M_CEU,CEU_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["CEU",]),main="",xlab="Total length of ROH per individual (Mb) ",ylab="Cumulative frequency", xlim=c(0,450), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_TSI,TSI_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["TSI",]), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_VBI,VBI_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["VBI",]), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
   # lines(M_FVG,FVG_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "FVG"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_CARL,CARL_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "CARL"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_Erto,Erto_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "Erto"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_Illegio,Illegio_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "Illegio"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_Resia,Resia_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "Resia"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
-  lines(M_Sauris,Sauris_tot_roh$ROH_tot,col=pop_colors[which(pop_colors$pop == "Sauris"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_CARL,CARL_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["CAR",]), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Erto,Erto_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["FVE",]), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Illegio,Illegio_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["FVI",]), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Resia,Resia_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["FVR",]), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Sauris,Sauris_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["FVS",]), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  abline(h=0.95,col='grey',lty='dashed')
+  #define parameters for legend
+  
+  # leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "FVG"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
+  # bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "FVG"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
+  # leg_txt <- c(pop_colors[which(pop_colors$pop == "CEU"),2],pop_colors[which(pop_colors$pop == "TSI"),2],pop_colors[which(pop_colors$pop == "VBI"),2],pop_colors[which(pop_colors$pop == "CARL"),2],pop_colors[which(pop_colors$pop == "Erto"),2],pop_colors[which(pop_colors$pop == "Illegio"),2],pop_colors[which(pop_colors$pop == "Resia"),2],pop_colors[which(pop_colors$pop == "Sauris"),2])
+  # bkg <- c(pop_colors[which(pop_colors$pop == "CEU"),1],pop_colors[which(pop_colors$pop == "TSI"),1],pop_colors[which(pop_colors$pop == "VBI"),1],pop_colors[which(pop_colors$pop == "CARL"),1],pop_colors[which(pop_colors$pop == "Erto"),1],pop_colors[which(pop_colors$pop == "Illegio"),1],pop_colors[which(pop_colors$pop == "Resia"),1],pop_colors[which(pop_colors$pop == "Sauris"),1])
+  leg_txt <- c("CEU", "TSI", "VBI", "CAR", "FVE", "FVI", "FVR", "FVS")
+  bkg <- c(
+    as.character(as.data.frame(pop_colors)["CEU",]),
+    as.character(as.data.frame(pop_colors)["TSI",]),
+    as.character(as.data.frame(pop_colors)["VBI",]),
+    as.character(as.data.frame(pop_colors)["CAR",]),
+    as.character(as.data.frame(pop_colors)["FVE",]),
+    as.character(as.data.frame(pop_colors)["FVI",]),
+    as.character(as.data.frame(pop_colors)["FVR",]),
+    as.character(as.data.frame(pop_colors)["FVS",]))
+  legend("bottomright",pch =c(rep(22,length(pops))),legend=leg_txt, pt.lwd=2,pt.cex=2,pt.bg=bkg,col=c(rep('black',length(pops))),ncol=4,bty="n")
+dev.off()
+
+
+
+jpeg(paste(base_folder,"/6_TSI_5POP_lod5_no_FVG.WG.jpg",sep=""),width=1000, height=1000)
+jpeg(paste(base_folder,"/6_TSI_5POP_lod5_no_FVG.WG.jpg",sep=""),width=1000, height=1000)
+  par(lwd=4,cex=2)
+  # plot(M_CEU,CEU_tot_roh$ROH_tot,main="",xlab="Total ROH homozigosity (Mb)", xlim=c(0,max(xmax)), verticals=TRUE, pch=46)
+  plot(M_CEU,CEU_tot_roh$ROH_tot,col=as.character(as.data.frame(pop_colors)["CEU",]),main="",xlab="Total length of ROH per individual (Mb) ",ylab="Cumulative frequency", xlim=c(0,450), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_TSI,TSI_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["TSI",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  # plot(M_TSI,TSI_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["TSI",],main="",xlab="Total length of ROH per individual (Mb) ",ylab="Cumulative frequency", xlim=c(0,450), verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_TSI(TSI_tot_roh$ROH_tot),TSI_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["TSI",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_VBI(VBI_tot_roh$ROH_tot),VBI_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["VBI",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  # lines(M_FVG,FVG_tot_roh$ROH_tot,col=as.data.frame(pop_colors)[which(,as.data.frame(pop_colors)$pop ,== "FVG"),1], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_CARL(CARL_tot_roh$ROH_tot),CARL_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["CARL",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Erto(Erto_tot_roh$ROH_tot),Erto_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["Erto",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Illegio(Illegio_tot_roh$ROH_tot),Illegio_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["Illegio",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Resia(Resia_tot_roh$ROH_tot),Resia_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["Resia",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
+  lines(M_Sauris(Sauris_tot_roh$ROH_tot),Sauris_tot_roh$ROH_tot,col=as.data.frame(pop_colors)["Sauris",], verticals=TRUE, pch=46,yaxs='i',col.01line='black')
   abline(h=0.95,col='grey',lty='dashed')
   #define parameters for legend
   
@@ -354,3 +400,48 @@ jpeg(paste(base_folder,"/6_A_roh_all_5POP_lod5_no_FVG.WG.jpg",sep=""),width=1000
 
   legend("bottomright",pch =c(rep(22,length(pops))),legend=leg_txt, pt.lwd=2,pt.cex=2,pt.bg=bkg,col=c(rep('black',length(pops))),ncol=4,bty="n")
 dev.off()
+
+
+#################################################
+#
+roh_all_cum <- data.frame(
+  ROH_tot=c(CEU_tot_roh$ROH_tot,
+    TSI_tot_roh$ROH_tot,
+    CARL_tot_roh$ROH_tot,
+    VBI_tot_roh$ROH_tot,
+    Erto_tot_roh$ROH_tot,
+    Illegio_tot_roh$ROH_tot,
+    Resia_tot_roh$ROH_tot,
+    Sauris_tot_roh$ROH_tot),
+ pop=rep(pops_c,rep(46,8)),
+ ecdf=c(M_CEU(CEU_tot_roh$ROH_tot),
+  M_TSI(TSI_tot_roh$ROH_tot),
+  M_CARL(CARL_tot_roh$ROH_tot),
+  M_VBI(VBI_tot_roh$ROH_tot),
+  M_Erto(Erto_tot_roh$ROH_tot),
+  M_Illegio(Illegio_tot_roh$ROH_tot),
+  M_Resia(Resia_tot_roh$ROH_tot),
+  M_Sauris(Sauris_tot_roh$ROH_tot)))
+
+#manually calculate ecdf (no ecdf function used)
+# ibd_all_cum <- ibd_all_cum[order(ibd_all_cum$pop),]
+roh_all_cum$pop <- factor(roh_all_cum$pop,level=names(pop_colors))
+# ibd_all_cum$ecdf <- ave(ibd_all_cum$IBD_tot, ibd_all_cum$pop, FUN=function(IBD_tot) seq_along(IBD_tot)/length(IBD_tot))
+
+#plot 
+pl <- ggplot(roh_all_cum)
+pl <- pl + aes(x = ROH_tot, y = ecdf, colour=pop)
+pl <- pl + scale_color_manual("Cohorts", values=pop_colors)
+pl <- pl + geom_smooth(size=1.5,stat="identity")
+pl <- pl + geom_hline(aes(yintercept=0.95), linetype=2,colour="Lightgrey",size=1.2)
+pl <- pl + xlab("Total length of ROH per individual (Mb)") + ylab("Cumulative frequency")
+pl <- pl + scale_x_continuous(limits=c(0,260))
+pl <- pl + scale_y_continuous(limits=c(0,1))
+pl <- pl + theme_bw()
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+  
+ggsave(filename=paste(base_folder,"/test_IBD_2.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
+# ggsave(filename=paste(base_folder,"/6_ROH_5POP_lod5_no_FVG.WG.ggplot.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)

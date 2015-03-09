@@ -34,11 +34,17 @@ res_path=$2
 #perl /nfs/users/nfs_a/ar10/exclude.pl all.palinear.out all.palinear.filtered
 
 # RUN FORMATTING AND PLOTTING STEPS
-for chr in {1..22} X
-do
-bsub -J "plot_${trait}_${chr}" -o "%J_plot_${trait}_${chr}.log" -e "%J_plot_${trait}_${chr}.err" \
--M6000000 -R"select[mem>6000] rusage[mem=6000]" -q basement \
-R CMD BATCH '--args '${trait}' '${chr}' '${res_path}/${trait}.chr${chr}.tab.assoc.txt'' /nfs/users/nfs_m/mc14/Work/r_scripts/formatting_plot.R
+# for chr in {1..22} X
+# do
+# bsub -J "plot_${trait}_${chr}" -o "%J_plot_${trait}_${chr}.log" -e "%J_plot_${trait}_${chr}.err" \
+# -M6000000 -R"select[mem>6000] rusage[mem=6000]" -q basement \
+# # R CMD BATCH '--args '${trait}' '${chr}' '${res_path}/${trait}.chr${chr}.tab.assoc.txt.gz'' /nfs/users/nfs_m/mc14/Work/r_scripts/formatting_plot.R
+# R CMD BATCH '--args '${trait}' '${chr}' '${res_path}'' /nfs/users/nfs_m/mc14/Work/r_scripts/replica_plotter.R
 
-done
+# done
 
+# RUN FORMATTING AND PLOTTING STEPS
+bsub -J "plot_${trait}" -o "%J_plot_${trait}.log" -e "%J_plot_${trait}.err" \
+-M8000 -R"select[mem>8000] rusage[mem=8000]" -q basement \
+# R CMD BATCH '--args '${trait}' '${chr}' '${res_path}/${trait}.chr${chr}.tab.assoc.txt.gz'' /nfs/users/nfs_m/mc14/Work/r_scripts/formatting_plot.R
+R CMD BATCH '--args '${trait}' '${res_path}' '${cat_list}'' /nfs/users/nfs_m/mc14/Work/r_scripts/replica_plotter.R

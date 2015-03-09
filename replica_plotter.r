@@ -1,9 +1,12 @@
+rm(list=ls())
 args=commandArgs(trailing=TRUE)
 #args[[1]] = trait
-#args[[2]] = result_file
+#args[[2]] = result_file_path
 #args[[3]] = snp list
 #args[[4]] = unfiltered sites number
 
+result_file_path <- args[[2]]
+# result_file_path <- "/lustre/scratch113/projects/uk10k/users/jh21/imputed/carl/gemma/TC"
 
 # MANHATTAN PLOT
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/qqman.R")
@@ -16,16 +19,30 @@ source("/nfs/users/nfs_m/mc14/Work/r_scripts/qqman.R")
 #}
 #number of total sites unfiltered to use in qq plot generation
 # tot_unfiltered <- as.numeric(as.character(args[[4]]))
+#need to read all separated chroms, than plot all together
+to_plot_unfiltered <- NULL
 
-to_plot_unfiltered = read.csv(args[[2]], sep=" ", header=T)
-# to_plot_unfiltered = read.csv("TC.all.result.maf_info_hwe_filtered.join.plot",sep=" ",header=T)
-pos_con = read.csv(args[[3]], sep=" ", header=T)
-# pos_con = read.csv("TC.all.poscon.join", sep=" ", header=T)
-pos_con_list <- pos_con$RS
+for (chr in 1:23){
+	if (chr == 23){
+		chr="X"
+		col_class <- c("NULL","character","character","integer","NULL","NULL","NULL","NULL","NULL","numeric","NULL","NULL")	
+	}else{
+		col_class <- c("NULL","character","integer","integer","NULL","NULL","NULL","NULL","NULL","numeric","NULL","NULL")
+	}
+	print(chr)
+	current_chr_tab <- paste(result_file_path,"/chr",chr,".gemma.gz", sep="")
+	current_chr_to_plot <- read.table(current_chr_tab,header=T,stringsAsFactors=F, comment.char="",colClasses=col_class)
+	
+	if (chr == 23){
+		current_chr_to_plot$CHR <- 23
+	}
 
+	to_plot_unfiltered <- cbind(to_plot_unfiltered,current_chr_to_plot)
 
-# colnames(to_plot_unfiltered) <- c("CHR","rs","BP","n_miss","beta","se","l_remle","l_mle","P","p_lrt","p_score")
-colnames(to_plot_unfiltered) <- c("CHR","SNP","BP","BETA","SE","P","P_score","MAF","INFO_snptest","HWE","all_0_freq","all_1_freq","eff_all_freq")
+}
+
+colnames(to_plot_unfiltered) <- c("rs","CHR","BP","P")
+# colnames(to_plot_unfiltered) <- c("CHR","SNP","BP","BETA","SE","P","P_score","MAF","INFO_snptest","HWE","all_0_freq","all_1_freq","eff_all_freq")
 # colnames(to_plot_unfiltered) <- c("CHR","SNP","BP","P")
 # colnames(to_plot_unfiltered) <- c("CHR","rs","BP","beta","se","P")
 # to_plot_unfiltered = read.csv("BMI.all.tab.assoc.txt.to_plot", sep="\t", header=F)
@@ -53,7 +70,11 @@ dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 1 & to_plot_unfiltered$P >= 
 dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 0.1 & to_plot_unfiltered$P >= 0.01),])
 dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 0.01),])
 
-#extract snps to color
+#extract snps to color from a list
+pos_con <- read.table(args[[3]], sep=" ", header=T)
+# pos_con = read.csv("TC.all.poscon.join", sep=" ", header=T)
+pos_con_list <- pos_con$RS
+
 # low_to_comm <- merged_new[which(merged_new$MAF >= 0.01 & merged_new$MAF < 0.05),]$SNP
 
 jpeg(paste(args[[1]],".manhattan.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
