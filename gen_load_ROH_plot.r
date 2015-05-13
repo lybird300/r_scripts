@@ -173,8 +173,8 @@ require(reshape2)
 # pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 pops <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
-pops_c <- c("CEU","TSI","CAR","VBI","FVE","FVI","FVR","FVS")
-
+# pops_c <- c("CEU","TSI","CAR","VBI","FVE","FVI","FVR","FVS")
+pops_c <- c("CEU","TSI","CAR","VBI","FVG-E","FVG-I","FVG-R","FVG-S")
 # input_format <- "PLINK"
 input_format <- "BEAGLE"
 xmax <- NULL
@@ -432,7 +432,7 @@ roh_all_cum$pop <- factor(roh_all_cum$pop,level=names(pop_colors))
 pl <- ggplot(roh_all_cum)
 pl <- pl + aes(x = ROH_tot, y = ecdf, colour=pop)
 pl <- pl + scale_color_manual("Cohorts", values=pop_colors)
-pl <- pl + geom_smooth(size=1.5,stat="identity")
+pl <- pl + geom_line(size=1.5)
 pl <- pl + geom_hline(aes(yintercept=0.95), linetype=2,colour="Lightgrey",size=1.2)
 pl <- pl + xlab("Total length of ROH per individual (Mb)") + ylab("Cumulative frequency")
 pl <- pl + scale_x_continuous(limits=c(0,260))
@@ -443,5 +443,5 @@ pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
   
-ggsave(filename=paste(base_folder,"/test_IBD_2.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
-# ggsave(filename=paste(base_folder,"/6_ROH_5POP_lod5_no_FVG.WG.ggplot.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
+# ggsave(filename=paste(base_folder,"/test_IBD_2.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
+ggsave(filename=paste(base_folder,"/6_ROH_5POP_lod5_no_FVG.WG.ggplot.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)

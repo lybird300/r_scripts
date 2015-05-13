@@ -137,10 +137,10 @@ require(ggplot2)
 require(reshape2)
 
 pops <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
-pops_c <- c("CEU","TSI","CAR","VBI","FVE","FVI","FVR","FVS")
+pops_c <- c("CEU","TSI","CAR","VBI","FVG-E","FVG-I","FVG-R","FVG-S")
 LOD <- 5
 # setwd("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/ROH/20140811/BEAGLE/")
-# base_folder <- getwd() #only if we're lazy
+base_folder <- getwd() #only if we're lazy
 input_format <- "BEAGLE"
 xmax <- NULL
 for (pop in pops) {
@@ -328,20 +328,14 @@ pl <- pl + scale_color_manual("Cohorts", values=pop_colors)
 pl <- pl + geom_line(size=1.5)
 pl <- pl + geom_hline(aes(yintercept=0.95), linetype=2,colour="Lightgrey",size=1.2)
 pl <- pl + xlab("IBD genome per pair of individuals (Mb)") + ylab("Cumulative frequency")
-# pl <- pl + scale_fill_manual(values=pop_colors)
 pl <- pl + scale_x_continuous(limits=c(0,1250))
 pl <- pl + scale_y_continuous(limits=c(0,1))
-# pl <- pl + scale_fill_continuous(guide = guide_legend(title = "Cohorts")) 
-# pl <- pl + guides(fill=guide_legend(title="Cohorts"))
-# pl <- pl + guides(fill=guide_legend(title="Cohorts",keywidth = 3, keyheight = 1))
 pl <- pl + theme_bw()
 pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
-# pl <- pl + theme(legend.text= element_text(size = 1.1), legend.title = element_text(size = 1))
-  
-# pl <- pl + aes(x = IBD_tot, y = ecdf)
+
 ggsave(filename=paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1200_NO_FVG_ggplot.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
 # ggsave(filename=paste(base_folder,"/test_IBD_2.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
 

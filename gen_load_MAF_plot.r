@@ -411,8 +411,11 @@ for (con in conseq){
 
 ###################################################################################
 ###### REPLOT with ggplot
+rm(list=ls())
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 require(ggplot2)
 require(reshape2)
+base_folder <- getwd()
 pops <- c("CEU","TSI","VBI","FVG","CARL")
 pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
 pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
@@ -451,10 +454,6 @@ colnames(all_pop_MAF_private_shared_table) <- c("breaks",pops_ingi_class)
 
 all_cols <-col_pop(all_pops)
 
-ylab <- "Proportion of sites"
-xlab <- "MAF"
-# main <- "MAF in all populations"
-
 all_pop_MAF_table_reshaped <- melt(all_pop_MAF_table, id='breaks')
 all_pop_MAF_private_shared_table_reshaped <- melt(all_pop_MAF_private_shared_table, id='breaks')
 all_pop_novel_MAF_table_reshaped <- melt(all_pop_novel_MAF_table, id='breaks')
@@ -474,30 +473,28 @@ all_pop_all_MAF_table_reshaped_4 <- all_pop_all_MAF_table_reshaped[which(all_pop
 all_pop_all_MAF_table_reshaped_14 <- rbind(all_pop_all_MAF_table_reshaped_1,all_pop_all_MAF_table_reshaped_4) 
 all_pop_all_MAF_table_reshaped_2 <- all_pop_all_MAF_table_reshaped[which(all_pop_all_MAF_table_reshaped$breaks <= 0.23) ,]
 
-# pl <- ggplot(all_pop_all_MAF_table_reshaped)
-# pl <- ggplot(all_pop_all_MAF_table_reshaped_1)
+#plot 
 pl <- ggplot(all_pop_all_MAF_table_reshaped_2)
-# pl <- ggplot(all_pop_all_MAF_table_reshaped_14)
-# pl <- pl + geom_bar(stat="identity",position="dodge",colour="black")
 pl <- pl + geom_bar(stat="identity",width=0.5, position = position_dodge(width=0.8),colour="black")
-# pl <- pl + geom_bar(stat="identity",colour="black")
-# pl <- pl + geom_bar(stat="identity",colour="black")
 pl <- pl + aes(x = factor(breaks), y = value, fill=variable)
-# pl <- pl + aes(x = factor(breaks), y = value, fill=cat)
-pl <- pl + xlab(xlab)
-pl <- pl + ylab(ylab)
-pl <- pl + guides(fill=guide_legend(title="Cohorts"))
-# pl <- pl + scale_x_continuous(breaks=c(all_pop_all_MAF_table_reshaped_1$breaks,all_pop_all_MAF_table_reshaped_4$breaks),limits=c(0,0.1,0.4,0.5))
-# pl <- pl + scale_fill_manual("Cohorts", values=all_cols$color)
+pl <- pl + xlab("MAF")
+pl <- pl + ylab("Proportion of sites")
+# pl <- pl + guides(shape = guide_legend(override.aes = list(colour = "pink")))
 pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
+# pl <- pl + scale_shape_manual(values=c(11,11))
 # pl <- pl + ggtitle(main)
+pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
 pl <- pl + theme_bw()
-# pl <- pl + facet_wrap(~breaks)
-  
+
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+   
 # jpeg(paste(base_folder,"/",chr,"_point_dens.jpg",sep=""),width=1800, height=800)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150310.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_stacked.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_14.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
