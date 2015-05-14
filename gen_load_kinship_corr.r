@@ -46,11 +46,12 @@ fvg_seq_list$ID <- as.character(fvg_seq_list$ID)
 
 #load genomic kinship previously calculated
 #/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP
+base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING"
 
-fve_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",header=F)
-fvi_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",header=F)
-fvr_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",header=F)
-fvs_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",header=F)
+fve_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+fvi_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+fvr_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+fvs_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
 
 
 dim(fve_kinship_king_seq)
@@ -213,15 +214,15 @@ fvs_kinship_seq_melted <- fvs_kinship_seq_melted[which(fvs_kinship_seq_melted$ID
 #####################################################################################
 #Correlation between kinship
 
-fve_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
-fvi_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
-fvr_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
-fvs_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
+fve_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
+fvi_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
+fvr_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
+fvs_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
 
-fve_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fve_kinship_melted.sorted.pkin.over_gen",header=F)
-fvi_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fvi_kinship_melted.sorted.pkin.over_gen",header=F)
-fvr_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fvr_kinship_melted.sorted.pkin.over_gen",header=F)
-fvs_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fvs_kinship_melted.sorted.pkin.over_gen",header=F)
+fve_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fve_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
+fvi_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fvi_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
+fvr_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fvr_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
+fvs_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fvs_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
 
 colnames(fve_kinship_gen) <- c("ID1","ID2","KIN","KEY")
 colnames(fve_kinship_ped) <- c("ID1","ID2","KIN","KEY")
