@@ -45,17 +45,13 @@ fvs_kinship_seq <- fvs_kinship[colnames(fvs_kinship) %in% fvg_seq_list$ID, rowna
 
 
 #load genomic kinship previously calculated
-#/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP
+base_folder <- "/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP"
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING"
 
-# fve_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",header=F)
-# fvi_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",header=F)
-# fvr_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",header=F)
-# fvs_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",header=F)
-
-fve_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Erto.keeplist.ibs0",header=T)
-fvi_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Illegio.keeplist.ibs0",header=T)
-fvr_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Resia.keeplist.ibs0",header=T)
-fvs_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Sauris.keeplist.ibs0",header=T)
+fve_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+fvi_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+fvr_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+fvs_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
 
 
 dim(fve_kinship_king_seq)
@@ -104,7 +100,7 @@ for (ped_set in kin_ped_set){
 	# current_ped_set_melted <- current_ped_set_melted[which(paste(current_ped_set_melted$ID1,current_ped_set_melted$ID2,sep="_") != paste(current_ped_set_melted$ID2,current_ped_set_melted$ID1,sep="_")),]
 	assign(paste(ped_set,"_melted",sep=""),current_ped_set_melted)
 }
-#setwd("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN")
+
 kin_ped_set_melted <- c("fve_kinship_seq_melted","fvi_kinship_seq_melted","fvr_kinship_seq_melted","fvs_kinship_seq_melted","fve_kinship_melted","fvi_kinship_melted","fvr_kinship_melted","fvs_kinship_melted")
 for (ped_set in kin_ped_set_melted){
 	current_ped_set <- get(ped_set)
@@ -218,15 +214,15 @@ fvs_kinship_seq_melted <- fvs_kinship_seq_melted[which(fvs_kinship_seq_melted$ID
 #####################################################################################
 #Correlation between kinship
 
-fve_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
-fvi_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
-fvr_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
-fvs_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin.over_ped",header=F)
+fve_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
+fvi_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
+fvr_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
+fvs_kinship_gen <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin.over_ped",sep=""),header=F)
 
-fve_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fve_kinship_melted.sorted.pkin.over_gen",header=F)
-fvi_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fvi_kinship_melted.sorted.pkin.over_gen",header=F)
-fvr_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fvr_kinship_melted.sorted.pkin.over_gen",header=F)
-fvs_kinship_ped <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_PED/fvs_kinship_melted.sorted.pkin.over_gen",header=F)
+fve_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fve_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
+fvi_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fvi_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
+fvr_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fvr_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
+fvs_kinship_ped <- read.table(paste(base_folder,"/KINSHIP/KIN_PED/fvs_kinship_melted.sorted.pkin.over_gen",sep=""),header=F)
 
 colnames(fve_kinship_gen) <- c("ID1","ID2","KIN","KEY")
 colnames(fve_kinship_ped) <- c("ID1","ID2","KIN","KEY")
@@ -245,16 +241,55 @@ colnames(fvs_kinship_gen) <- c("ID1","ID2","KIN","KEY")
 colnames(fvs_kinship_ped) <- c("ID1","ID2","KIN","KEY")
 fvs_gen_ped_merged <- merge(fvs_kinship_gen,fvs_kinship_ped,by.x="KEY",by.y="KEY",all.x)
 
-library(Hmisc)
-rcorr(fve_gen_ped_merged$KIN.x,fve_gen_ped_merged$KIN.y)
-rcorr(fvi_gen_ped_merged$KIN.x,fvi_gen_ped_merged$KIN.y)
-rcorr(fvr_gen_ped_merged$KIN.x,fvr_gen_ped_merged$KIN.y)
-rcorr(fvs_gen_ped_merged$KIN.x,fvs_gen_ped_merged$KIN.y)
+#conversion table kinship2 / KING
+# MZT: 0.5 > 0.3535
+# 1st degree: 0.25 (0.1767,0.3535)
+# 2nd degree: 0.125 (0.0883,0.1767)
+# 3rd degree: 0.0625 (0.0441,0.0883)
+# Unrelated: 0 < 0.0441
 
-cor_fve <- cor.test(fve_gen_ped_merged$KIN.x,fve_gen_ped_merged$KIN.y,alternative='g')
-cor_fvi <- cor.test(fvi_gen_ped_merged$KIN.x,fvi_gen_ped_merged$KIN.y,alternative='g')
-cor_fvr <- cor.test(fvr_gen_ped_merged$KIN.x,fvr_gen_ped_merged$KIN.y,alternative='g')
-cor_fvs <- cor.test(fvs_gen_ped_merged$KIN.x,fvs_gen_ped_merged$KIN.y,alternative='g')
+villages <- c("fve","fvi","fvr","fvs","vbi","carl","fvg")
+
+for (village in villages){
+	current_village_set <- paste(village,"_gen_ped_merged",sep="")
+	current_village <- get(current_village_set)
+	current_village$KIN.cast <- 0
+	current_village[current_village$KIN.gen >= 0.3535,"KIN.cast"] <- 0.5 
+	current_village[current_village$KIN.gen < 0.3535 & current_village$KIN.gen >= 0.1767,"KIN.cast"] <- 0.25 
+	current_village[current_village$KIN.gen < 0.1767 & current_village$KIN.gen >= 0.0883,"KIN.cast"] <- 0.125 
+	current_village[current_village$KIN.gen < 0.0883 & current_village$KIN.gen >= 0.0441,"KIN.cast"] <- 0.0625 
+	current_village[current_village$KIN.gen <= 0.0441,"KIN.cast"] <- 0
+	colnames(current_village) <- c("KEY","ID1.x","ID2.x","KIN.gen","ID1.y","ID2.y","KIN.ped","KIN.cast")
+	assign(current_village_set,current_village)
+}
+
+
+
+library(Hmisc)
+library(corrgram)
+# corrgram(fve_gen_ped_merged[,c(4,7,8)],lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+# corrgram(fve_gen_ped_merged[,c(4,7,8)],lower.panel=panel.ellipse,upper.panel=panel.pts, text.panel=panel.txt,diag.panel=panel.minmax)
+
+rcorr(fve_gen_ped_merged$KIN.gen,fve_gen_ped_merged$KIN.ped)
+rcorr(fve_gen_ped_merged$KIN.cast,fve_gen_ped_merged$KIN.ped)
+corrgram(fve_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+
+rcorr(fvi_gen_ped_merged$KIN.gen,fvi_gen_ped_merged$KIN.ped)
+rcorr(fvi_gen_ped_merged$KIN.cast,fvi_gen_ped_merged$KIN.ped)
+corrgram(fvi_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+
+rcorr(fvr_gen_ped_merged$KIN.gen,fvr_gen_ped_merged$KIN.ped)
+rcorr(fvr_gen_ped_merged$KIN.cast,fvr_gen_ped_merged$KIN.ped)
+corrgram(fvr_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+
+rcorr(fvs_gen_ped_merged$KIN.gen,fvs_gen_ped_merged$KIN.ped)
+rcorr(fvs_gen_ped_merged$KIN.cast,fvs_gen_ped_merged$KIN.ped)
+corrgram(fvs_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+
+cor_fve <- cor.test(fve_gen_ped_merged$KIN.gen,fve_gen_ped_merged$KIN.ped,alternative='g')
+cor_fvi <- cor.test(fvi_gen_ped_merged$KIN.gen,fvi_gen_ped_merged$KIN.ped,alternative='g')
+cor_fvr <- cor.test(fvr_gen_ped_merged$KIN.gen,fvr_gen_ped_merged$KIN.ped,alternative='g')
+cor_fvs <- cor.test(fvs_gen_ped_merged$KIN.gen,fvs_gen_ped_merged$KIN.ped,alternative='g')
 
 # Kinship correlation values from cor.test(),Pearson's coefficient
 # Fvg-E: r= 0.6517779, pval = <2.2e-16
@@ -305,12 +340,20 @@ cor_fvs <- cor.test(fvs_gen_ped_merged$KIN.x,fvs_gen_ped_merged$KIN.y,alternativ
 #       cor 
 # 0.5232983 
 
+cor_fve <- plot(fve_gen_ped_merged$KIN.gen,fve_gen_ped_merged$KIN.ped)
+cor_fvi <- plot(fvi_gen_ped_merged$KIN.gen,fvi_gen_ped_merged$KIN.ped)
+cor_fvr <- plot(fvr_gen_ped_merged$KIN.gen,fvr_gen_ped_merged$KIN.ped)
+cor_fvs <- plot(fvs_gen_ped_merged$KIN.gen,fvs_gen_ped_merged$KIN.ped)
+
+
 ###################Merge all FVG together
 fvg_gen_ped_merged <- rbind(fve_gen_ped_merged,fvi_gen_ped_merged,fvr_gen_ped_merged,fvs_gen_ped_merged)
-rcorr(fvg_gen_ped_merged$KIN.x,fvg_gen_ped_merged$KIN.y)
-cor(fvg_gen_ped_merged$KIN.x,fvg_gen_ped_merged$KIN.y)
-cor.test(fvg_gen_ped_merged$KIN.x,fvg_gen_ped_merged$KIN.y,method="spearman")
-cor_fvg <- cor.test(fvg_gen_ped_merged$KIN.x,fvg_gen_ped_merged$KIN.y,alternative="g")
+rcorr(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped)
+cor(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped)
+cor.test(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped,method="spearman")
+cor_fvg <- cor.test(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped,alternative="g")
+
+corrgram(fvg_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
 
 ###########
 # Kinship VB
@@ -330,7 +373,11 @@ vbi_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/
 colnames(vbi_kinship_gen) <- c("ID1","ID2","KIN","KEY")
 colnames(vbi_kinship_ped) <- c("ID1","ID2","KIN","KEY")
 vbi_gen_ped_merged <- merge(vbi_kinship_gen,vbi_kinship_ped,by.x="KEY",by.y="KEY",all.x)
-cor_vbi <- cor.test(vbi_gen_ped_merged$KIN.x,vbi_gen_ped_merged$KIN.y,alternative="g")
+
+
+cor_vbi <- cor.test(vbi_gen_ped_merged$KIN.gen,vbi_gen_ped_merged$KIN.ped,alternative="g")
+cor.test(vbi_gen_ped_merged$KIN.cast,vbi_gen_ped_merged$KIN.ped,alternative="g")
+corrgram(vbi_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
 
 
 # Kinship CARL
@@ -349,15 +396,17 @@ carl_kinship_gen <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP
 colnames(carl_kinship_gen) <- c("ID1","ID2","KIN","KEY")
 colnames(carl_kinship_ped) <- c("ID1","ID2","KIN","KEY")
 carl_gen_ped_merged <- merge(carl_kinship_gen,carl_kinship_ped,by.x="KEY",by.y="KEY",all.x)
-cor_carl <- cor.test(carl_gen_ped_merged$KIN.x,carl_gen_ped_merged$KIN.y,alternative="g")
+cor_carl <- cor.test(carl_gen_ped_merged$KIN.gen,carl_gen_ped_merged$KIN.ped,alternative="g")
+cor.test(carl_gen_ped_merged$KIN.cast,carl_gen_ped_merged$KIN.ped,alternative="g")
+corrgram(carl_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
 
-rcor_fvg <- rcorr(fvg_gen_ped_merged$KIN.x,fvg_gen_ped_merged$KIN.y)
-rcor_vbi <- rcorr(vbi_gen_ped_merged$KIN.x,vbi_gen_ped_merged$KIN.y)
-rcor_carl <- rcorr(carl_gen_ped_merged$KIN.x,carl_gen_ped_merged$KIN.y)
+rcor_fvg <- rcorr(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped)
+rcor_vbi <- rcorr(vbi_gen_ped_merged$KIN.gen,vbi_gen_ped_merged$KIN.ped)
+rcor_carl <- rcorr(carl_gen_ped_merged$KIN.gen,carl_gen_ped_merged$KIN.ped)
 
-cov_fvg <- cov(fvg_gen_ped_merged$KIN.x,fvg_gen_ped_merged$KIN.y)
-cov_vbi <- cov(vbi_gen_ped_merged$KIN.x,vbi_gen_ped_merged$KIN.y)
-cov_carl <- cov(carl_gen_ped_merged$KIN.x,carl_gen_ped_merged$KIN.y)
+cov_fvg <- cov(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped)
+cov_vbi <- cov(vbi_gen_ped_merged$KIN.gen,vbi_gen_ped_merged$KIN.ped)
+cov_carl <- cov(carl_gen_ped_merged$KIN.gen,carl_gen_ped_merged$KIN.ped)
 
 # Kinship correlation values from cor.test(),Pearson's coefficient
 # Fvg: r= 0.611911,pval = <2.2e-16
@@ -404,3 +453,27 @@ cov_carl <- cov(carl_gen_ped_merged$KIN.x,carl_gen_ped_merged$KIN.y)
 # 0.8717032 
 
 # > 
+jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvg_gen_ped_merged.jpg",width=800, height=800,pointsize = 20)
+	corrgram(fvg_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+dev.off()
+
+jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/vbi_gen_ped_merged.jpg",width=800, height=800,pointsize = 20)
+	corrgram(vbi_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+dev.off()
+
+jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/carl_gen_ped_merged.jpg",width=800, height=800,pointsize = 20)
+	corrgram(carl_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+dev.off()
+
+jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fve_gen_ped_merged.jpg",width=800, height=800,pointsize = 20)
+	corrgram(fve_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+dev.off()
+jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvi_gen_ped_merged.jpg",width=800, height=800,pointsize = 20)
+	corrgram(fvi_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+dev.off()
+jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvr_gen_ped_merged.jpg",width=800, height=800,pointsize = 20)
+	corrgram(fvr_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+dev.off()
+jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvs_gen_ped_merged.jpg",width=800, height=800,pointsize = 20)
+	corrgram(fvs_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
+dev.off()
