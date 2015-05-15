@@ -29,10 +29,10 @@ colnames(fvg_seq_list) <- c("ID")
 fvg_seq_list$ID <- as.character(fvg_seq_list$ID)
 
 #split kinships in villages extracting only sequenced samples
-# fvr_kinship_seq <- fvr_kinship[colnames(fvr_kinship) %in% fvg_seq_list$ID, rownames(fvr_kinship) %in% fvg_seq_list$ID]
-# fve_kinship_seq <- fve_kinship[colnames(fve_kinship) %in% fvg_seq_list$ID, rownames(fve_kinship) %in% fvg_seq_list$ID]
-# fvi_kinship_seq <- fvi_kinship[colnames(fvi_kinship) %in% fvg_seq_list$ID, rownames(fvi_kinship) %in% fvg_seq_list$ID]
-# fvs_kinship_seq <- fvs_kinship[colnames(fvs_kinship) %in% fvg_seq_list$ID, rownames(fvs_kinship) %in% fvg_seq_list$ID]
+fvr_kinship_seq <- fvr_kinship[colnames(fvr_kinship) %in% fvg_seq_list$ID, rownames(fvr_kinship) %in% fvg_seq_list$ID]
+fve_kinship_seq <- fve_kinship[colnames(fve_kinship) %in% fvg_seq_list$ID, rownames(fve_kinship) %in% fvg_seq_list$ID]
+fvi_kinship_seq <- fvi_kinship[colnames(fvi_kinship) %in% fvg_seq_list$ID, rownames(fvi_kinship) %in% fvg_seq_list$ID]
+fvs_kinship_seq <- fvs_kinship[colnames(fvs_kinship) %in% fvg_seq_list$ID, rownames(fvs_kinship) %in% fvg_seq_list$ID]
 # dim(fvr_kinship_seq)
 # dim(fve_kinship_seq)
 # dim(fvi_kinship_seq)
@@ -47,10 +47,15 @@ fvg_seq_list$ID <- as.character(fvg_seq_list$ID)
 #load genomic kinship previously calculated
 #/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP
 
-fve_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",header=F)
-fvi_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",header=F)
-fvr_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",header=F)
-fvs_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",header=F)
+# fve_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",header=F)
+# fvi_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",header=F)
+# fvr_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",header=F)
+# fvs_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",header=F)
+
+fve_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Erto.keeplist.ibs0",header=T)
+fvi_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Illegio.keeplist.ibs0",header=T)
+fvr_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Resia.keeplist.ibs0",header=T)
+fvs_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Sauris.keeplist.ibs0",header=T)
 
 
 dim(fve_kinship_king_seq)
@@ -80,6 +85,7 @@ for (set in kin_set){
 	current_set$N_Het2 <- NULL
 	current_set$Distance <- NULL
 	current_set$SE_Dist <- NULL
+	# colnames(current_set) <- c("ID1","ID2","KIN","KEY")
 	#convert ids
 	current_merged <- merge(current_set,conv_fvg,by.x="ID1",by.y="SEQ",all.x)
 	current_merged <- merge(current_merged,conv_fvg,by.x="ID2",by.y="SEQ",all.x)
@@ -87,9 +93,8 @@ for (set in kin_set){
 }
 
 library(reshape2)
-# kin_ped_set <- c("fve_kinship_seq","fvi_kinship_seq","fvr_kinship_seq","fvs_kinship_seq")
-kin_ped_set <- c("fve_kinship","fvi_kinship","fvr_kinship","fvs_kinship")
-kin_ped_set <- c("fvr_kinship")
+kin_ped_set <- c("fve_kinship_seq","fvi_kinship_seq","fvr_kinship_seq","fvs_kinship_seq","fve_kinship","fvi_kinship","fvr_kinship","fvs_kinship")
+# kin_ped_set <- c("fvr_kinship")
 current_kin_ped_set <- NULL
 for (ped_set in kin_ped_set){
 	current_ped_set <- get(ped_set)
@@ -99,8 +104,8 @@ for (ped_set in kin_ped_set){
 	# current_ped_set_melted <- current_ped_set_melted[which(paste(current_ped_set_melted$ID1,current_ped_set_melted$ID2,sep="_") != paste(current_ped_set_melted$ID2,current_ped_set_melted$ID1,sep="_")),]
 	assign(paste(ped_set,"_melted",sep=""),current_ped_set_melted)
 }
-
-kin_ped_set_melted <- c("fvr_kinship_melted")
+#setwd("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/KIN_GEN")
+kin_ped_set_melted <- c("fve_kinship_seq_melted","fvi_kinship_seq_melted","fvr_kinship_seq_melted","fvs_kinship_seq_melted","fve_kinship_melted","fvi_kinship_melted","fvr_kinship_melted","fvs_kinship_melted")
 for (ped_set in kin_ped_set_melted){
 	current_ped_set <- get(ped_set)
 	#write tables
