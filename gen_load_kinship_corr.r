@@ -29,10 +29,10 @@ colnames(fvg_seq_list) <- c("ID")
 fvg_seq_list$ID <- as.character(fvg_seq_list$ID)
 
 #split kinships in villages extracting only sequenced samples
-# fvr_kinship_seq <- fvr_kinship[colnames(fvr_kinship) %in% fvg_seq_list$ID, rownames(fvr_kinship) %in% fvg_seq_list$ID]
-# fve_kinship_seq <- fve_kinship[colnames(fve_kinship) %in% fvg_seq_list$ID, rownames(fve_kinship) %in% fvg_seq_list$ID]
-# fvi_kinship_seq <- fvi_kinship[colnames(fvi_kinship) %in% fvg_seq_list$ID, rownames(fvi_kinship) %in% fvg_seq_list$ID]
-# fvs_kinship_seq <- fvs_kinship[colnames(fvs_kinship) %in% fvg_seq_list$ID, rownames(fvs_kinship) %in% fvg_seq_list$ID]
+fvr_kinship_seq <- fvr_kinship[colnames(fvr_kinship) %in% fvg_seq_list$ID, rownames(fvr_kinship) %in% fvg_seq_list$ID]
+fve_kinship_seq <- fve_kinship[colnames(fve_kinship) %in% fvg_seq_list$ID, rownames(fve_kinship) %in% fvg_seq_list$ID]
+fvi_kinship_seq <- fvi_kinship[colnames(fvi_kinship) %in% fvg_seq_list$ID, rownames(fvi_kinship) %in% fvg_seq_list$ID]
+fvs_kinship_seq <- fvs_kinship[colnames(fvs_kinship) %in% fvg_seq_list$ID, rownames(fvs_kinship) %in% fvg_seq_list$ID]
 # dim(fvr_kinship_seq)
 # dim(fve_kinship_seq)
 # dim(fvi_kinship_seq)
@@ -48,10 +48,15 @@ fvg_seq_list$ID <- as.character(fvg_seq_list$ID)
 #/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING"
 
-fve_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
-fvi_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
-fvr_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
-fvs_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+# fve_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+# fvi_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+# fvr_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+# fvs_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+
+fve_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Erto.keeplist.ibs0",header=T)
+fvi_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Illegio.keeplist.ibs0",header=T)
+fvr_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Resia.keeplist.ibs0",header=T)
+fvs_kinship_king_seq <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP/FVG_Sauris.keeplist.ibs0",header=T)
 
 
 dim(fve_kinship_king_seq)
@@ -89,8 +94,8 @@ for (set in kin_set){
 
 library(reshape2)
 # kin_ped_set <- c("fve_kinship_seq","fvi_kinship_seq","fvr_kinship_seq","fvs_kinship_seq")
-kin_ped_set <- c("fve_kinship","fvi_kinship","fvr_kinship","fvs_kinship")
-kin_ped_set <- c("fvr_kinship")
+kin_ped_set <- c("fve_kinship_seq","fvi_kinship_seq","fvr_kinship_seq","fvs_kinship_seq","fve_kinship","fvi_kinship","fvr_kinship","fvs_kinship")
+# kin_ped_set <- c("fvr_kinship")
 current_kin_ped_set <- NULL
 for (ped_set in kin_ped_set){
 	current_ped_set <- get(ped_set)
@@ -101,7 +106,7 @@ for (ped_set in kin_ped_set){
 	assign(paste(ped_set,"_melted",sep=""),current_ped_set_melted)
 }
 
-kin_ped_set_melted <- c("fvr_kinship_melted")
+kin_ped_set_melted <- c("fve_kinship_seq_melted","fvi_kinship_seq_melted","fvr_kinship_seq_melted","fvs_kinship_seq_melted","fve_kinship_melted","fvi_kinship_melted","fvr_kinship_melted","fvs_kinship_melted")
 for (ped_set in kin_ped_set_melted){
 	current_ped_set <- get(ped_set)
 	#write tables
@@ -247,18 +252,7 @@ fvs_gen_ped_merged <- merge(fvs_kinship_gen,fvs_kinship_ped,by.x="KEY",by.y="KEY
 # 2nd degree: 0.125 (0.0883,0.1767)
 # 3rd degree: 0.0625 (0.0441,0.0883)
 # Unrelated: 0 < 0.0441
-# if(fve_gen_ped_merged$KIN.x >= 0.3535) {
-# 	fve_gen_ped_merged$KIN.cast <- 0.5 
-# }
-# else if(fve_gen_ped_merged$KIN.x < 0.3535 & fve_gen_ped_merged$KIN.x >= 0.1767){
-# 	fve_gen_ped_merged$KIN.cast <- 0.25) }
-# else if(fve_gen_ped_merged$KIN.x < 0.1767 & fve_gen_ped_merged$KIN.x >= 0.0883){
-# 	fve_gen_ped_merged$KIN.cast <- 0.125) }
-# else if(fve_gen_ped_merged$KIN.x < 0.0883 & fve_gen_ped_merged$KIN.x >= 0.0441){
-# 	fve_gen_ped_merged$KIN.cast <- 0.0625) }
-# else if(fve_gen_ped_merged$KIN.x <= 0.0441){
-# 	fve_gen_ped_merged$KIN.cast <- 0 
-# }
+
 villages <- c("fve","fvi","fvr","fvs","vbi","carl","fvg")
 
 for (village in villages){
