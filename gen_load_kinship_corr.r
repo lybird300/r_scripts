@@ -60,9 +60,10 @@ dim(fvr_kinship_king_seq)
 dim(fvs_kinship_king_seq)
 
 #load conversion table data
-conv_fvg <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/WGS_FVG_id_conversion_complete_sorted.list")
+conv_fvg <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/WGS_FVG_id_conversion_complete_sorted.list")
 colnames(conv_fvg) <- c("SEQ","CLIN")
 conv_fvg$SEQ <- as.character(conv_fvg$SEQ)
+conv_fvg$CLIN <- as.character(conv_fvg$CLIN)
 
 #clean tables from useless columns
 kin_set <- c("fve_kinship_king_seq","fvi_kinship_king_seq","fvr_kinship_king_seq","fvs_kinship_king_seq")
@@ -478,9 +479,63 @@ jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/K
 	corrgram(fvs_gen_ped_merged[,c(4,7,8)],order=TRUE, lower.panel=panel.shade,upper.panel=panel.pts, text.panel=panel.txt)
 dev.off()
 
+#read unrelated lists
+vbi_unrel <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop/VBI_unrelated.list")
+carl_unrel <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop/CARL_unrelated.list")
+fvg_unrel <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop/FVG_unrelated.list")
+fve_unrel <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop/Erto_unrelated.list")
+fvi_unrel <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop/Illegio_unrelated.list")
+fvr_unrel <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop/Resia_unrelated.list")
+fvs_unrel <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/listpop/Sauris_unrelated.list")
+
+vbi_unrel$V1 <- as.character(vbi_unrel$V1)
+carl_unrel$V1 <- as.character(carl_unrel$V1)
+fvg_unrel$V1 <- as.character(fvg_unrel$V1)
+fve_unrel$V1 <- as.character(fve_unrel$V1)
+fvi_unrel$V1 <- as.character(fvi_unrel$V1)
+fvr_unrel$V1 <- as.character(fvr_unrel$V1)
+fvs_unrel$V1 <- as.character(fvs_unrel$V1)
+conv_fvg
+
+fvg_unrel_conv <- conv_fvg[which(fvg_unrel$V1 %in% conv_fvg$SEQ),]
+fve_unrel_conv <- conv_fvg[which(fve_unrel$V1 %in% conv_fvg$SEQ),]
+fvi_unrel_conv <- conv_fvg[which(fvi_unrel$V1 %in% conv_fvg$SEQ),]
+fvr_unrel_conv <- conv_fvg[which(fvr_unrel$V1 %in% conv_fvg$SEQ),]
+fvs_unrel_conv <- conv_fvg[which(fvs_unrel$V1 %in% conv_fvg$SEQ),]
+
+dim(fvg_unrel_conv)
+dim(fve_unrel_conv)
+dim(fvi_unrel_conv)
+dim(fvr_unrel_conv)
+dim(fvs_unrel_conv)
+
+# fvg_unrel_conv$key <- paste(apply(fvg_unrel_conv[,1:2],1,min),apply(fvg_unrel_conv[,1:2],1,max),sep="_")
+# fve_unrel_conv$key <- paste(apply(fve_unrel_conv[,1:2],1,min),apply(fve_unrel_conv[,1:2],1,max),sep="_")
+# fvi_unrel_conv$key <- paste(apply(fvi_unrel_conv[,1:2],1,min),apply(fvi_unrel_conv[,1:2],1,max),sep="_")
+# fvr_unrel_conv$key <- paste(apply(fvr_unrel_conv[,1:2],1,min),apply(fvr_unrel_conv[,1:2],1,max),sep="_")
+# fvs_unrel_conv$key <- paste(apply(fvs_unrel_conv[,1:2],1,min),apply(fvs_unrel_conv[,1:2],1,max),sep="_")
+
+# fvg_unrel_conv <- fvg_unrel_conv[!duplicated(fvg_unrel_conv$key),]
+# fve_unrel_conv <- fve_unrel_conv[!duplicated(fve_unrel_conv$key),]
+# fvi_unrel_conv <- fvi_unrel_conv[!duplicated(fvi_unrel_conv$key),]
+# fvr_unrel_conv <- fvr_unrel_conv[!duplicated(fvr_unrel_conv$key),]
+# fvs_unrel_conv <- fvs_unrel_conv[!duplicated(fvs_unrel_conv$key),]
+
+
+vbi_gen_ped_merged_unrel <- subset(vbi_gen_ped_merged, vbi_gen_ped_merged$ID1.x %in% vbi_unrel_conv$CLIN | vbi_gen_ped_merged$ID2.x %in% vbi_unrel_conv$CLIN)
+carl_gen_ped_merged_unrel <- subset(carl_gen_ped_merged, carl_gen_ped_merged$ID1.x %in% carl_unrel_conv$CLIN | carl_gen_ped_merged$ID2.x %in% carl_unrel_conv$CLIN)
+
+fvg_gen_ped_merged_unrel <- subset(fvg_gen_ped_merged, fvg_gen_ped_merged$ID1.x %in% fvg_unrel_conv$CLIN | fvg_gen_ped_merged$ID2.x %in% fvg_unrel_conv$CLIN )
+
+fve_gen_ped_merged_unrel <- subset(fve_gen_ped_merged, fve_gen_ped_merged$ID1.x %in% fve_unrel_conv$CLIN | fve_gen_ped_merged$ID2.x %in% fve_unrel_conv$CLIN)
+fvi_gen_ped_merged_unrel <- subset(fvi_gen_ped_merged, fvi_gen_ped_merged$ID1.x %in% fvi_unrel_conv$CLIN | fvi_gen_ped_merged$ID2.x %in% fvi_unrel_conv$CLIN)
+fvr_gen_ped_merged_unrel <- subset(fvr_gen_ped_merged, fvr_gen_ped_merged$ID1.x %in% fvr_unrel_conv$CLIN | fvr_gen_ped_merged$ID2.x %in% fvr_unrel_conv$CLIN)
+fvs_gen_ped_merged_unrel <- subset(fvs_gen_ped_merged, fvs_gen_ped_merged$ID1.x %in% fvs_unrel_conv$CLIN | fvs_gen_ped_merged$ID2.x %in% fvs_unrel_conv$CLIN)
+
 
 jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvg_gen_ped_merged_ncorr.jpg",width=800, height=800,pointsize = 20)
-	plot(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped)
+	plot(fvg_gen_ped_merged$KIN.gen,fvg_gen_ped_merged$KIN.ped,cex=0.5)
+	points(fvg_gen_ped_merged_unrel$KIN.gen,fvg_gen_ped_merged_unrel$KIN.ped,col="red")
 dev.off()
 
 jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/vbi_gen_ped_merged_ncorr.jpg",width=800, height=800,pointsize = 20)
@@ -492,14 +547,18 @@ jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/K
 dev.off()
 
 jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fve_gen_ped_merged_ncorr.jpg",width=800, height=800,pointsize = 20)
-	plot(fve_gen_ped_merged$KIN.gen,fve_gen_ped_merged$KIN.ped)
+	plot(fve_gen_ped_merged$KIN.gen,fve_gen_ped_merged$KIN.ped,cex=0.5)
+	points(fve_gen_ped_merged_unrel$KIN.gen,fve_gen_ped_merged_unrel$KIN.ped,col="red")
 dev.off()
 jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvi_gen_ped_merged_ncorr.jpg",width=800, height=800,pointsize = 20)
-	plot(fvi_gen_ped_merged$KIN.gen,fvi_gen_ped_merged$KIN.ped)
+	plot(fvi_gen_ped_merged$KIN.gen,fvi_gen_ped_merged$KIN.ped,cex=0.5)
+	points(fvi_gen_ped_merged_unrel$KIN.gen,fvi_gen_ped_merged_unrel$KIN.ped,col="red")
 dev.off()
 jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvr_gen_ped_merged_ncorr.jpg",width=800, height=800,pointsize = 20)
-	plot(fvr_gen_ped_merged$KIN.gen,fvr_gen_ped_merged$KIN.ped)
+	plot(fvr_gen_ped_merged$KIN.gen,fvr_gen_ped_merged$KIN.ped,cex=0.5)
+	points(fvr_gen_ped_merged_unrel$KIN.gen,fvr_gen_ped_merged_unrel$KIN.ped,col="red")
 dev.off()
 jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvs_gen_ped_merged_ncorr.jpg",width=800, height=800,pointsize = 20)
-	plot(fvs_gen_ped_merged$KIN.gen,fvs_gen_ped_merged$KIN.ped)
+	plot(fvs_gen_ped_merged$KIN.gen,fvs_gen_ped_merged$KIN.ped,cex=0.5)
+	points(fvs_gen_ped_merged_unrel$KIN.gen,fvs_gen_ped_merged_unrel$KIN.ped,col="red")
 dev.off()
