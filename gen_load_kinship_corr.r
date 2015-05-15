@@ -527,10 +527,11 @@ carl_gen_ped_merged_unrel <- subset(carl_gen_ped_merged, carl_gen_ped_merged$ID1
 
 fvg_gen_ped_merged_unrel <- subset(fvg_gen_ped_merged, fvg_gen_ped_merged$ID1.x %in% fvg_unrel_conv$CLIN | fvg_gen_ped_merged$ID2.x %in% fvg_unrel_conv$CLIN )
 
-fve_gen_ped_merged_unrel <- subset(fve_gen_ped_merged, fve_gen_ped_merged$ID1.x %in% fve_unrel_conv$CLIN | fve_gen_ped_merged$ID2.x %in% fve_unrel_conv$CLIN)
-fvi_gen_ped_merged_unrel <- subset(fvi_gen_ped_merged, fvi_gen_ped_merged$ID1.x %in% fvi_unrel_conv$CLIN | fvi_gen_ped_merged$ID2.x %in% fvi_unrel_conv$CLIN)
-fvr_gen_ped_merged_unrel <- subset(fvr_gen_ped_merged, fvr_gen_ped_merged$ID1.x %in% fvr_unrel_conv$CLIN | fvr_gen_ped_merged$ID2.x %in% fvr_unrel_conv$CLIN)
-fvs_gen_ped_merged_unrel <- subset(fvs_gen_ped_merged, fvs_gen_ped_merged$ID1.x %in% fvs_unrel_conv$CLIN | fvs_gen_ped_merged$ID2.x %in% fvs_unrel_conv$CLIN)
+
+fve_gen_ped_merged_unrel <- subset(fvg_gen_ped_merged, fvg_gen_ped_merged$ID1.x %in% fve_unrel_conv$CLIN | fvg_gen_ped_merged$ID2.x %in% fve_unrel_conv$CLIN)
+fvi_gen_ped_merged_unrel <- subset(fvg_gen_ped_merged, fvg_gen_ped_merged$ID1.x %in% fvi_unrel_conv$CLIN | fvg_gen_ped_merged$ID2.x %in% fvi_unrel_conv$CLIN)
+fvr_gen_ped_merged_unrel <- subset(fvg_gen_ped_merged, fvg_gen_ped_merged$ID1.x %in% fvr_unrel_conv$CLIN | fvg_gen_ped_merged$ID2.x %in% fvr_unrel_conv$CLIN)
+fvs_gen_ped_merged_unrel <- subset(fvg_gen_ped_merged, fvg_gen_ped_merged$ID1.x %in% fvs_unrel_conv$CLIN | fvg_gen_ped_merged$ID2.x %in% fvs_unrel_conv$CLIN)
 
 
 jpeg("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/fvg_gen_ped_merged_ncorr.jpg",width=800, height=800,pointsize = 20)
