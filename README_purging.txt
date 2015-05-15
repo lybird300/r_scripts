@@ -1,0 +1,1 @@
+/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/README_purging.txt
