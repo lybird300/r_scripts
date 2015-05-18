@@ -2,64 +2,52 @@
 rm(list=ls())
 library(kinship2)
 
+fvg_base_ped <- "/nfs/users/nfs_m/mc14/Work/SANGER/FVG/pedigree_FVG/VILLAGES"
 # fvr_ped <- read.table('/home/max/Work/FVG/pedigree_FVG/SEQ/resia_ped.csv.seq.list')
-fvr_ped <- read.table('/home/max/Work/FVG/pedigree_FVG/VILLAGES/resia_ped_sorted_manmod.csv')
+fvr_ped <- read.table(paste(fvg_base_ped,'/resia_ped_sorted_manmod.csv',sep=""))
 #had to manually fix the pedigree data
 fvr_pedigree <- pedigree(id=fvr_ped$V1,dadid=fvr_ped$V2,momid=fvr_ped$V3,sex=fvr_ped$V4,miss=0)
 fvr_kinship <- kinship(fvr_pedigree)
 
-fve_ped <- read.table('/home/max/Work/FVG/pedigree_FVG/VILLAGES/erto_ped.csv',skip=1)
+fve_ped <- read.table(paste(fvg_base_ped,'/erto_ped.csv',sep=""),skip=1)
 fve_pedigree <- pedigree(id=fve_ped$V1,dadid=fve_ped$V2,momid=fve_ped$V3,sex=fve_ped$V4,miss=0)
 #I had to manually remove mothers from DUOS relationships (id with no father but mother info)
 fve_kinship <- kinship(fve_pedigree)
 
-fvi_ped <- read.table('/home/max/Work/FVG/pedigree_FVG/VILLAGES/illegio_ped_uniq.csv')
+fvi_ped <- read.table(paste(fvg_base_ped,'/illegio_ped_uniq.csv',sep=""))
 fvi_pedigree <- pedigree(id=fvi_ped$V1,dadid=fvi_ped$V2,momid=fvi_ped$V3,sex=fvi_ped$V4,miss=0)
 #added manually founders
 fvi_kinship <- kinship(fvi_pedigree)
 
-fvs_ped <- read.table('/home/max/Work/FVG/pedigree_FVG/VILLAGES/sauris_ped_uniq.csv')
+fvs_ped <- read.table(paste(fvg_base_ped,'/sauris_ped_uniq.csv',sep=""))
 fvs_pedigree <- pedigree(id=fvs_ped$V1,dadid=fvs_ped$V2,momid=fvs_ped$V3,sex=fvs_ped$V4,miss=0)
 #removed duplicates founders
 fvs_kinship <- kinship(fvs_pedigree)
 
+################################################
 #now load genomic kinship done with king
-fvg_seq_list <- read.table('/home/max/Work/FVG/SEQ_CALLING/FVG_seq_sorted.list',h=F)
+# fvg_seq_list <- read.table('/home/max/Work/FVG/SEQ_CALLING/FVG_seq_sorted.list',h=F)
+fvg_seq_list <- read.table('/lustre/scratch113/teams/soranzo/users/mc14/INGI_FVG/SEQ_CALLING/FVG_seq_sorted.singlecol.keeplist',h=F)
 colnames(fvg_seq_list) <- c("ID")
 fvg_seq_list$ID <- as.character(fvg_seq_list$ID)
 
-#split kinships in villages extracting only sequenced samples
-fvr_kinship_seq <- fvr_kinship[colnames(fvr_kinship) %in% fvg_seq_list$ID, rownames(fvr_kinship) %in% fvg_seq_list$ID]
-fve_kinship_seq <- fve_kinship[colnames(fve_kinship) %in% fvg_seq_list$ID, rownames(fve_kinship) %in% fvg_seq_list$ID]
-fvi_kinship_seq <- fvi_kinship[colnames(fvi_kinship) %in% fvg_seq_list$ID, rownames(fvi_kinship) %in% fvg_seq_list$ID]
-fvs_kinship_seq <- fvs_kinship[colnames(fvs_kinship) %in% fvg_seq_list$ID, rownames(fvs_kinship) %in% fvg_seq_list$ID]
-# dim(fvr_kinship_seq)
-# dim(fve_kinship_seq)
-# dim(fvi_kinship_seq)
-# dim(fvs_kinship_seq)
-
-# dim(fvr_kinship)
-# dim(fve_kinship)
-# dim(fvi_kinship)
-# dim(fvs_kinship)
-
 
 #load genomic kinship previously calculated
-base_folder <- "/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP"
-# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING"
+# base_folder <- "/home/max/Work/Analyses/PURGE_INBREEDING/KINSHIP"
+base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP"
 
-fve_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Erto.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
-fvi_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Illegio.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
-fvr_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Resia.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
-fvs_kinship_king_seq <- read.table(paste(base_folder,"/KINSHIP/KIN_GEN/FVG_Sauris.keeplist.ibs0.kinship.conv.kin",sep=""),header=F)
+fve_kinship_king_seq <- read.table(paste(base_folder,"/FVG_Erto.keeplist.ibs0",sep=""),header=T)
+fvi_kinship_king_seq <- read.table(paste(base_folder,"/FVG_Illegio.keeplist.ibs0",sep=""),header=T)
+fvr_kinship_king_seq <- read.table(paste(base_folder,"/FVG_Resia.keeplist.ibs0",sep=""),header=T)
+fvs_kinship_king_seq <- read.table(paste(base_folder,"/FVG_Sauris.keeplist.ibs0",sep=""),header=T)
 
-
-dim(fve_kinship_king_seq)
-dim(fvi_kinship_king_seq)
-dim(fvr_kinship_king_seq)
-dim(fvs_kinship_king_seq)
+head(fve_kinship_king_seq)
+head(fvi_kinship_king_seq)
+head(fvr_kinship_king_seq)
+head(fvs_kinship_king_seq)
 
 #load conversion table data
+# conv_fvg <- read.table("/home/max/Work/Analyses/PURGE_INBREEDING/WGS_FVG_id_conversion_complete_sorted.list")
 conv_fvg <- read.table("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/WGS_FVG_id_conversion_complete_sorted.list")
 colnames(conv_fvg) <- c("SEQ","CLIN")
 conv_fvg$SEQ <- as.character(conv_fvg$SEQ)
@@ -67,7 +55,6 @@ conv_fvg$CLIN <- as.character(conv_fvg$CLIN)
 
 #clean tables from useless columns
 kin_set <- c("fve_kinship_king_seq","fvi_kinship_king_seq","fvr_kinship_king_seq","fvs_kinship_king_seq")
-current_set <- NULL
 for (set in kin_set){
 	current_set <- get(set)
 	current_set$FID1 <- NULL
@@ -84,15 +71,15 @@ for (set in kin_set){
 	current_set$SE_Dist <- NULL
 	# colnames(current_set) <- c("ID1","ID2","KIN","KEY")
 	#convert ids
-	current_merged <- merge(current_set,conv_fvg,by.x="ID1",by.y="SEQ",all.x)
-	current_merged <- merge(current_merged,conv_fvg,by.x="ID2",by.y="SEQ",all.x)
+	current_merged1 <- merge(current_set,conv_fvg,by.x="ID1",by.y="SEQ",all.x)
+	current_merged <- merge(current_merged1,conv_fvg,by.x="ID2",by.y="SEQ",all.x)
 	assign(set,current_merged)
 }
 
+
 library(reshape2)
-kin_ped_set <- c("fve_kinship_seq","fvi_kinship_seq","fvr_kinship_seq","fvs_kinship_seq","fve_kinship","fvi_kinship","fvr_kinship","fvs_kinship")
-# kin_ped_set <- c("fvr_kinship")
-current_kin_ped_set <- NULL
+# kin_ped_set <- c("fve_kinship_seq","fvi_kinship_seq","fvr_kinship_seq","fvs_kinship_seq","fve_kinship","fvi_kinship","fvr_kinship","fvs_kinship")
+kin_ped_set <- c("fve_kinship","fvi_kinship","fvr_kinship","fvs_kinship")
 for (ped_set in kin_ped_set){
 	current_ped_set <- get(ped_set)
 	#convert ids
@@ -102,67 +89,94 @@ for (ped_set in kin_ped_set){
 	assign(paste(ped_set,"_melted",sep=""),current_ped_set_melted)
 }
 
-kin_ped_set_melted <- c("fve_kinship_seq_melted","fvi_kinship_seq_melted","fvr_kinship_seq_melted","fvs_kinship_seq_melted","fve_kinship_melted","fvi_kinship_melted","fvr_kinship_melted","fvs_kinship_melted")
+#split kinships in villages extracting only sequenced samples
+# fvr_kinship_ped_seq_melted2 <- fvr_kinship_melted[fvr_kinship_melted$ID1 %in% fvg_seq_list$ID,]
+# fvr_kinship_ped_seq_melted <- fvr_kinship_ped_seq_melted2[fvr_kinship_ped_seq_melted2$ID2 %in% fvg_seq_list$ID,]
+fvr_kinship_ped_seq_melted <- fvr_kinship_melted[fvr_kinship_melted$ID1 %in% fvg_seq_list$ID & fvr_kinship_melted$ID2 %in% fvg_seq_list$ID,]
+fve_kinship_ped_seq_melted <- fve_kinship_melted[fve_kinship_melted$ID1 %in% fvg_seq_list$ID & fve_kinship_melted$ID2 %in% fvg_seq_list$ID,]
+fvi_kinship_ped_seq_melted <- fvi_kinship_melted[fvi_kinship_melted$ID1 %in% fvg_seq_list$ID & fvi_kinship_melted$ID2 %in% fvg_seq_list$ID,]
+fvs_kinship_ped_seq_melted <- fvs_kinship_melted[fvs_kinship_melted$ID1 %in% fvg_seq_list$ID & fvs_kinship_melted$ID2 %in% fvg_seq_list$ID,]
+# dim(fvr_kinship_ped_seq_melted)
+# dim(fve_kinship_ped_seq_melted)
+# dim(fvi_kinship_ped_seq_melted)
+# dim(fvs_kinship_ped_seq_melted)
+
+# dim(fvr_kinship)
+# dim(fve_kinship)
+# dim(fvi_kinship)
+# dim(fvs_kinship)
+
+dim(fvr_kinship_ped_seq_melted)
+dim(fve_kinship_ped_seq_melted)
+dim(fvi_kinship_ped_seq_melted)
+dim(fvs_kinship_ped_seq_melted)
+dim(fve_kinship_melted)
+dim(fvi_kinship_melted)
+dim(fvr_kinship_melted)
+dim(fvs_kinship_melted)
+
+# kin_ped_set_melted <- c("fve_kinship_seq_melted","fvi_kinship_seq_melted","fvr_kinship_seq_melted","fvs_kinship_seq_melted","fve_kinship_melted","fvi_kinship_melted","fvr_kinship_melted","fvs_kinship_melted")
+kin_ped_set_melted <- c("fvr_kinship_ped_seq_melted","fve_kinship_ped_seq_melted","fvi_kinship_ped_seq_melted","fvs_kinship_ped_seq_melted","fve_kinship_melted","fvi_kinship_melted","fvr_kinship_melted","fvs_kinship_melted")
+
 for (ped_set in kin_ped_set_melted){
 	current_ped_set <- get(ped_set)
 	#write tables
-	write.table(current_ped_set,file=paste(getwd(),ped_set,sep="/"),quote=F,sep="\t",row.names=F,col.names=F)
+	write.table(current_ped_set,file=paste(getwd(),"KIN_PED",ped_set,sep="/"),quote=F,sep="\t",row.names=F,col.names=F)
 }
 
 
 dim(fve_kinship_king_seq)
-dim(fve_kinship_seq_melted)
-fve_kinship_seq_melted$key <- paste(apply(fve_kinship_seq_melted[,1:2],1,min),apply(fve_kinship_seq_melted[,1:2],1,max),sep="_")
-fve_kinship_seq_melted <- fve_kinship_seq_melted[!duplicated(fve_kinship_seq_melted$key),]
-dim(fve_kinship_seq_melted)
+dim(fve_kinship_ped_seq_melted)
+fve_kinship_ped_seq_melted$key <- paste(apply(fve_kinship_ped_seq_melted[,1:2],1,min),apply(fve_kinship_ped_seq_melted[,1:2],1,max),sep="_")
+fve_kinship_ped_seq_melted <- fve_kinship_ped_seq_melted[!duplicated(fve_kinship_ped_seq_melted$key),]
+dim(fve_kinship_ped_seq_melted)
 
 dim(fvi_kinship_king_seq)
-dim(fvi_kinship_seq_melted)
-fvi_kinship_seq_melted$key <- paste(apply(fvi_kinship_seq_melted[,1:2],1,min),apply(fvi_kinship_seq_melted[,1:2],1,max),sep="_")
-fvi_kinship_seq_melted <- fvi_kinship_seq_melted[!duplicated(fvi_kinship_seq_melted$key),]
-dim(fvi_kinship_seq_melted)
+dim(fvi_kinship_ped_seq_melted)
+fvi_kinship_ped_seq_melted$key <- paste(apply(fvi_kinship_ped_seq_melted[,1:2],1,min),apply(fvi_kinship_ped_seq_melted[,1:2],1,max),sep="_")
+fvi_kinship_ped_seq_melted <- fvi_kinship_ped_seq_melted[!duplicated(fvi_kinship_ped_seq_melted$key),]
+dim(fvi_kinship_ped_seq_melted)
 
 dim(fvr_kinship_king_seq)
-dim(fvr_kinship_seq_melted)
-fvr_kinship_seq_melted$key <- paste(apply(fvr_kinship_seq_melted[,1:2],1,min),apply(fvr_kinship_seq_melted[,1:2],1,max),sep="_")
-fvr_kinship_seq_melted <- fvr_kinship_seq_melted[!duplicated(fvr_kinship_seq_melted$key),]
-dim(fvr_kinship_seq_melted)
+dim(fvr_kinship_ped_seq_melted)
+fvr_kinship_ped_seq_melted$key <- paste(apply(fvr_kinship_ped_seq_melted[,1:2],1,min),apply(fvr_kinship_ped_seq_melted[,1:2],1,max),sep="_")
+fvr_kinship_ped_seq_melted <- fvr_kinship_ped_seq_melted[!duplicated(fvr_kinship_ped_seq_melted$key),]
+dim(fvr_kinship_ped_seq_melted)
 
 dim(fvs_kinship_king_seq)
-dim(fvs_kinship_seq_melted)
-fvs_kinship_seq_melted$key <- paste(apply(fvs_kinship_seq_melted[,1:2],1,min),apply(fvs_kinship_seq_melted[,1:2],1,max),sep="_")
-fvs_kinship_seq_melted <- fvs_kinship_seq_melted[!duplicated(fvs_kinship_seq_melted$key),]
-dim(fvs_kinship_seq_melted)
+dim(fvs_kinship_ped_seq_melted)
+fvs_kinship_ped_seq_melted$key <- paste(apply(fvs_kinship_ped_seq_melted[,1:2],1,min),apply(fvs_kinship_ped_seq_melted[,1:2],1,max),sep="_")
+fvs_kinship_ped_seq_melted <- fvs_kinship_ped_seq_melted[!duplicated(fvs_kinship_ped_seq_melted$key),]
+dim(fvs_kinship_ped_seq_melted)
 
-length(unique(fve_kinship_seq_melted$ID1))
+length(unique(fve_kinship_ped_seq_melted$ID1))
 length(unique(fve_kinship_king_seq$CLIN.x))
 
-length(unique(fvi_kinship_seq_melted$ID1))
+length(unique(fvi_kinship_ped_seq_melted$ID1))
 length(unique(fvi_kinship_king_seq$CLIN.x))
 
-length(unique(fvr_kinship_seq_melted$ID1))
+length(unique(fvr_kinship_ped_seq_melted$ID1))
 length(unique(fvr_kinship_king_seq$CLIN.x))
 
-length(unique(fvs_kinship_seq_melted$ID1))
+length(unique(fvs_kinship_ped_seq_melted$ID1))
 length(unique(fvs_kinship_king_seq$CLIN.x))
 
-fve_kinship_king_seq2 <- (fve_kinship_king_seq[which(fve_kinship_king_seq$CLIN.x %in% fve_kinship_seq_melted$ID1),][which(fve_kinship_king_seq$CLIN.y %in% fve_kinship_seq_melted$ID2),])
-fvi_kinship_king_seq2 <- (fvi_kinship_king_seq[which(fvi_kinship_king_seq$CLIN.x %in% fvi_kinship_seq_melted$ID1),][which(fvi_kinship_king_seq$CLIN.y %in% fvi_kinship_seq_melted$ID2),])
-fvr_kinship_king_seq2 <- (fvr_kinship_king_seq[which(fvr_kinship_king_seq$CLIN.x %in% fvr_kinship_seq_melted$ID1),][which(fvr_kinship_king_seq$CLIN.y %in% fvr_kinship_seq_melted$ID2),])
-fvs_kinship_king_seq2 <- (fvs_kinship_king_seq[which(fvs_kinship_king_seq$CLIN.x %in% fvs_kinship_seq_melted$ID1),][which(fvs_kinship_king_seq$CLIN.y %in% fvs_kinship_seq_melted$ID2),])
+fve_kinship_king_seq2 <- (fve_kinship_king_seq[which(fve_kinship_king_seq$CLIN.x %in% fve_kinship_ped_seq_melted$ID1),][which(fve_kinship_king_seq$CLIN.y %in% fve_kinship_ped_seq_melted$ID2),])
+fvi_kinship_king_seq2 <- (fvi_kinship_king_seq[which(fvi_kinship_king_seq$CLIN.x %in% fvi_kinship_ped_seq_melted$ID1),][which(fvi_kinship_king_seq$CLIN.y %in% fvi_kinship_ped_seq_melted$ID2),])
+fvr_kinship_king_seq2 <- (fvr_kinship_king_seq[which(fvr_kinship_king_seq$CLIN.x %in% fvr_kinship_ped_seq_melted$ID1),][which(fvr_kinship_king_seq$CLIN.y %in% fvr_kinship_ped_seq_melted$ID2),])
+fvs_kinship_king_seq2 <- (fvs_kinship_king_seq[which(fvs_kinship_king_seq$CLIN.x %in% fvs_kinship_ped_seq_melted$ID1),][which(fvs_kinship_king_seq$CLIN.y %in% fvs_kinship_ped_seq_melted$ID2),])
 
 length(unique(fve_kinship_king_seq2$CLIN.x))
-length(unique(fve_kinship_seq_melted$ID1))
+length(unique(fve_kinship_ped_seq_melted$ID1))
 
 length(unique(fvi_kinship_king_seq2$CLIN.x))
-length(unique(fvi_kinship_seq_melted$ID1))
+length(unique(fvi_kinship_ped_seq_melted$ID1))
 
 length(unique(fvr_kinship_king_seq2$CLIN.x))
-length(unique(fvr_kinship_seq_melted$ID1))
+length(unique(fvr_kinship_ped_seq_melted$ID1))
 
 length(unique(fvs_kinship_king_seq2$CLIN.x))
-length(unique(fvs_kinship_seq_melted$ID1))
-
+length(unique(fvs_kinship_ped_seq_melted$ID1))
 
 fve_kinship_king_seq2$key <- paste(apply(fve_kinship_king_seq2[,4:5],1,min),apply(fve_kinship_king_seq2[,4:5],1,max),sep="_")
 fve_kinship_king_seq3 <- fve_kinship_king_seq2[!duplicated(fve_kinship_king_seq2$key),]
@@ -177,15 +191,15 @@ fvs_kinship_king_seq2$key <- paste(apply(fvs_kinship_king_seq2[,4:5],1,min),appl
 fvs_kinship_king_seq3 <- fvs_kinship_king_seq2[!duplicated(fvs_kinship_king_seq2$key),]
 
 
-length(unique(fve_kinship_king_seq3$CLIN.x))
-length(unique(fvi_kinship_king_seq3$CLIN.x))
-length(unique(fvr_kinship_king_seq3$CLIN.x))
-length(unique(fvs_kinship_king_seq3$CLIN.x))
+length(unique(fve_kinship_king_seq3$CLIN.y))
+length(unique(fvi_kinship_king_seq3$CLIN.y))
+length(unique(fvr_kinship_king_seq3$CLIN.y))
+length(unique(fvs_kinship_king_seq3$CLIN.y))
 
-length(unique(fve_kinship_seq_melted$ID1))
-length(unique(fvi_kinship_seq_melted$ID1))
-length(unique(fvr_kinship_seq_melted$ID1))
-length(unique(fvs_kinship_seq_melted$ID1))
+length(unique(fve_kinship_ped_seq_melted$ID2))
+length(unique(fvi_kinship_ped_seq_melted$ID2))
+length(unique(fvr_kinship_ped_seq_melted$ID2))
+length(unique(fvs_kinship_ped_seq_melted$ID2))
 
 #sort dataframes
 fve_kinship_king_seq3 <- fve_kinship_king_seq3[with(fve_kinship_king_seq3,order(key)),]
