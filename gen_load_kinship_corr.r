@@ -826,10 +826,18 @@ for (village in villages_n){
 all_gen_ped_merged <- rbind(vbi_gen_ped_merged,carl_gen_ped_merged,fve_gen_ped_merged,fvi_gen_ped_merged,fvr_gen_ped_merged,fvs_gen_ped_merged)
 all_gen_ped_merged_unrel <- rbind(vbi_gen_ped_merged_unrel,carl_gen_ped_merged_unrel,fve_gen_ped_merged_unrel,fvi_gen_ped_merged_unrel,fvr_gen_ped_merged_unrel,fvs_gen_ped_merged_unrel)
 
-all_gen_ped_merged$rel <- "ALL"
-all_gen_ped_merged_unrel$rel <- "Unrel"
+all_gen_ped_merged$rel <- as.factor("All")
+all_gen_ped_merged_unrel$rel <- as.factor("Unrelated")
+
+shapes <- as.data.frame(t(c(ALL="1",Unrel="4")))
+
+names(shapes) <- c("ALL","Unrel")
 
 all_gen_ped <- rbind(all_gen_ped_merged,all_gen_ped_merged_unrel)
+all_gen_ped_nodups <- all_gen_ped[!duplicated(all_gen_ped$KEY,fromLast=T),]
+all_gen_ped_nodups$cohort <- as.factor(all_gen_ped_nodups$cohort)
+all_gen_ped_nodups$KIN.gen2 <- all_gen_ped_nodups$KIN.gen
+all_gen_ped_nodups[all_gen_ped_nodups$KIN.gen <= 0.0441,"KIN.gen2"] <- 0
 
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
@@ -838,26 +846,21 @@ pop_colors <- col_pop(pops_c)
 require(ggplot2)
 require(reshape2)
 
-pl <- ggplot(all_gen_ped)
-pl <- pl + aes(x = KIN.gen, y = KIN.ped,colour=cohort,shape=rel)
+pl <- ggplot(all_gen_ped_nodups)
 pl <- pl + geom_point()
-# pl <- pl + scale_colour_manual("Cohorts", values=as.factor(pop_colors[unique(all_gen_ped_merged$cohort)]))
+pl <- pl + aes(x = KIN.gen2, y = KIN.ped,colour=cohort,shape=rel)
+pl <- pl + scale_shape(solid = FALSE)
+pl <- pl + scale_colour_manual("Cohorts", values=pop_colors[as.character(unique(all_gen_ped_nodups$cohort))])
 pl <- pl + xlab("Genetic Kinship")
 pl <- pl + ylab("Pedigree Kinship")
 pl <- pl + facet_wrap(~cohort, ncol=2)
-# pl <- pl + guides(shape = guide_legend(override.aes = list(colour = "pink")))
-# pl <- pl + scale_shape_manual(values=c(11,11))
 # pl <- pl + ggtitle(main)
-# pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
 pl <- pl + theme_bw()
-
 pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 # pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
    
-# jpeg(paste(base_folder,"/",chr,"_point_dens.jpg",sep=""),width=1800, height=800)
-# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 base_plot <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/05162015/PLOTS"
-ggsave(filename=paste(base_plot,"/kinship_corr_all.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_plot,"/kinship_corr_all.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_plot,"/kinship_corr_all_gen2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
