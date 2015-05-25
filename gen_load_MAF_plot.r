@@ -152,10 +152,14 @@ dev.off()
 # merged_daf <- read.table(paste0(base_folder,"INPUT_FILES/INGI_chr",chr,".merged_daf.tab.gz"),skip=1,header=F)
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 #we need to use the files with MAF info, but created after filtering by DAF: we need to put all chr together
-pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
-pops_ingi <- c("VBI","FVG","CARL")
-var_class <- c("private","shared")
-
+# pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
+pops_ingi_class <- c("CEU_n","TSI_n","VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n","CEU_p","TSI_p","VBI_p","CARL_p","Erto_p","Illegio_p","Resia_p","Sauris_p","CEU_s","TSI_s","VBI_s","CARL_s","Erto_s","Illegio_s","Resia_s","Sauris_s")
+# pops_ingi_novel <- c("VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n")
+# pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+pops_ingi <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
+# pops_ingi <- c("VBI","FVG","CARL")
+var_class <- c("novel","shared")
+in_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/INPUT_FILES/FIVE_POPS/WG"
 for (type in var_class) {
   print(type)
   all_pop_current_type <- NULL
@@ -166,30 +170,34 @@ for (type in var_class) {
     for (chr in 1:22) {
       print(chr)
       #read the current file for this population and this chromosome
-      base_type_folder <- paste(in_folder,"/CHR",chr,sep="")
-      current_filename <- paste(base_type_folder,"/INGI_chr",chr,".merged_maf.tab.gz.",pop,".",type,".tab.gz",sep="")
+      base_type_folder <- paste(in_folder,"/CHR",chr,"/CHR",chr,sep="")
+      # VBI_private_chr1.merged_frq.tab.gz
+      current_filename <- paste(base_type_folder,"/",pop,"_",type,"_chr",chr,".merged_frq.tab.gz",sep="")
       current_chr_current_type <- read.table(current_filename, sep="\t",header=F)
-      colnames(current_chr_current_type) <- c("CHROM","POZ","POS","TYPE","CEU","TSI","VBI","FVG","CARL")
+      # colnames(current_chr_current_type) <- c("CHROM","POZ","POS","TYPE","CEU","TSI","VBI","FVG","CARL")
+      colnames(current_chr_current_type) <- c("CHROM","POS","VT","CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
       current_pop_col <- grep(pop,colnames(current_chr_current_type))
       current_chr_current_type <- current_chr_current_type[which(current_chr_current_type[,current_pop_col] != 0),]
       
-      current_pop_current_type <-rbind(current_pop_current_type,current_chr_current_type[,c(1,2,3,4,current_pop_col)])
+      current_pop_current_type <-rbind(current_pop_current_type,current_chr_current_type[,c(1,2,3,current_pop_col)])
     }
     
-    current_pop_col <- grep(pop,colnames(current_pop_current_type))
-    all_pop_current_type <- append(all_pop_current_type,list(current_pop_current_type[,current_pop_col]))
+    # current_pop_col <- grep(pop,colnames(current_pop_current_type))
+    all_pop_current_type <- append(all_pop_current_type,list(current_pop_current_type[,4]))
 
   }
   all_pop_current_type_table_name <- paste("all_pop_MAF_",type,sep="")
   assign(all_pop_current_type_table_name,all_pop_current_type)
+  save(all_pop_current_type_table_name,file=paste("all_pop_MAF_",type,".RData",sep=""))
   
 }
 
-#we now have lists for private and shared sites
+#we now have lists for private and shared ad novel sites
 all_pop_MAF_private_shared <- append(all_pop_MAF_private,all_pop_MAF_shared)
 
 #save the R object so we just need to reload this, eventually
-save(all_pop_MAF_private_shared,file="all_pop_MAF_private_shared.RData")
+save(all_pop_MAF_novel,file="all_pop_MAF_novel.RData")
+save(all_pop_MAF_shared,file="all_pop_MAF_shared.RData")
 
 #now we should be able to proceed as before...and plot
 pop_col <- col_pop(pops_ingi_class)

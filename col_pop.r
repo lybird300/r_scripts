@@ -42,6 +42,30 @@ col_pop <- function(pops){
     cur_col <- TSI_col
     density <- 8
   }
+  if(pops[i] == "CEU_p"){
+    cur_col <- CEU_col
+    density <- 3
+  }
+  if(pops[i] == "TSI_p"){
+    cur_col <- TSI_col
+    density <- 3
+  }
+  if(pops[i] == "CEU_s"){
+    cur_col <- CEU_col
+    density <- 2
+  }
+  if(pops[i] == "TSI_s"){
+    cur_col <- TSI_col
+    density <- 2
+  }
+  if(pops[i] == "CEU_n"){
+    cur_col <- CEU_col
+    density <- 1
+  }
+  if(pops[i] == "TSI_n"){
+    cur_col <- TSI_col
+    density <- 1
+  }
    if(pops[i] == "CARL" || pops[i] == "CAR" ){
     cur_col <- CAR_col
     density <- 8
