@@ -69,6 +69,7 @@ all_pop_MAF_table <- as.data.frame(cbind((all_pop_hist[[1]]$mids),t(all_pop_hist
 colnames(all_pop_MAF_table) <- c("breaks",pops)
 
 write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(all_pop_MAF_count_rel,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
   
 ####################ONLY FOR PLOTTING POURPOSE!!!!#################
 require(plotrix)
@@ -153,7 +154,10 @@ dev.off()
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 #we need to use the files with MAF info, but created after filtering by DAF: we need to put all chr together
 # pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
-pops_ingi_class <- c("CEU_n","TSI_n","VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n","CEU_p","TSI_p","VBI_p","CARL_p","Erto_p","Illegio_p","Resia_p","Sauris_p","CEU_s","TSI_s","VBI_s","CARL_s","Erto_s","Illegio_s","Resia_s","Sauris_s")
+# pops_ingi_class <- c("CEU_n","TSI_n","VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n","CEU_p","TSI_p","VBI_p","CARL_p","Erto_p","Illegio_p","Resia_p","Sauris_p","CEU_s","TSI_s","VBI_s","CARL_s","Erto_s","Illegio_s","Resia_s","Sauris_s")
+# pops_ingi_class <- c("CEU_n","TSI_n","VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n","CEU_s","TSI_s","VBI_s","CARL_s","Erto_s","Illegio_s","Resia_s","Sauris_s")
+pops_ingi_class_n <- c("CEU_n","TSI_n","VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n")
+pops_ingi_class_s <- c("CEU_s","TSI_s","VBI_s","CARL_s","Erto_s","Illegio_s","Resia_s","Sauris_s")
 # pops_ingi_novel <- c("VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n")
 # pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
 pops_ingi <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
@@ -193,7 +197,8 @@ for (type in var_class) {
 }
 
 #we now have lists for private and shared ad novel sites
-all_pop_MAF_private_shared <- append(all_pop_MAF_private,all_pop_MAF_shared)
+# all_pop_MAF_private_shared <- append(all_pop_MAF_private,all_pop_MAF_shared)
+all_pop_MAF_novel_shared <- append(all_pop_MAF_novel,all_pop_MAF_shared)
 
 #save the R object so we just need to reload this, eventually
 save(all_pop_MAF_novel,file="all_pop_MAF_novel.RData")
@@ -204,13 +209,23 @@ pop_col <- col_pop(pops_ingi_class)
 base_folder <- getwd()
 require(plotrix)
 
-all_pop_MAF_private_shared_hist <- multhist(all_pop_MAF_private_shared,
+# all_pop_MAF_private_shared_hist <- multhist(all_pop_MAF_private_shared,
+all_pop_MAF_novel_hist <- multhist(all_pop_MAF_novel,
    freq=FALSE,
    breaks=20,
    plot=F)
 
-all_pop_MAF_private_shared_table <- as.data.frame(cbind((all_pop_MAF_private_shared_hist[[1]]$mids),t(all_pop_MAF_private_shared_hist[[2]])))
-colnames(all_pop_MAF_private_shared_table) <- c("breaks",pops_ingi_class)
+all_pop_MAF_shared_hist <- multhist(all_pop_MAF_shared,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+
+# all_pop_MAF_private_shared_table <- as.data.frame(cbind((all_pop_MAF_private_shared_hist[[1]]$mids),t(all_pop_MAF_private_shared_hist[[2]])))
+# colnames(all_pop_MAF_private_shared_table) <- c("breaks",pops_ingi_class)
+all_pop_MAF_novel_table <- as.data.frame(cbind((all_pop_MAF_novel_hist[[1]]$mids),all_pop_MAF_novel_hist[[1]]$counts,t(all_pop_MAF_novel_hist[[2]])))
+all_pop_MAF_shared_table <- as.data.frame(cbind((all_pop_MAF_shared_hist[[1]]$mids),all_pop_MAF_shared_hist[[1]]$counts,t(all_pop_MAF_shared_hist[[2]])))
+colnames(all_pop_MAF_novel_table) <- c("breaks","counts",pops_ingi_class_n)
+colnames(all_pop_MAF_shared_table) <- c("breaks","counts",pops_ingi_class_s)
 
 write.table(all_pop_MAF_private_shared_table,file=paste("all_pop_MAF_private_shared_table.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
@@ -230,10 +245,14 @@ jpeg(paste(base_folder,"/1_all_INGI_private_shared_MAF_plotrix.jpg",sep=""),widt
 dev.off()
 
 #now we need to put all together to plot the complete spectum for all classes!
-all_pop_all_MAF <- append(append(all_pop_MAF,all_pop_novel_MAF),all_pop_MAF_private_shared)
+# all_pop_all_MAF <- append(append(all_pop_MAF,all_pop_novel_MAF),all_pop_MAF_private_shared)
+all_pop_all_MAF <- append(all_pop_MAF_novel,all_pop_MAF_shared)
+# all_pop_all_MAF_table <- cbind(all_pop_MAF_novel_table,all_pop_MAF_shared_table[c(3:12),])
 
 #we need pops in the same order as the list
-all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
+# all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
+
+all_pops <- c(pops_ingi_class_n,pops_ingi_class_s)
 
 all_cols <- col_pop(all_pops)
 require(plotrix)
@@ -252,8 +271,14 @@ all_pop_MAF_count_rel <- as.data.frame(all_pop_MAF_count_rel)
 #add colnames (we can use the same order of the population data)
 colnames(all_pop_MAF_count_rel) <- all_pops
 #add a column for breaks
-all_pop_MAF_count_rel$breaks <- CEU_maf_hist$breaks[2:length(CEU_maf_hist$breaks)]
+# all_pop_MAF_count_rel$breaks <- CEU_maf_hist$breaks[2:length(CEU_maf_hist$breaks)]
+all_pop_MAF_count_rel$breaks <- CEU_n_maf_hist$breaks[2:length(CEU_n_maf_hist$breaks)]
 
+save(all_pop_MAF_count_rel,file="all_pop_MAF_count_rel.RData")
+
+
+
+#######################################################################################################
 all_ingi_MAF_not_all <- NULL
 #we need to add also the column with all - the sum of categories, for the ingi pops
 for(inpop in pops_ingi){
@@ -421,20 +446,29 @@ for (con in conseq){
 ###### REPLOT with ggplot
 rm(list=ls())
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+require(plotrix)
 require(ggplot2)
 require(reshape2)
 base_folder <- getwd()
-pops <- c("CEU","TSI","VBI","FVG","CARL")
+pops <- c("CEU","TSI","VBI","CARL","FVG-E","FVG-I","FVG-R","FVG-S")
 pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
 pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
 
-all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
+all_pops <- c(pops_ingi_class_n,pops_ingi_class_s)
+# all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
 
 load('all_pop_MAF.RData')
 load('all_pop_novel_MAF.RData')
 load('all_pop_MAF_private_shared.RData')
 #To do after uploading the RData
-require(plotrix)
+load("all_pop_MAF_novel.RData")
+load("all_pop_MAF_shared.RData")
+load("all_pop_MAF_count_rel.RData")
+
+all_pop_MAF_novel
+all_pop_MAF_shared
+all_pop_MAF_count_rel
+
 #all
 all_pop_hist <- multhist(all_pop_MAF,
    freq=FALSE,
@@ -443,27 +477,39 @@ all_pop_hist <- multhist(all_pop_MAF,
 all_pop_MAF_table <- as.data.frame(cbind((all_pop_hist[[1]]$mids),t(all_pop_hist[[2]])))
 colnames(all_pop_MAF_table) <- c("breaks",pops)
 
+all_pop_MAF_novel_table
+all_pop_MAF_shared_table
 #novel
-novel_hist <- multhist(all_pop_novel_MAF,
+novel_hist <- multhist(all_pop_MAF_novel,
    freq=FALSE,
    breaks=20,
    plot=F)
 all_pop_novel_MAF_table <- as.data.frame(cbind((novel_hist[[1]]$mids),t(novel_hist[[2]])))
-colnames(all_pop_novel_MAF_table) <- c("breaks",pops_ingi_novel)
+colnames(all_pop_novel_MAF_table) <- c("breaks",pops_ingi_class_n)
 
 #classes
-all_pop_MAF_private_shared_hist <- multhist(all_pop_MAF_private_shared,
+all_pop_MAF_shared_hist <- multhist(all_pop_MAF_shared,
    freq=FALSE,
    breaks=20,
    plot=F)
-all_pop_MAF_private_shared_table <- as.data.frame(cbind((all_pop_MAF_private_shared_hist[[1]]$mids),t(all_pop_MAF_private_shared_hist[[2]])))
-colnames(all_pop_MAF_private_shared_table) <- c("breaks",pops_ingi_class)
+all_pop_MAF_shared_table <- as.data.frame(cbind((all_pop_MAF_shared_hist[[1]]$mids),t(all_pop_MAF_shared_hist[[2]])))
+colnames(all_pop_MAF_shared_table) <- c("breaks",pops_ingi_class_s)
 
 
-all_cols <-col_pop(all_pops)
+# all_cols <-col_pop(all_pops)
+pops_ingi <- c("CEU","TSI","VBI","CARL","FVG-E","FVG-I","FVG-R","FVG-S")
+all_cols <-col_pop(pops_ingi)
 
 all_pop_MAF_table_reshaped <- melt(all_pop_MAF_table, id='breaks')
+
+all_pop_MAF_count_rel_reshaped <- melt(all_pop_MAF_count_rel, id='breaks')
+
+all_pop_novel_MAF_table_reshaped <-melt(all_pop_novel_MAF_table,id='breaks')
+all_pop_MAF_shared_table_reshaped <-melt(all_pop_MAF_shared_table,id='breaks')
+all_pop_MAF_novel_shared_table_reshaped <- rbind(all_pop_novel_MAF_table_reshaped,all_pop_MAF_shared_table_reshaped)
+
 all_pop_MAF_private_shared_table_reshaped <- melt(all_pop_MAF_private_shared_table, id='breaks')
+
 all_pop_novel_MAF_table_reshaped <- melt(all_pop_novel_MAF_table, id='breaks')
 
 #merge data together
@@ -471,29 +517,89 @@ all_pop_all_MAF_table_reshaped <- rbind(all_pop_MAF_table_reshaped,all_pop_MAF_p
 all_pop_all_MAF_table_reshaped$variable <- as.character(all_pop_all_MAF_table_reshaped$variable)
 all_pop_all_MAF_table_reshaped$variable <- factor(all_pop_all_MAF_table_reshaped$variable, levels = all_pops)
 
+all_pop_MAF_count_rel_reshaped$variable <- factor(all_pop_MAF_count_rel_reshaped$variable, levels = all_pops)
+all_pop_MAF_novel_shared_table_reshaped$variable <- factor(all_pop_MAF_novel_shared_table_reshaped$variable, levels = all_pops)
+
 all_pop_all_MAF_table_reshaped$cat <- "total"
 all_pop_all_MAF_table_reshaped[grep("_n",all_pop_all_MAF_table_reshaped$variable),]$cat <- "novel"
 all_pop_all_MAF_table_reshaped[grep("_s",all_pop_all_MAF_table_reshaped$variable),]$cat <- "shared"
 all_pop_all_MAF_table_reshaped[grep("_p",all_pop_all_MAF_table_reshaped$variable),]$cat <- "private"
+
+all_pop_MAF_count_rel_reshaped$cat <- "total"
+all_pop_MAF_count_rel_reshaped[grep("_n",all_pop_MAF_count_rel_reshaped$variable),]$cat <- "Novel"
+all_pop_MAF_count_rel_reshaped[grep("_s",all_pop_MAF_count_rel_reshaped$variable),]$cat <- "Shared"
+all_pop_MAF_count_rel_reshaped[grep("_n",all_pop_MAF_count_rel_reshaped$variable),]$cat <- "Private"
+
+all_pop_MAF_count_rel_reshaped$pop <- "all"
+all_pop_MAF_count_rel_reshaped[grep("CEU",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "CEU"
+all_pop_MAF_count_rel_reshaped[grep("TSI",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "TSI"
+all_pop_MAF_count_rel_reshaped[grep("VBI",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "VBI"
+all_pop_MAF_count_rel_reshaped[grep("CARL",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "CARL"
+all_pop_MAF_count_rel_reshaped[grep("Erto",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "FVG-E"
+all_pop_MAF_count_rel_reshaped[grep("Illegio",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "FVG-I"
+all_pop_MAF_count_rel_reshaped[grep("Resia",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "FVG-R"
+all_pop_MAF_count_rel_reshaped[grep("Sauris",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "FVG-S"
+all_pop_MAF_count_rel_reshaped$pop <- factor(all_pop_MAF_count_rel_reshaped$pop, levels = pops)
+
+all_pop_MAF_novel_shared_table_reshaped$cat <- "total"
+all_pop_MAF_novel_shared_table_reshaped[grep("_n",all_pop_MAF_novel_shared_table_reshaped$variable),]$cat <- "novel"
+all_pop_MAF_novel_shared_table_reshaped[grep("_s",all_pop_MAF_novel_shared_table_reshaped$variable),]$cat <- "Shared"
+all_pop_MAF_novel_shared_table_reshaped[grep("_n",all_pop_MAF_novel_shared_table_reshaped$variable),]$cat <- "Private"
+
+all_pop_MAF_novel_shared_table_reshaped$pop <- "all"
+all_pop_MAF_novel_shared_table_reshaped[grep("CEU",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "CEU"
+all_pop_MAF_novel_shared_table_reshaped[grep("TSI",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "TSI"
+all_pop_MAF_novel_shared_table_reshaped[grep("VBI",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "VBI"
+all_pop_MAF_novel_shared_table_reshaped[grep("CARL",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "CARL"
+all_pop_MAF_novel_shared_table_reshaped[grep("Erto",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "FVG-E"
+all_pop_MAF_novel_shared_table_reshaped[grep("Illegio",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "FVG-I"
+all_pop_MAF_novel_shared_table_reshaped[grep("Resia",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "FVG-R"
+all_pop_MAF_novel_shared_table_reshaped[grep("Sauris",all_pop_MAF_novel_shared_table_reshaped$variable),]$pop <- "FVG-S"
+all_pop_MAF_novel_shared_table_reshaped$pop <- factor(all_pop_MAF_novel_shared_table_reshaped$pop, levels = pops)
 
 all_pop_all_MAF_table_reshaped_1 <- all_pop_all_MAF_table_reshaped[which(all_pop_all_MAF_table_reshaped$breaks <= 0.1) ,]
 all_pop_all_MAF_table_reshaped_4 <- all_pop_all_MAF_table_reshaped[which(all_pop_all_MAF_table_reshaped$breaks >= 0.45) ,]
 all_pop_all_MAF_table_reshaped_14 <- rbind(all_pop_all_MAF_table_reshaped_1,all_pop_all_MAF_table_reshaped_4) 
 all_pop_all_MAF_table_reshaped_2 <- all_pop_all_MAF_table_reshaped[which(all_pop_all_MAF_table_reshaped$breaks <= 0.23) ,]
 
+all_pop_MAF_count_rel_reshaped_1 <- all_pop_MAF_count_rel_reshaped[which(all_pop_MAF_count_rel_reshaped$breaks <= 0.24) ,]
+all_pop_MAF_count_rel_reshaped_4 <- all_pop_MAF_count_rel_reshaped[which(all_pop_MAF_count_rel_reshaped$breaks >= 0.45) ,]
+all_pop_MAF_count_rel_reshaped_14 <- rbind(all_pop_MAF_count_rel_reshaped_1,all_pop_MAF_count_rel_reshaped_4) 
+all_pop_MAF_count_rel_reshaped_2 <- all_pop_MAF_count_rel_reshaped[which(all_pop_MAF_count_rel_reshaped$breaks <= 0.23) ,]
+
+all_pop_MAF_novel_shared_table_reshaped_1 <- all_pop_MAF_novel_shared_table_reshaped[which(all_pop_MAF_novel_shared_table_reshaped$breaks <= 0.24) ,]
+all_pop_MAF_novel_shared_table_reshaped_4 <- all_pop_MAF_novel_shared_table_reshaped[which(all_pop_MAF_novel_shared_table_reshaped$breaks >= 0.45) ,]
+all_pop_MAF_novel_shared_table_reshaped_14 <- rbind(all_pop_MAF_novel_shared_table_reshaped_1,all_pop_MAF_novel_shared_table_reshaped_4) 
+all_pop_MAF_novel_shared_table_reshaped_2 <- all_pop_MAF_novel_shared_table_reshaped[which(all_pop_MAF_novel_shared_table_reshaped$breaks <= 0.23) ,]
+
+
 #plot 
-pl <- ggplot(all_pop_all_MAF_table_reshaped_2)
+# pl <- ggplot(all_pop_all_MAF_table_reshaped_2)
+# pl <- ggplot(all_pop_MAF_count_rel_reshaped)
+# pl <- ggplot(all_pop_MAF_count_rel_reshaped_14)
+# pl <- ggplot(all_pop_MAF_count_rel_reshaped_2)
+# pl <- ggplot(all_pop_MAF_novel_shared_table_reshaped)
+# pl <- ggplot(all_pop_MAF_novel_shared_table_reshaped_14)
+# pl <- ggplot(all_pop_MAF_novel_shared_table_reshaped_2)
+
 pl <- pl + geom_bar(stat="identity",width=0.5, position = position_dodge(width=0.8),colour="black")
-pl <- pl + aes(x = factor(breaks), y = value, fill=variable)
+# pl <- pl + geom_bar(stat="identity",width=0.5,colour="black")
+# pl <- pl + geom_bar(stat="bin",width=0.5, position = position_dodge(width=0.8),colour="black")
+# pl <- pl + aes(x = factor(breaks), y = value, fill=variable)
+pl <- pl + aes(x = factor(breaks), y = value, fill=pop)
 pl <- pl + xlab("MAF")
 pl <- pl + ylab("Proportion of sites")
+# pl <- pl + ylab("Sites count")
 # pl <- pl + guides(shape = guide_legend(override.aes = list(colour = "pink")))
-pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
+# pl <- pl + scale_fill_manual("Cohorts", values=all_cols)
+pl <- pl + scale_fill_manual("", values=all_cols)
 # pl <- pl + scale_shape_manual(values=c(11,11))
 # pl <- pl + ggtitle(main)
+pl <- pl + facet_wrap( ~ cat, ncol=1)
 pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
 pl <- pl + theme_bw()
 
+pl <- pl + theme(strip.text.x = element_text(size = 20))
 pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
@@ -502,12 +608,52 @@ pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = elem
 # jpeg(paste(base_folder,"/",chr,"_point_dens.jpg",sep=""),width=1800, height=800)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150310.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_stacked.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_14.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels_2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_20150525.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_14_20150525.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150525.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_20150525_freq.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_14_20150525_freq.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# png(paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150525_freq.png",sep=""),width=1400, height=500,res=300)
+# png(paste(base_folder,"/1_all_pop_MAF_ggplot_14_20150525_freq.png",sep=""),width=1400, height=500,res=300)
+# png(paste(base_folder,"/1_all_pop_MAF_ggplot_20150525_freq.png",sep=""),width=1400, height=500,res=300)
+# png(paste(base_folder,"/1_all_pop_MAF_ggplot_20150525.png",sep=""),width=1400, height=500,res=300)
+# png(paste(base_folder,"/1_all_pop_MAF_ggplot_14_20150525.png",sep=""),width=1400, height=500,res=300)
+png(paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150525.png",sep=""),width=1400, height=500,res=300)
+print(pl)
+dev.off()
+
+ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150525_freq.jpeg",sep=""),width=12, height=7,units="px",dpi=300,plot=pl)
+
+
+maf_sets_1 <- c("all_pop_MAF_count_rel_reshaped","all_pop_MAF_count_rel_reshaped_14","all_pop_MAF_count_rel_reshaped_2")
+maf_sets_2 <- c("all_pop_MAF_novel_shared_table_reshaped","all_pop_MAF_novel_shared_table_reshaped_14","all_pop_MAF_novel_shared_table_reshaped_2")
+# for(set in maf_sets_1){
+for(set in maf_sets_2){
+  current_set <- get(set)
+  pl <- ggplot(current_set)
+
+  pl <- pl + geom_bar(stat="identity",width=0.5, position = position_dodge(width=0.8),colour="black")
+  pl <- pl + aes(x = factor(breaks), y = value, fill=pop)
+  pl <- pl + xlab("MAF")
+  pl <- pl + ylab("Proportion of sites (%)")
+  # pl <- pl + ylab("Site count")
+  pl <- pl + scale_fill_manual("", values=all_cols)
+  pl <- pl + facet_wrap( ~ cat, ncol=1)
+  pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
+  pl <- pl + theme_bw()
+
+  pl <- pl + theme(strip.text.x = element_text(size = 20))
+  pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+  pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+  pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+  pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+  
+  png(paste(base_folder,"/1_",set,"_20150525.png",sep=""),width=1400, height=500)
+  print(pl)
+  dev.off()
+  # ggsave(filename=paste(base_folder,"/1_",set,"_20150525.jpeg",sep=""),width=12, height=7,units="px",dpi=300,plot=pl)
+}
+
 
 
 
