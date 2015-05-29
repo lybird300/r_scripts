@@ -264,3 +264,219 @@ jpeg(paste(base_folder,"PLOTS/1_all_pop_DAF_sp_no_MAC1.jpg",sep=""),width=1800, 
       legend("top",pch =c(rep(19,length(all_cols[,1]))),col=all_cols[c(1,2,3,5,6,7),1],legend=all_cols[c(1,2,3,5,6,7),2], ncol=6)
   dev.off()
 
+
+
+########################################################################
+#PLOT 1A: same as plot 1 but based on DAF: for the DAF categories, we plot the maf spectrum
+#upload data for each population:
+# chr <- "22"
+# chr <- "12"
+# pop <- "Resia"
+# conseq <- conseqs[1]
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+conseqs <- c("condel.deleterious","condel.neutral","miss","neut","polyphen.benign","polyphen.possibly.damaging","polyphen.probably.damaging","sift.deleterious","sift.tolerated","syn")
+# in_folder <- paste(getwd(),conseq,sep="/")
+in_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/INPUT_FILES/FIVE_POPS/WG"
+
+#the order of all pops is due to the merge order
+# pops <- c("Erto","Illegio","Resia","Sauris","CEU","TSI","VBI","FVG","CARL")
+pops <- c("Erto","Illegio","Resia","Sauris","CEU","TSI","VBI","CARL")
+#wrapped in this for-loop, I'll write a table for each chr, so we can easily import the thing to plot, after...
+all_pop_MAF <- NULL
+for (pop in pops) {
+  print(pop)
+  all_chr_MAF <- NULL
+  for (chr in 1:22) {
+  # for (chr in 20:22) {
+  print(chr)
+  base_folder <- paste(in_folder,"/CHR",chr,sep="")
+
+    # pop_table_file <- paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/TABLES/",pop,".chr",chr,".tab",sep="")
+    pop_table_file <- paste(base_folder,"/",pop,".chr",chr,".tab.gz",sep="")
+    # for files with not mac=1
+    # pop_table_file <- paste(pop,".chr",chr,".not_fixed.not_MAC1.tab.gz",sep="")
+
+    pop_table <- read.table(pop_table_file,header=F,skip=1,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
+    # pop_table <- read.table(pop_table_file,header=F,skip=1,nrows=100000,stringsAsFactors=F, comment.char="",colClasses=c(rep("integer",3),rep("character",3),"NULL",rep("integer",4),rep("numeric",2)))
+    colnames(pop_table) <- c("CHROM","POZ","POS","ID","REF","ALT","REC","ALC","DAC","MAC","DAF","MAF")
+    pop_table$DAF <- as.numeric(as.character(pop_table$DAF))
+
+    #remove nas
+    #we want to keep the NA's because those are the novel variants!
+    # pop_table <- pop_table[which(!is.na(pop_table$DAF)),]
+    
+    #remove fixed variants (the ones with DAF == 0 or == 1) ---> those are also the ones with MAF 0, basically!
+    pop_table <- pop_table[which(pop_table$DAF != 0),]
+    pop_table <- pop_table[which(pop_table$DAF != 1),]
+
+    #remove MAC = 1
+    # pop_table <- pop_table[which(pop_table$MAC > 1),]
+
+    # current_hist <- hist(pop_table$MAF,plot=F,breaks=20)
+
+    # #use relative frequency sites per bin count/total variants number
+    # current_pop_MAF <- as.data.frame(cbind(breaks=current_hist$breaks[2:length(current_hist$breaks)],counts=current_hist$counts,pop=rep(pop,length(current_hist$counts)),rel_count=(current_hist$counts/length(pop_table$POS)),chr_length=(length(pop_table$POS))))
+    
+    all_chr_MAF <- rbind(all_chr_MAF,pop_table)
+
+  }
+  all_pop_MAF <- append(all_pop_MAF,list(all_chr_MAF$DAF))
+}
+
+#save the R object so we just need to reload this, eventually
+save(all_pop_MAF,file="all_pop_DAF.RData")
+
+
+pop_col <- col_pop(pops)
+require(plotrix)
+all_pop_hist <- multhist(all_pop_MAF,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+
+all_pop_MAF_table <- as.data.frame(cbind((all_pop_hist[[1]]$mids),t(all_pop_hist[[2]])))
+colnames(all_pop_MAF_table) <- c("breaks",pops)
+
+write.table(all_pop_MAF_table,file=paste("all_pop_DAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+
+
+########################################################################################################
+#PLOT 1B: same as plot 1 but based on DAF: for the consequences categories, we plot the daf spectrum
+#upload data for each population:
+rm(list=ls())
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/maf_bins_splitter.r")
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+
+# pops <- c("CEU","TSI","VBI","FVG","CARL")
+# base_conseq_maf_folder <- '/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/MAF'
+base_conseq_maf_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/DAF/20150519"
+
+# conseq <- system('for i in `ls -d /lustre/scratch113/projects/esgi-vbseq/20140430_purging/enza/listsites/*/`;do echo \"${i%*/}\"| awk \'BEGIN{FS=\"/\"};{print $(NF)}\';done',intern=T)
+# conseq <- c("condel","sift","polyphen")
+conseq <- c("condel.deleterious","condel.neutral","polyphen.benign","polyphen.possibly.damaging","polyphen.probably.damaging","sift.deleterious","sift.tolerated","syn","neut","miss")
+# conseq <- c("syn","miss","condel","sift","polyphen","neut")
+pops <- c("VBI","CARL","Erto","Illegio","Resia","Sauris")
+
+#we need to select different categories
+# categories <- c("shared","private","novel")
+categories <- c("shared","private")
+for (cat in categories){
+  if (cat=="shared"){
+    pops_ingi_class <- c("VBI_s","CARL_s","Erto_s","Illegio_s","Resia_s","Sauris_s")
+  } else if (cat=="private"){
+    pops_ingi_class <- c("VBI_p","CARL_p","Erto_p","Illegio_p","Resia_p","Sauris_p")
+  } else if (cat=="novel"){
+    pops_ingi_class <- c("VBI_n","CARL_n","Erto_n","Illegio_n","Resia_n","Sauris_n")
+  }
+
+  for (con in conseq){
+    current_con_path <- paste(base_conseq_maf_folder,con,sep="/")
+  #read the current file for this population and this chromosome
+  # current_chr_novel <- read.table(paste(base_novel_folder,"/",pop,".",chr,".n.maf",sep=""), sep="\t",header=F)
+    #we assume all files are splitted by chr
+    if (con == "condel"){
+      subcats <- c("deleterious","neutral")
+    } else if (con == "polyphen"){
+      subcats <- c("benign","possibly_damaging","probably_damaging")
+    } else if (con == "sift"){
+      subcats <- c("deleterious","tolerated")
+    } else if (con == "gerp"){
+      # those don't have subcategories
+      subcats <- NULL
+    } else if (con == "neut"){
+     # those don't have subcategories
+      subcats <- NULL
+    } else if (con == "miss"){
+      # those don't have subcategories
+      subcats <- NULL
+    } else if (con == "syn"){
+      # those don't have subcategories
+      subcats <- NULL
+    } else {subcats <- NULL}
+
+    if (!is.null(subcats)){
+
+      for(subcat in subcats){
+        all_pop_current_consec_current_subcat <- NULL
+        for (pop in pops) {
+          current_pop_current_consec_current_subcat <- NULL
+          for (chr in 1:22){
+            current_chr <- try(read.table(paste(current_con_path,"/CHR",chr,"/",pop,"_",cat,"_chr",chr,".merged_frq.tab.gz",sep=""), sep="\t",header=F))
+            if (!inherits(current_chr, 'try-error')){ 
+              print(pop)
+              print(chr)
+              # colnames(current_chr_cat) <- c("CHROM","POZ","POS","TYPE","CEU","TSI","VBI","FVG","CAR")
+              colnames(current_chr) <- c("CHROM","POS","VT","CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+              current_pop_col <- grep(pop,colnames(current_chr))
+              current_chr <- current_chr[which(current_chr[,current_pop_col] != 0),]
+              current_pop_current_consec_current_subcat <-rbind(current_pop_current_consec_current_subcat,current_chr[,c(1,2,3,current_pop_col)])
+            }
+          }
+          
+          all_pop_current_consec_current_subcat <- append(all_pop_current_consec_current_subcat,list(current_pop_current_consec_current_subcat[,4]))
+        }
+        save(all_pop_current_consec_current_subcat,file=paste("all_pop_",con,"_",subcat,"_",cat,".RData"))
+
+        pop_col <- col_pop(pops_ingi_class)
+        require(plotrix)
+
+        # now plot everything together
+        jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",subcat,"_",con,"_",cat,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
+          par(oma=c(3,3,3,3),cex=1.4)
+          multhist(all_pop_current_consec_current_subcat,
+           col=pop_col[pops_ingi_class],
+           # density=all_cols$density*20,
+           freq=FALSE,
+           ylab="Proportion of sites",
+           xlab="DAF",
+           breaks=20,
+           ylim=c(0, 40),
+           main=paste("DAF in all populations for ",con,subcat,"in",cat,"sites"))
+          legend("topright",pch =c(rep(22,length(pop_col))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[pops_ingi_class],col=c(rep('black',length(pops_ingi_class))),legend=names(pop_col), ncol=2,bty="n")
+          # legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
+        dev.off()
+
+      }
+    }else{
+      all_pop_current_consec_current_subcat <- NULL
+      for (pop in pops) {
+        print(con)
+        print(pop)
+
+        current_pop_current_consec_current_subcat <- NULL
+        for (chr in 1:22){
+          print(chr)
+          # current_chr <- read.table(paste(current_con_path,"/",con,".",chr,".list.maf_file",sep=""),header=F)
+          current_chr <- try(read.table(paste(current_con_path,"/CHR",chr,"/",pop,"_",cat,"_chr",chr,".merged_frq.tab.gz",sep=""), sep="\t",header=F))
+          if (!inherits(current_chr, 'try-error')){ 
+            colnames(current_chr) <- c("CHROM","POS","VT","CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
+            current_pop_col <- grep(pop,colnames(current_chr))
+            current_chr <- current_chr[which(current_chr[,current_pop_col] != 0),]
+            current_pop_current_consec_current_subcat <-rbind(current_pop_current_consec_current_subcat,current_chr[,c(1,2,3,current_pop_col)])
+          }
+        }
+        # current_pop_col <- grep(pop,colnames(current_pop_current_consec_current_subcat)) #this is always the fourth column
+        all_pop_current_consec_current_subcat <- append(all_pop_current_consec_current_subcat,list(current_pop_current_consec_current_subcat[,4]))
+      }
+      save(all_pop_current_consec_current_subcat,file=paste0("all_pop_",con,"_",cat,".RData"))
+      pop_col <- col_pop(pops_ingi_class)
+      require(plotrix)
+
+      # now plot everything together
+      jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",con,"_",cat,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
+        par(oma=c(3,3,3,3),cex=1.4)
+        multhist(all_pop_current_consec_current_subcat,
+         col=pop_col[pops_ingi_class],
+         # density=all_cols$density*20,
+         freq=FALSE,
+         ylab="Proportion of sites",
+         xlab="DAF",
+         breaks=20,
+         ylim=c(0, 40),
+         main=paste("DAF in all populations for",con,"in", cat,"sites",sep=" "))
+        legend("topright",pch =c(rep(22,length(pop_col))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[pops_ingi_class],col=c(rep('black',length(pops_ingi_class))),legend=names(pop_col), ncol=2,bty="n")
+        # legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
+      dev.off()
+    }
+  }
+}
