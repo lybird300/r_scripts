@@ -70,6 +70,7 @@ colnames(all_pop_MAF_table) <- c("breaks",pops)
 
 write.table(all_pop_MAF_table,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 write.table(all_pop_MAF_count_rel,file=paste("all_pop_MAF_count.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+
   
 ####################ONLY FOR PLOTTING POURPOSE!!!!#################
 require(plotrix)
@@ -272,7 +273,7 @@ all_pop_MAF_count_rel <- as.data.frame(all_pop_MAF_count_rel)
 colnames(all_pop_MAF_count_rel) <- all_pops
 #add a column for breaks
 # all_pop_MAF_count_rel$breaks <- CEU_maf_hist$breaks[2:length(CEU_maf_hist$breaks)]
-all_pop_MAF_count_rel$breaks <- CEU_n_maf_hist$breaks[2:length(CEU_n_maf_hist$breaks)]
+all_pop_MAF_count_rel$breaks <- CEU_n_maf_hist$mids[2:length(CEU_n_maf_hist$mids)]
 
 save(all_pop_MAF_count_rel,file="all_pop_MAF_count_rel.RData")
 
@@ -281,11 +282,12 @@ save(all_pop_MAF_count_rel,file="all_pop_MAF_count_rel.RData")
 #######################################################################################################
 all_ingi_MAF_not_all <- NULL
 #we need to add also the column with all - the sum of categories, for the ingi pops
-for(inpop in pops_ingi){
+for(inpop in all_pops){
   current_pop_col <- grep(inpop,colnames(all_pop_MAF_count_rel))
-  current_pop_not_all <- all_pop_MAF_count_rel[current_pop_col[1]] - apply(all_pop_MAF_count_rel[current_pop_col[2:length(current_pop_col)]],1,sum)
+  current_pop_not_all <- all_pop_MAF_count_rel[current_pop_col[1]] - apply(all_pop_MAF_count_rel[current_pop_col[1:length(current_pop_col)]],1,sum)
   all_ingi_MAF_not_all <- c(all_ingi_MAF_not_all,current_pop_not_all)
 }
+
 all_ingi_MAF_not_all <- as.data.frame(all_ingi_MAF_not_all)
 colnames(all_ingi_MAF_not_all) <- paste(colnames(all_ingi_MAF_not_all),"no_all",sep="_")
 
@@ -295,22 +297,28 @@ all_pop_MAF_count_rel <- cbind(all_pop_MAF_count_rel,all_ingi_MAF_not_all)
 #now create a relatove freq set
 all_pop_MAF_count_rel_rf <- NULL
 #we need to add also the column with all - the sum of categories, for the ingi pops
-for(inpop in pops_ingi){
+for(inpop in all_pops){
   current_pop_col_rf <- grep(inpop,colnames(all_pop_MAF_count_rel))
-  current_pop_not_all_rf <- ((all_pop_MAF_count_rel[current_pop_col_rf[2:length(current_pop_col_rf)]])/sum(all_pop_MAF_count_rel[current_pop_col_rf[1]]))*100
+  # current_pop_not_all_rf <- ((all_pop_MAF_count_rel[current_pop_col_rf[current_pop_col_rf]])/sum(all_pop_MAF_count_rel[current_pop_col_rf]))*100
+  current_pop_not_all_rf <- ((all_pop_MAF_count_rel[current_pop_col_rf])/sum(all_pop_MAF_count_rel[current_pop_col_rf]))*100
   all_pop_MAF_count_rel_rf <- c(all_pop_MAF_count_rel_rf,current_pop_not_all_rf)
 }
 all_pop_MAF_count_rel_rf <- as.data.frame(all_pop_MAF_count_rel_rf)
+all_pop_MAF_count_rel_rf$breaks <- CEU_n_maf_hist$mids[1:length(CEU_n_maf_hist$mids)]
 
+
+save(all_pop_MAF_count_rel_rf,file="all_pop_MAF_count_rel_rf.RData")
+write.table(all_pop_MAF_count_rel_rf,file=paste("all_pop_MAF_rel_freq.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 #add CEU and TSI to this
-all_pop_MAF_count_rel_rf <- cbind(all_pop_MAF_count_rel_rf,CEU=(all_pop_MAF_count_rel$CEU/sum(all_pop_MAF_count_rel$CEU))*100,TSI=(all_pop_MAF_count_rel$TSI/sum(all_pop_MAF_count_rel$TSI))*100)
+# all_pop_MAF_count_rel_rf <- cbind(all_pop_MAF_count_rel_rf,CEU=(all_pop_MAF_count_rel$CEU/sum(all_pop_MAF_count_rel$CEU))*100,TSI=(all_pop_MAF_count_rel$TSI/sum(all_pop_MAF_count_rel$TSI))*100)
 
-all_pop_MAF_count_rel_rf <- as.data.frame(all_pop_MAF_count_rel_rf)
+# all_pop_MAF_count_rel_rf <- as.data.frame(all_pop_MAF_count_rel_rf)
 
-barplot1 <- as.matrix(t(all_pop_MAF_count_rel_rf[,c(13,14,3,7,11,2,6,10,1,5,9)]))
+# barplot1 <- as.matrix(t(all_pop_MAF_count_rel_rf[,c(13,14,3,7,11,2,6,10,1,5,9)]))
 
-all_cols <- col_pop(rownames(barplot1))
-all_pop_no_INGI_MAF <- list(all_pop_all_MAF[[1]],all_pop_all_MAF[[2]],all_pop_all_MAF[[6]],all_pop_all_MAF[[7]],all_pop_all_MAF[[8]],all_pop_all_MAF[[9]],all_pop_all_MAF[[10]],all_pop_all_MAF[[11]],all_pop_all_MAF[[12]],all_pop_all_MAF[[13]],all_pop_all_MAF[[14]])
+# all_cols <- col_pop(rownames(barplot1))
+# all_pop_no_INGI_MAF <- list(all_pop_all_MAF[[1]],all_pop_all_MAF[[2]],all_pop_all_MAF[[6]],all_pop_all_MAF[[7]],all_pop_all_MAF[[8]],all_pop_all_MAF[[9]],all_pop_all_MAF[[10]],all_pop_all_MAF[[11]],all_pop_all_MAF[[12]],all_pop_all_MAF[[13]],all_pop_all_MAF[[14]])
+
 
 # all_cols <- col_pop(all_pops)
 
@@ -468,7 +476,7 @@ load("all_pop_MAF_count_rel.RData")
 all_pop_MAF_novel
 all_pop_MAF_shared
 all_pop_MAF_count_rel
-
+all_pop_MAF_count_rel_rf
 #all
 all_pop_hist <- multhist(all_pop_MAF,
    freq=FALSE,
@@ -503,6 +511,7 @@ all_cols <-col_pop(pops_ingi)
 all_pop_MAF_table_reshaped <- melt(all_pop_MAF_table, id='breaks')
 
 all_pop_MAF_count_rel_reshaped <- melt(all_pop_MAF_count_rel, id='breaks')
+all_pop_MAF_count_rel_rf_reshaped <- melt(all_pop_MAF_count_rel_rf, id='breaks')
 
 all_pop_novel_MAF_table_reshaped <-melt(all_pop_novel_MAF_table,id='breaks')
 all_pop_MAF_shared_table_reshaped <-melt(all_pop_MAF_shared_table,id='breaks')
@@ -513,17 +522,20 @@ all_pop_MAF_private_shared_table_reshaped <- melt(all_pop_MAF_private_shared_tab
 all_pop_novel_MAF_table_reshaped <- melt(all_pop_novel_MAF_table, id='breaks')
 
 #merge data together
-all_pop_all_MAF_table_reshaped <- rbind(all_pop_MAF_table_reshaped,all_pop_MAF_private_shared_table_reshaped,all_pop_novel_MAF_table_reshaped)
-all_pop_all_MAF_table_reshaped$variable <- as.character(all_pop_all_MAF_table_reshaped$variable)
-all_pop_all_MAF_table_reshaped$variable <- factor(all_pop_all_MAF_table_reshaped$variable, levels = all_pops)
+# all_pop_all_MAF_table_reshaped <- rbind(all_pop_MAF_table_reshaped,all_pop_MAF_private_shared_table_reshaped,all_pop_novel_MAF_table_reshaped)
+# all_pop_all_MAF_table_reshaped$variable <- as.character(all_pop_all_MAF_table_reshaped$variable)
+# all_pop_all_MAF_table_reshaped$variable <- factor(all_pop_all_MAF_table_reshaped$variable, levels = all_pops)
 
 all_pop_MAF_count_rel_reshaped$variable <- factor(all_pop_MAF_count_rel_reshaped$variable, levels = all_pops)
+
+all_pop_MAF_count_rel_rf_reshaped$variable <- factor(all_pop_MAF_count_rel_rf_reshaped$variable, levels = all_pops)
+
 all_pop_MAF_novel_shared_table_reshaped$variable <- factor(all_pop_MAF_novel_shared_table_reshaped$variable, levels = all_pops)
 
-all_pop_all_MAF_table_reshaped$cat <- "total"
-all_pop_all_MAF_table_reshaped[grep("_n",all_pop_all_MAF_table_reshaped$variable),]$cat <- "novel"
-all_pop_all_MAF_table_reshaped[grep("_s",all_pop_all_MAF_table_reshaped$variable),]$cat <- "shared"
-all_pop_all_MAF_table_reshaped[grep("_p",all_pop_all_MAF_table_reshaped$variable),]$cat <- "private"
+# all_pop_all_MAF_table_reshaped$cat <- "total"
+# all_pop_all_MAF_table_reshaped[grep("_n",all_pop_all_MAF_table_reshaped$variable),]$cat <- "novel"
+# all_pop_all_MAF_table_reshaped[grep("_s",all_pop_all_MAF_table_reshaped$variable),]$cat <- "shared"
+# all_pop_all_MAF_table_reshaped[grep("_p",all_pop_all_MAF_table_reshaped$variable),]$cat <- "private"
 
 all_pop_MAF_count_rel_reshaped$cat <- "total"
 all_pop_MAF_count_rel_reshaped[grep("_n",all_pop_MAF_count_rel_reshaped$variable),]$cat <- "Novel"
@@ -540,6 +552,27 @@ all_pop_MAF_count_rel_reshaped[grep("Illegio",all_pop_MAF_count_rel_reshaped$var
 all_pop_MAF_count_rel_reshaped[grep("Resia",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "FVG-R"
 all_pop_MAF_count_rel_reshaped[grep("Sauris",all_pop_MAF_count_rel_reshaped$variable),]$pop <- "FVG-S"
 all_pop_MAF_count_rel_reshaped$pop <- factor(all_pop_MAF_count_rel_reshaped$pop, levels = pops)
+
+
+all_pop_MAF_count_rel_rf_reshaped$cat <- "total"
+all_pop_MAF_count_rel_rf_reshaped[grep("_n",all_pop_MAF_count_rel_rf_reshaped$variable),]$cat <- "Novel"
+all_pop_MAF_count_rel_rf_reshaped[grep("_s",all_pop_MAF_count_rel_rf_reshaped$variable),]$cat <- "Shared"
+all_pop_MAF_count_rel_rf_reshaped[grep("_n",all_pop_MAF_count_rel_rf_reshaped$variable),]$cat <- "Private"
+
+all_pop_MAF_count_rel_rf_reshaped$pop <- "all"
+all_pop_MAF_count_rel_rf_reshaped[grep("CEU",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "CEU"
+all_pop_MAF_count_rel_rf_reshaped[grep("TSI",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "TSI"
+all_pop_MAF_count_rel_rf_reshaped[grep("VBI",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "VBI"
+all_pop_MAF_count_rel_rf_reshaped[grep("CARL",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "CARL"
+all_pop_MAF_count_rel_rf_reshaped[grep("Erto",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "FVG-E"
+all_pop_MAF_count_rel_rf_reshaped[grep("Illegio",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "FVG-I"
+all_pop_MAF_count_rel_rf_reshaped[grep("Resia",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "FVG-R"
+all_pop_MAF_count_rel_rf_reshaped[grep("Sauris",all_pop_MAF_count_rel_rf_reshaped$variable),]$pop <- "FVG-S"
+all_pop_MAF_count_rel_rf_reshaped$pop <- factor(all_pop_MAF_count_rel_rf_reshaped$pop, levels = pops)
+
+# all_pop_MAF_novel_shared_table_reshaped <- cbind(all_pop_MAF_count_rel_rf,CEU=(all_pop_MAF_count_rel$CEU/sum(all_pop_MAF_count_rel$CEU))*100,TSI=(all_pop_MAF_count_rel$TSI/sum(all_pop_MAF_count_rel$TSI))*100)
+
+
 
 all_pop_MAF_novel_shared_table_reshaped$cat <- "total"
 all_pop_MAF_novel_shared_table_reshaped[grep("_n",all_pop_MAF_novel_shared_table_reshaped$variable),]$cat <- "novel"
@@ -566,6 +599,12 @@ all_pop_MAF_count_rel_reshaped_1 <- all_pop_MAF_count_rel_reshaped[which(all_pop
 all_pop_MAF_count_rel_reshaped_4 <- all_pop_MAF_count_rel_reshaped[which(all_pop_MAF_count_rel_reshaped$breaks >= 0.45) ,]
 all_pop_MAF_count_rel_reshaped_14 <- rbind(all_pop_MAF_count_rel_reshaped_1,all_pop_MAF_count_rel_reshaped_4) 
 all_pop_MAF_count_rel_reshaped_2 <- all_pop_MAF_count_rel_reshaped[which(all_pop_MAF_count_rel_reshaped$breaks <= 0.23) ,]
+
+
+all_pop_MAF_count_rel_rf_reshaped_1 <- all_pop_MAF_count_rel_rf_reshaped[which(all_pop_MAF_count_rel_rf_reshaped$breaks <= 0.24) ,]
+all_pop_MAF_count_rel_rf_reshaped_4 <- all_pop_MAF_count_rel_rf_reshaped[which(all_pop_MAF_count_rel_rf_reshaped$breaks >= 0.45) ,]
+all_pop_MAF_count_rel_rf_reshaped_14 <- rbind(all_pop_MAF_count_rel_rf_reshaped_1,all_pop_MAF_count_rel_rf_reshaped_4) 
+all_pop_MAF_count_rel_rf_reshaped_2 <- all_pop_MAF_count_rel_rf_reshaped[which(all_pop_MAF_count_rel_rf_reshaped$breaks <= 0.23) ,]
 
 all_pop_MAF_novel_shared_table_reshaped_1 <- all_pop_MAF_novel_shared_table_reshaped[which(all_pop_MAF_novel_shared_table_reshaped$breaks <= 0.24) ,]
 all_pop_MAF_novel_shared_table_reshaped_4 <- all_pop_MAF_novel_shared_table_reshaped[which(all_pop_MAF_novel_shared_table_reshaped$breaks >= 0.45) ,]
@@ -626,17 +665,17 @@ ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150525_freq.jpeg",s
 
 
 maf_sets_1 <- c("all_pop_MAF_count_rel_reshaped","all_pop_MAF_count_rel_reshaped_14","all_pop_MAF_count_rel_reshaped_2")
-maf_sets_2 <- c("all_pop_MAF_novel_shared_table_reshaped","all_pop_MAF_novel_shared_table_reshaped_14","all_pop_MAF_novel_shared_table_reshaped_2")
-# for(set in maf_sets_1){
-for(set in maf_sets_2){
+maf_sets_2 <- c("all_pop_MAF_count_rel_rf_reshaped","all_pop_MAF_count_rel_rf_reshaped_14","all_pop_MAF_count_rel_rf_reshaped_2")
+for(set in maf_sets_1){
+# for(set in maf_sets_2){
   current_set <- get(set)
   pl <- ggplot(current_set)
 
   pl <- pl + geom_bar(stat="identity",width=0.5, position = position_dodge(width=0.8),colour="black")
   pl <- pl + aes(x = factor(breaks), y = value, fill=pop)
   pl <- pl + xlab("MAF")
-  pl <- pl + ylab("Proportion of sites (%)")
-  # pl <- pl + ylab("Site count")
+  # pl <- pl + ylab("Proportion of sites (%)")
+  pl <- pl + ylab("Site count")
   pl <- pl + scale_fill_manual("", values=all_cols)
   pl <- pl + facet_wrap( ~ cat, ncol=1)
   pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
@@ -648,7 +687,7 @@ for(set in maf_sets_2){
   pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
   pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
   
-  png(paste(base_folder,"/1_",set,"_20150525.png",sep=""),width=1400, height=500)
+  png(paste(base_folder,"/1_",set,"_20150527.png",sep=""),width=1400, height=500)
   print(pl)
   dev.off()
   # ggsave(filename=paste(base_folder,"/1_",set,"_20150525.jpeg",sep=""),width=12, height=7,units="px",dpi=300,plot=pl)

@@ -839,22 +839,63 @@ all_gen_ped_nodups$cohort <- as.factor(all_gen_ped_nodups$cohort)
 all_gen_ped_nodups$KIN.gen2 <- all_gen_ped_nodups$KIN.gen
 all_gen_ped_nodups[all_gen_ped_nodups$KIN.gen <= 0.0441,"KIN.gen2"] <- 0
 
+cohorts <- unique(all_gen_ped$cohort)
+
+for (cohort in cohorts){
+	current_pop_summary_all <- summary(all_gen_ped[which(all_gen_ped$cohort == cohort & all_gen_ped$rel == "All") ,c(4,7,8)])
+	current_pop_summary_unrel <- summary(all_gen_ped[which(all_gen_ped$cohort == cohort & all_gen_ped$rel == "Unrelated") ,c(4,7,8)])
+	current_pop_all <- all_gen_ped[which(all_gen_ped$cohort == cohort & all_gen_ped$rel == "All") ,c(2,3,7,9)]
+	current_pop_unrel <- all_gen_ped[which(all_gen_ped$cohort == cohort & all_gen_ped$rel == "Unrelated") ,c(2,3,7,9)]
+
+	print(cohort)
+	print(current_pop_summary_all)
+	print(current_pop_summary_unrel)
+
+	write.table(current_pop_all,file=paste(cohort,"_kin_ped_all.txt",sep=""),quote=F,sep="\t",row.names=F,col.names=T)
+	write.table(current_pop_unrel,file=paste(cohort,"_kin_ped_unrel.txt",sep=""),quote=F,sep="\t",row.names=F,col.names=T)
+
+	assign(paste(cohort,"_kin_summary_all",sep=""),current_pop_summary)
+	assign(paste(cohort,"_kin_summary_unrel",sep=""),current_pop_summary_unrel)
+
+}
+
+VBI_kin_summary_unrel
+FVG-E_kin_summary_unrel
+FVG-I_kin_summary_unrel
+FVG-E_kin_summary_unrel
+FVG-E_kin_summary_unrel
+VBI_kin_summary_unrel
+########################################################################################################
+len <- length(unique(all_gen_ped_nodups$cohort))
+pop_text <- c("VBI","CARL","FVG-E","FVG-I","FVG-R","FVG-S")
+vars <- data.frame(pop_text, c(0.5021468,0.8717032,0.6517779,0.775517,0.5116486,0.5232983),c("<2.2e-16","<2.2e-16","<2.2e-16","<2.2e-16","<2.2e-16","<2.2e-16"))
+colnames(vars) <- c("cohort", "r","p_val")
+vars$cohort <- factor(vars$cohort, levels = pop_text)
+
+dat <- data.frame(x = rep(15, len), y = rep(5, len), vars)
+dat$label_r <- paste("r=",dat$r,sep="")
+dat$label_p <- paste("P-val=",dat$p_val,sep="")
+
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 pops <- c("CEU","TSI","VBI","FVG","CARL","Erto","Illegio","Resia","Sauris")
 pops_c <- c("CEU","TSI","CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S")
 pop_colors <- col_pop(pops_c)
 require(ggplot2)
 require(reshape2)
+all_gen_ped_nodups$cohort <- factor(all_gen_ped_nodups$cohort, levels = pops_c)
 
 pl <- ggplot(all_gen_ped_nodups)
 pl <- pl + geom_point()
-pl <- pl + aes(x = KIN.gen2, y = KIN.ped,colour=cohort,shape=rel)
+# pl <- pl + aes(x = KIN.gen2, y = KIN.ped,colour=cohort,shape=rel)
+pl <- pl + aes(x = KIN.gen, y = KIN.ped,colour=cohort,shape=rel)
 pl <- pl + scale_shape(solid = FALSE)
-pl <- pl + scale_colour_manual("Cohorts", values=pop_colors[as.character(unique(all_gen_ped_nodups$cohort))])
 pl <- pl + xlab("Genetic Kinship")
 pl <- pl + ylab("Pedigree Kinship")
 pl <- pl + facet_wrap(~cohort, ncol=2)
+pl <- pl + geom_text(aes(x=-0.08, y=0.2, label=label_r),data=dat,size=4,inherit.aes=FALSE) 
+pl <- pl + geom_text(aes(x=-0.08, y=0.16, label=label_p),data=dat,size=4,inherit.aes=FALSE) 
 # pl <- pl + ggtitle(main)
+pl <- pl + scale_colour_manual("Cohorts", values=pop_colors[as.character(unique(all_gen_ped_nodups$cohort))])
 pl <- pl + theme_bw()
 pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
@@ -863,4 +904,5 @@ pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
    
 base_plot <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PURGE_INBREEDING/KINSHIP/05162015/PLOTS"
 # ggsave(filename=paste(base_plot,"/kinship_corr_all.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-ggsave(filename=paste(base_plot,"/kinship_corr_all_gen2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_plot,"/kinship_corr_all_gen2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_plot,"/kinship_corr_all_gen2_ann.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)

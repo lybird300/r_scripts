@@ -241,6 +241,24 @@ summary_Erto <- summary(Erto_tot_roh$ROH_tot)
 summary_Illegio <- summary(Illegio_tot_roh$ROH_tot)
 summary_Resia <- summary(Resia_tot_roh$ROH_tot)
 
+CEU_tot_roh$pop <- "CEU"
+TSI_tot_roh$pop <- "TSI"
+VBI_tot_roh$pop <- "VBI"
+CARL_tot_roh$pop <- "CARL"
+Sauris_tot_roh$pop <- "FVG-S"
+Erto_tot_roh$pop <- "FVG-E"
+Illegio_tot_roh$pop <- "FVG-I"
+Resia_tot_roh$pop <- "FVG-R"
+
+write.table(CEU_tot_roh,file=paste("CEU_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(TSI_tot_roh,file=paste("TSI_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(VBI_tot_roh,file=paste("VBI_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(CARL_tot_roh,file=paste("CARL_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Sauris_tot_roh,file=paste("Sauris_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Erto_tot_roh,file=paste("Erto_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Illegio_tot_roh,file=paste("Illegio_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Resia_tot_roh,file=paste("Resia_tot_roh.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+
 #W24 (Beagle RefinedIBD, filtered at LOD = 5)
 # CEU: 95% -> 1.335094 
 # TSI: 95% -> 1.018848 
@@ -445,3 +463,28 @@ pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = elem
   
 # ggsave(filename=paste(base_folder,"/test_IBD_2.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
 ggsave(filename=paste(base_folder,"/6_ROH_5POP_lod5_no_FVG.WG.ggplot.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
+
+#############################BOXPLOT 
+pops_c <- c("CEU","TSI","CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S")
+all_tot_roh <- rbind(CEU_tot_roh,TSI_tot_roh,VBI_tot_roh,CARL_tot_roh,Sauris_tot_roh,Erto_tot_roh,Illegio_tot_roh,Resia_tot_roh)
+all_tot_roh$pop <- as.factor(all_tot_roh$pop)
+all_tot_roh$pop <- factor(all_tot_roh$pop, levels = pops_c)
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+pop_colors <- col_pop(pops_c)
+
+pl <- ggplot(all_tot_roh)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = factor(pop), y = ROH_tot, fill=pop)
+pl <- pl + ggtitle("Total Runs of homozygosity per individual")
+pl <- pl + ylab("Length (Mb)")
+pl <- pl + xlab("")
+# pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + scale_fill_manual("Cohorts", values=pop_colors)
+pl <- pl + theme_bw()
+# pl <- pl + facet_grid(cat~cons, scales="free")
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+ggsave(filename=paste(getwd(),"/figure3cRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+

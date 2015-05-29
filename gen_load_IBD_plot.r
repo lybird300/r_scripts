@@ -202,6 +202,25 @@ summary_Erto_ibd <- summary(Erto_tot_ibd$IBD_tot)
 summary_Illegio_ibd <- summary(Illegio_tot_ibd$IBD_tot)
 summary_Resia_ibd <- summary(Resia_tot_ibd$IBD_tot)
 
+CEU_tot_ibd$pop <- "CEU"
+TSI_tot_ibd$pop <- "TSI"
+VBI_tot_ibd$pop <- "VBI"
+CARL_tot_ibd$pop <- "CARL"
+Sauris_tot_ibd$pop <- "FVG-S"
+Erto_tot_ibd$pop <- "FVG-E"
+Illegio_tot_ibd$pop <- "FVG-I"
+Resia_tot_ibd$pop <- "FVG-R"
+
+write.table(CEU_tot_ibd,file=paste("CEU_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(TSI_tot_ibd,file=paste("TSI_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(VBI_tot_ibd,file=paste("VBI_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(CARL_tot_ibd,file=paste("CARL_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Sauris_tot_ibd,file=paste("Sauris_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Erto_tot_ibd,file=paste("Erto_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Illegio_tot_ibd,file=paste("Illegio_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+write.table(Resia_tot_ibd,file=paste("Resia_tot_ibd.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+
+
 #W24 (Beagle RefinedIBD, filtered at LOD = 5)
 # CEU: 95% -> 1.49898 
 # TSI: 95% -> 1.242603 
@@ -347,4 +366,29 @@ jpeg(paste(base_folder,"PLOTS/7_roh_density.jpg",sep=""),width=800, height=800)
   lines(density(CEU_tot_roh$ROH_tot))
   legend("bottomright",pch =c(rep(19,length(pops))),legend=c("CEU","FVG","TSI","VBI"),col=c("black","red","green","blue"),ncol=4)
 dev.off()
+
+
+#############################BOXPLOT 
+pops_c <- c("CEU","TSI","CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S")
+all_tot_ibd <- rbind(CEU_tot_ibd,TSI_tot_ibd,VBI_tot_ibd,CARL_tot_ibd,Sauris_tot_ibd,Erto_tot_ibd,Illegio_tot_ibd,Resia_tot_ibd)
+all_tot_ibd$pop <- as.factor(all_tot_ibd$pop)
+all_tot_ibd$pop <- factor(all_tot_ibd$pop, levels = pops_c)
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+pop_colors <- col_pop(pops_c)
+
+pl <- ggplot(all_tot_ibd)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = factor(pop), y = IBD_tot, fill=pop)
+pl <- pl + ggtitle("Identical by descent genome in pairs of individuals")
+pl <- pl + ylab("Length (Mb)")
+pl <- pl + xlab("")
+# pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + scale_fill_manual("Cohorts", values=pop_colors)
+pl <- pl + theme_bw()
+# pl <- pl + facet_grid(cat~cons, scales="free")
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+ggsave(filename=paste(getwd(),"/figure3aRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
