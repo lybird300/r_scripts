@@ -826,66 +826,101 @@ ggsave(filename=paste(data_folder,"/8b_shared_private_plus_novel_pop_conseq_carr
 rm(list=ls())
 all_pops <- c("CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S","CEU","TSI")
 all_pops_e <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
-categories <- c("Missense","Synonymous","Neutral")
-categories <- c("Missense")
-categories <- c("Synonymous")
-categories <- c("Neutral")
+# categories <- c("Missense","Synonymous","Neutral")
+categories <- c("Missense","Synonymous")
+# categories <- c("Missense")
+# categories <- c("Synonymous")
+# categories <- c("Neutral")
 # categories <- c("Missense","Synonymous")
-base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/05292015/shared/"
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/05292015/shared/"
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/05302015_ALT/shared/"
 
 #first we need to create the sample file for each pupulation for each category
 all_pop_all_cat <- NULL
+all_pop_all_cat_hom <- NULL
 for (hum_cat in categories){
+  # cat <- "miss"
+  # hum_cat="Missense"
   if(hum_cat=="Neutral"){
      cat <- "neut"
+     base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
+     # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/05302015_ALT/shared/"
   }
   if(hum_cat=="Missense"){
     cat <- "miss"
+    base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
+    # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/05302015_ALT/shared/"
   }
   if(hum_cat=="Synonymous"){
     cat <- "syn"
+    base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
+    # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/06012015_ALT/shared/"
   }
-  # cat <- "syn"
   print(cat)
   for(pop in all_pops_e){
     print(pop)
-    # pop<- "CARL"
+    # pop<- "CEU"
     current_cat_pop_name <- paste(base_folder,"/",cat,"/",pop,"/All_samples_",cat,"_",pop,".tab",sep="")
     current_cat_pop <- read.table(current_cat_pop_name,header=F)
-    colnames(current_cat_pop) <- c("ID","CHR","HOM_DA_COUNT","cohort","shared","cat_shared")
+    colnames(current_cat_pop) <- c("ID","CHR","HOM_DA_COUNT","DAC","cohort","shared","cat_shared","tot_chr")
     
-    sample_current_cat_pop_sum <- by(current_cat_pop$HOM_DA_COUNT,current_cat_pop$ID,sum)
+    sample_current_cat_pop_sum <- by(current_cat_pop$DAC,current_cat_pop$ID,sum)
+    sample_current_cat_pop_sum_hom <- by(current_cat_pop$HOM_DA_COUNT,current_cat_pop$ID,sum)
     
     all_sample_current_cat_pop <- NULL
 
     for( id in 1:dim(sample_current_cat_pop_sum)) {
-      sample_current_cat_pop <- as.data.frame(cbind(ID=names(sample_current_cat_pop_sum[id]),HOM_SUM=sample_current_cat_pop_sum[id]))
+      sample_current_cat_pop <- as.data.frame(cbind(ID=names(sample_current_cat_pop_sum[id]),DAC_SUM=sample_current_cat_pop_sum[id]))
       all_sample_current_cat_pop <- rbind(all_sample_current_cat_pop,sample_current_cat_pop)
     }
 
-    rownames(all_sample_current_cat_pop) <- NULL
-    all_sample_current_cat_pop$HOM_SUM <- as.numeric(as.character(all_sample_current_cat_pop$HOM_SUM))
+    all_sample_current_cat_pop_hom <- NULL
 
-    tot_shared <- sum(current_cat_pop$shared)/46
-    tot_cat_shared <- sum(current_cat_pop$cat_shared)/46
+    for( id in 1:dim(sample_current_cat_pop_sum_hom)) {
+      sample_current_cat_pop_hom <- as.data.frame(cbind(ID=names(sample_current_cat_pop_sum_hom[id]),HOM_SUM=sample_current_cat_pop_sum_hom[id]))
+      all_sample_current_cat_pop_hom <- rbind(all_sample_current_cat_pop_hom,sample_current_cat_pop_hom)
+    }
+
+    rownames(all_sample_current_cat_pop) <- NULL
+    all_sample_current_cat_pop$DAC_SUM <- as.numeric(as.character(all_sample_current_cat_pop$DAC_SUM))
     all_sample_current_cat_pop$category <- hum_cat
-    all_sample_current_cat_pop$HDAC_shared <- all_sample_current_cat_pop$HOM_SUM/tot_shared
-    all_sample_current_cat_pop$HDAC_cat <- all_sample_current_cat_pop$HOM_SUM/tot_cat_shared
+      
+
+    rownames(all_sample_current_cat_pop_hom) <- NULL
+    all_sample_current_cat_pop_hom$HOM_SUM <- as.numeric(as.character(all_sample_current_cat_pop_hom$HOM_SUM))
+    all_sample_current_cat_pop_hom$category <- hum_cat
+
+    # tot_shared <- sum(current_cat_pop$shared)/46
+    # tot_cat_shared <- sum(current_cat_pop$cat_shared)/46
+    # tot_shared <- all_sample_current_cat_pop_hom$tot_chr*2
+    # tot_cat_shared <- all_sample_current_cat_pop_hom$tot_chr*2
+
+    # all_sample_current_cat_pop_hom$HDAC_shared <- all_sample_current_cat_pop_hom$HOM_SUM/tot_shared
+    # all_sample_current_cat_pop_hom$HDAC_cat <- all_sample_current_cat_pop_hom$HOM_SUM/tot_cat_shared
+    current_pop_cat_shared <- sum(current_cat_pop$cat_shared)/46
+    all_sample_current_cat_pop_hom$pop_cat_shared <- current_pop_cat_shared 
+   
     all_sample_current_cat_pop$cohort <- pop
+    all_sample_current_cat_pop_hom$cohort <- pop
     if(pop=="Erto"){
       all_sample_current_cat_pop$cohort <- "FVG-E"
+      all_sample_current_cat_pop_hom$cohort <- "FVG-E"
     }
     if(pop=="Illegio"){
       all_sample_current_cat_pop$cohort <- "FVG-I"
+      all_sample_current_cat_pop_hom$cohort <- "FVG-I"
     }
     if(pop=="Resia"){
       all_sample_current_cat_pop$cohort <- "FVG-R"
+      all_sample_current_cat_pop_hom$cohort <- "FVG-R"
     }
     if(pop=="Sauris"){
       all_sample_current_cat_pop$cohort <- "FVG-S"
+      all_sample_current_cat_pop_hom$cohort <- "FVG-S"
     }
 
     all_pop_all_cat <- rbind(all_pop_all_cat,all_sample_current_cat_pop)
+    all_pop_all_cat_hom <- rbind(all_pop_all_cat_hom,all_sample_current_cat_pop_hom)
 
   }
 }
@@ -894,6 +929,28 @@ all_pop_all_cat$category <-as.factor(all_pop_all_cat$category)
 all_pop_all_cat$category <-factor(all_pop_all_cat$category,categories)
 all_pop_all_cat$cohort <-factor(all_pop_all_cat$cohort,all_pops)
 
+all_pop_all_cat_hom$category <-as.factor(all_pop_all_cat_hom$category)
+all_pop_all_cat_hom$category <-factor(all_pop_all_cat_hom$category,categories)
+all_pop_all_cat_hom$cohort <-factor(all_pop_all_cat_hom$cohort,all_pops)
+
+#calculate the number of variants in all the three categories by populations
+all_variants_pop_cat <- by(all_pop_all_cat_hom$pop_cat_shared,all_pop_all_cat_hom$cohort,sum)
+
+all_pop_all_variants <-  NULL
+for( id in 1:dim(all_variants_pop_cat)) {
+  current_pop_all_variants <- as.data.frame(cbind(ID=names(all_variants_pop_cat[id]),tot_variants=all_variants_pop_cat[id]))
+  all_pop_all_variants <- rbind(all_pop_all_variants,current_pop_all_variants)
+}
+
+rownames(all_pop_all_variants) <- NULL
+all_pop_all_variants$tot_variants <- as.numeric(as.character(all_pop_all_variants$tot_variants))/46
+
+all_pop_all_cat_hom$tot_variants <- 0
+for (cohort in all_pop_all_variants$ID){
+  all_pop_all_cat_hom[all_pop_all_cat_hom$cohort == cohort,]$tot_variants <- all_pop_all_variants[all_pop_all_variants$ID == cohort,]$tot_variants
+}
+
+all_pop_all_cat_hom$HDAC_shared <- all_pop_all_cat_hom$HOM_SUM/all_pop_all_cat_hom$tot_variants
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 require(ggplot2)
 require(reshape2)
@@ -913,7 +970,7 @@ all_cols <-col_pop(all_pops)
 #first plot
 pl <- ggplot(all_pop_all_cat)
 pl <- pl + geom_boxplot()
-pl <- pl + aes(x = cohort, y = HOM_SUM, fill=cohort)
+pl <- pl + aes(x = cohort, y = DAC_SUM, fill=cohort)
 pl <- pl + ylab("Counts")
 pl <- pl + ggtitle("Derived allele counts")
 pl <- pl + xlab("")
@@ -925,10 +982,12 @@ pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
-ggsave(filename=paste(base_folder,"/figure4bRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/figure4bRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/figure4bRev_ALT.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/figure4bRev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 #second plot
-pl <- ggplot(all_pop_all_cat)
+pl <- ggplot(all_pop_all_cat_hom)
 pl <- pl + geom_boxplot()
 pl <- pl + aes(x = cohort, y = HDAC_shared,fill=cohort)
 pl <- pl + ylab("Fraction (HOM_sites per sample/sum of sites shared in population)")
@@ -942,10 +1001,12 @@ pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
-ggsave(filename=paste(base_folder,"/figure4aRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/figure4aRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/figure4aRev_ALT.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/figure4aRev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 #third plot
-pl <- ggplot(all_pop_all_cat)
+pl <- ggplot(all_pop_all_cat_hom)
 pl <- pl + geom_boxplot()
 pl <- pl + aes(x = cohort, y = HDAC_cat,fill=cohort)
 pl <- pl + ylab("Fraction (HOM_sites per sample/sum of sites shared in a category)")
