@@ -13,7 +13,7 @@
 
 split_bins <- function(maf_classes,snp_set,population,col_name,outdir){
 
-  #snp_set <- dataframe of snps. We assume there is a column named MAF
+  #snp_set : dataframe of snps. We assume there is a column named MAF
   #
   column <- which(colnames(snp_set) %in% col_name)
 

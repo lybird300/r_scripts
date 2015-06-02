@@ -951,6 +951,8 @@ for (cohort in all_pop_all_variants$ID){
 }
 
 all_pop_all_cat_hom$HDAC_shared <- all_pop_all_cat_hom$HOM_SUM/all_pop_all_cat_hom$tot_variants
+all_pop_all_cat_hom$HDAC_cat <- all_pop_all_cat_hom$HOM_SUM/all_pop_all_cat_hom$pop_cat_shared
+
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 require(ggplot2)
 require(reshape2)
@@ -1020,6 +1022,7 @@ pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
-ggsave(filename=paste(base_folder,"/figure4cRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/figure4cRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/figure4cRev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 #test for differences 
