@@ -9,12 +9,12 @@ require(ggplot2)
 # define populations and reference panes
 pops <- c("CARL","FVG","INCIPE2","VBI")
 ingi_panels <- c("INGI.shapeit","CARL.shapeit","FVG.shapeit","VBI.shapeit")
-gen_pop_ref_panels <- c("1000Gph1.shapeit","1000GP_Phase3.shapeit","INGI_1000GPh3.shapeit")
+gen_pop_ref_panels <- c("1000Gph1.shapeit","1000GP_Phase3.shapeit","INGI_1000GPh3.shapeit", "uk10k1kg.ref")
 all_panels <- c(ingi_panels,gen_pop_ref_panels)
 #for each population, we upload the interesting columns of the info file:
 base_folder <- "/lustre/scratch113/projects/carl_seq/05272015_MERGED_REF_PANEL/IMPUTED"
 #rsId, position,expected_af, info, type and concordances 
-maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
+# maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
 
 for (pop in pops){
     # pop <- "CARL"
