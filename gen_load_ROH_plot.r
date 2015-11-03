@@ -465,6 +465,8 @@ pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = elem
 ggsave(filename=paste(base_folder,"/6_ROH_5POP_lod5_no_FVG.WG.ggplot.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
 
 #############################BOXPLOT 
+require(ggplot2)
+require(reshape2)
 pops_c <- c("CEU","TSI","CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S")
 all_tot_roh <- rbind(CEU_tot_roh,TSI_tot_roh,VBI_tot_roh,CARL_tot_roh,Sauris_tot_roh,Erto_tot_roh,Illegio_tot_roh,Resia_tot_roh)
 all_tot_roh$pop <- as.factor(all_tot_roh$pop)
@@ -479,12 +481,69 @@ pl <- pl + ggtitle("Total Runs of homozygosity per individual")
 pl <- pl + ylab("Length (Mb)")
 pl <- pl + xlab("")
 # pl <- pl + guides(fill=guide_legend(title="Cohorts"))
-pl <- pl + scale_fill_manual("Cohorts", values=pop_colors)
+pl <- pl + scale_fill_manual("", values=pop_colors)
 pl <- pl + theme_bw()
 # pl <- pl + facet_grid(cat~cons, scales="free")
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.8)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.8)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.8)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.8)), legend.title = element_text(size = rel(1.8)))
+pl <- pl + theme(legend.position="none")
+
+ggsave(filename=paste(getwd(),"/figure3cRev_11062015.jpeg",sep=""),width=8, height=7,dpi=400,plot=pl)
+
+
+#######################FROM ENZA ROH BARS
+require(ggplot2)
+require(reshape2)
+
+myd=read.table("all.roh.class", header=T) 
+summary(myd) 
+mys=subset(myd, pop!="FVG") 
+
+
+# ggplot (mys, aes(x=ROH_length, fill=pop) )     
+
+# ggplot (mys,  aes(x=ROH_length, fill=pop ) )
+#  + geom_bar(stat = "bin", position ="dodge" )+ 
+#  facet_grid(type ~ ., scales = "free")+
+#   theme(axis.text= element_text(size=rel (1.5)))  + theme_bw() +   
+#   scale_fill_manual(values = c("#F54E4E", "#13256F", "#10DFBC",  "#48867F", "#16C224", "#00631F", "#619FE0", "#CA8A1A"))
+
+pl <- ggplot(all_pop_all_MAF_table_syn_reshaped)
+pl <- pl + geom_bar(stat="identity",width=0.81, position = position_dodge(width=0.8),colour="black")
+pl <- pl + aes(x = factor(breaks), y = value, fill=variable)
+pl <- pl + xlab("MAF")
+# pl <- pl + ylab("Proportion of sites (%)")
+pl <- pl + ylab("Site count")
+pl <- pl + scale_fill_manual("", values=all_cols)
+pl <- pl + facet_wrap( ~ cat, ncol=1)
+pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
+pl <- pl + theme_bw()
+
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2),angle=90, vjust=0.5))
 pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
 pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
-ggsave(filename=paste(getwd(),"/figure3cRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/ALL_MAF_pop_SYNONYMOUS.jpeg",sep=""),width=18, height=7,dpi=300,plot=pl)
+
+
+pl <- ggplot(mys)
+pl <- pl + geom_bar(stat = "bin", position = "dodge",colour="black")
+pl <- pl + aes(x = ROH_length, fill=pop)
+# pl <- pl + ggtitle("Total Runs of homozygosity per individual")
+pl <- pl + ylab("Count")
+pl <- pl + xlab("ROH length")
+# pl <- pl + guides(fill=guide_legend(title="Cohorts"))
+pl <- pl + scale_fill_manual(values = c("#F54E4E", "#13256F", "#10DFBC",  "#48867F", "#16C224", "#00631F", "#619FE0", "#CA8A1A"))
+pl <- pl + facet_grid(type ~ ., scales = "free")
+pl <- pl + theme_bw()
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.6)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.6)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.6)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.6)), legend.title = element_text(size = rel(1.6)))
+ggsave(filename=paste(getwd(),"/figureS7.jpeg",sep=""),width=14, height=7,dpi=300,plot=pl)
+
+# pl <- pl + theme(legend.position="none")
 

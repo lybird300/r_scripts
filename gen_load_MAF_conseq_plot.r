@@ -361,19 +361,20 @@ source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 
 # pops <- c("CEU","TSI","VBI","FVG","CARL")
 # base_conseq_maf_folder <- '/lustre/scratch113/projects/esgi-vbseq/20140430_purging/UNRELATED/RESULTS/MAF'
-# base_conseq_maf_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/MAF/20150520"
-base_conseq_maf_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/DAF/20150519"
+base_conseq_maf_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/MAF/20150519"
+# base_conseq_maf_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/DAF/20150519"
 
 # conseq <- system('for i in `ls -d /lustre/scratch113/projects/esgi-vbseq/20140430_purging/enza/listsites/*/`;do echo \"${i%*/}\"| awk \'BEGIN{FS=\"/\"};{print $(NF)}\';done',intern=T)
-# conseq <- c("condel","sift","polyphen")
-conseq <- c("condel.deleterious","condel.neutral","polyphen.benign","polyphen.possibly.damaging","polyphen.probably.damaging","sift.deleterious","sift.tolerated","syn","neut","miss")
+# conseq <- c("condel.deleterious","condel.neutral","polyphen.benign","polyphen.possibly.damaging","polyphen.probably.damaging","sift.deleterious","sift.tolerated","syn","neut","miss")
 # conseq <- c("syn","miss","condel","sift","polyphen","neut")
-pops <- c("VBI","CARL","Erto","Illegio","Resia","Sauris")
+conseq <- c("syn","miss")
+pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
 
 #we need to select different categories
 # categories <- c("shared","private","novel")
 categories <- c("shared","private")
 for (cat in categories){
+  # cat="shared"
   if (cat=="shared"){
     pops_ingi_class <- c("VBI_s","CARL_s","Erto_s","Illegio_s","Resia_s","Sauris_s")
   } else if (cat=="private"){
@@ -383,6 +384,7 @@ for (cat in categories){
   }
 
   for (con in conseq){
+    # con="miss"
     current_con_path <- paste(base_conseq_maf_folder,con,sep="/")
   #read the current file for this population and this chromosome
   # current_chr_novel <- read.table(paste(base_novel_folder,"/",pop,".",chr,".n.maf",sep=""), sep="\t",header=F)
@@ -430,24 +432,24 @@ for (cat in categories){
         }
         save(all_pop_current_consec_current_subcat,file=paste("all_pop_",con,"_",subcat,"_",cat,".RData"))
 
-        pop_col <- col_pop(pops_ingi_class)
-        require(plotrix)
+        # pop_col <- col_pop(pops_ingi_class)
+        # require(plotrix)
 
-        # now plot everything together
-        jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",subcat,"_",con,"_",cat,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
-          par(oma=c(3,3,3,3),cex=1.4)
-          multhist(all_pop_current_consec_current_subcat,
-           col=pop_col[pops_ingi_class],
-           # density=all_cols$density*20,
-           freq=FALSE,
-           ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
-           xlab="MAF",
-           breaks=20,
-           ylim=c(0, 40),
-           main=paste("MAF in all populations for ",con,subcat,"in",cat,"sites"))
-          legend("topright",pch =c(rep(22,length(pop_col))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[pops_ingi_class],col=c(rep('black',length(pops_ingi_class))),legend=names(pop_col), ncol=2,bty="n")
-          # legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
-        dev.off()
+        # # now plot everything together
+        # jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",subcat,"_",con,"_",cat,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
+        #   par(oma=c(3,3,3,3),cex=1.4)
+        #   multhist(all_pop_current_consec_current_subcat,
+        #    col=pop_col[pops_ingi_class],
+        #    # density=all_cols$density*20,
+        #    freq=FALSE,
+        #    ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
+        #    xlab="MAF",
+        #    breaks=20,
+        #    ylim=c(0, 40),
+        #    main=paste("MAF in all populations for ",con,subcat,"in",cat,"sites"))
+        #   legend("topright",pch =c(rep(22,length(pop_col))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[pops_ingi_class],col=c(rep('black',length(pops_ingi_class))),legend=names(pop_col), ncol=2,bty="n")
+        #   # legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
+        # dev.off()
 
       }
     }else{
@@ -471,25 +473,26 @@ for (cat in categories){
         # current_pop_col <- grep(pop,colnames(current_pop_current_consec_current_subcat)) #this is always the fourth column
         all_pop_current_consec_current_subcat <- append(all_pop_current_consec_current_subcat,list(current_pop_current_consec_current_subcat[,4]))
       }
+      assign(paste0("all_pop_",con,"_",cat),all_pop_current_consec_current_subcat)
       save(all_pop_current_consec_current_subcat,file=paste0("all_pop_",con,"_",cat,".RData"))
-      pop_col <- col_pop(pops_ingi_class)
-      require(plotrix)
+      # pop_col <- col_pop(pops_ingi_class)
+      # require(plotrix)
 
-      # now plot everything together
-      jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",con,"_",cat,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
-        par(oma=c(3,3,3,3),cex=1.4)
-        multhist(all_pop_current_consec_current_subcat,
-         col=pop_col[pops_ingi_class],
-         # density=all_cols$density*20,
-         freq=FALSE,
-         ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
-         xlab="MAF",
-         breaks=20,
-         ylim=c(0, 40),
-         main=paste("MAF in all populations for",con,"in", cat,"sites",sep=" "))
-        legend("topright",pch =c(rep(22,length(pop_col))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[pops_ingi_class],col=c(rep('black',length(pops_ingi_class))),legend=names(pop_col), ncol=2,bty="n")
-        # legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
-      dev.off()
+      # # now plot everything together
+      # jpeg(paste(base_conseq_maf_folder,"/1B_all_pop_all_MAF_",con,"_",cat,"_plotrix_texture.jpg",sep=""),width=1800, height=800)
+      #   par(oma=c(3,3,3,3),cex=1.4)
+      #   multhist(all_pop_current_consec_current_subcat,
+      #    col=pop_col[pops_ingi_class],
+      #    # density=all_cols$density*20,
+      #    freq=FALSE,
+      #    ylab="Relative Frequency (N sites/Tot sites in freq bin)(%)",
+      #    xlab="MAF",
+      #    breaks=20,
+      #    ylim=c(0, 40),
+      #    main=paste("MAF in all populations for",con,"in", cat,"sites",sep=" "))
+      #   legend("topright",pch =c(rep(22,length(pop_col))),pt.lwd=2,pt.cex=2,pt.bg=pop_col[pops_ingi_class],col=c(rep('black',length(pops_ingi_class))),legend=names(pop_col), ncol=2,bty="n")
+      #   # legend("topright",pch =c(rep(22,length(all_cols[,1]))),pt.lwd=2,pt.cex=2,pt.bg=all_cols[,1],col=c(rep('black',length(all_cols$color))),legend=all_cols[,2], ncol=2,bty="n",density=all_cols$density*20)
+      # dev.off()
     }
 }
 
@@ -502,15 +505,20 @@ source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 require(ggplot2)
 require(reshape2)
 base_folder <- getwd()
-pops <- c("CEU","TSI","VBI","FVG","CARL")
-pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
-pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
+pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
+pops_c <- c("CEU","TSI","VBI","CARL","FVG-E","FVG-I","FVG-R","FVG-S")
+# pops <- c("CEU","TSI","VBI","FVG","CARL")
+# pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
+# pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
 
 all_pops <- c(pops,pops_ingi_novel,pops_ingi_class)
 
 load('all_pop_MAF.RData')
 load('all_pop_novel_MAF.RData')
 load('all_pop_MAF_private_shared.RData')
+
+load('all_pop_MAF_novel.RData')
+load('all_pop_MAF_shared.RData')
 #To do after uploading the RData
 require(plotrix)
 #all
@@ -586,6 +594,226 @@ ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_2_20150310.jpeg",sep=""
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels_1.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/1_all_pop_MAF_ggplot_panels_2.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+###################################################################################
+###### REPLOT with ggplot by category
+rm(list=ls())
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+require(ggplot2)
+require(reshape2)
+base_folder <- getwd()
+# pops <- c("CEU","TSI","VBI","CARL","Erto","Illegio","Resia","Sauris")
+pops <- c("CEU","TSI","VBI","CARL","FVG-E","FVG-I","FVG-R","FVG-S")
+# pops <- c("CEU","TSI","VBI","FVG","CARL")
+# pops_ingi_novel <- c("VBI_n","FVG_n","CARL_n")
+# pops_ingi_class <- c("VBI_p","FVG_p","CARL_p","VBI_s","FVG_s","CARL_s")
+
+all_pop_miss_private <- load('all_pop_miss_private.RData')
+all_pop_miss_shared <- load('all_pop_miss_shared.RData')
+all_pop_syn_private <- load('all_pop_syn_private.RData')
+all_pop_syn_shared <- load('all_pop_syn_shared.RData')
+
+
+#To do after uploading the RData
+require(plotrix)
+
+# MISSENSE
+#private
+all_pop_hist_private_miss <- multhist(all_pop_miss_private,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+all_pop_private_miss_MAF_table <- as.data.frame(cbind((all_pop_hist_private_miss[[1]]$mids),t(all_pop_hist_private_miss[[2]])))
+colnames(all_pop_private_miss_MAF_table) <- c("breaks",pops)
+
+#shared
+all_pop_hist_shared_miss <- multhist(all_pop_miss_shared,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+all_pop_shared_miss_MAF_table <- as.data.frame(cbind((all_pop_hist_shared_miss[[1]]$mids),t(all_pop_hist_shared_miss[[2]])))
+colnames(all_pop_shared_miss_MAF_table) <- c("breaks",pops)
+
+# SYNONYMOUS
+#private
+all_pop_hist_private_syn <- multhist(all_pop_syn_private,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+all_pop_private_syn_MAF_table <- as.data.frame(cbind((all_pop_hist_private_syn[[1]]$mids),t(all_pop_hist_private_syn[[2]])))
+colnames(all_pop_private_syn_MAF_table) <- c("breaks",pops)
+
+#shared
+all_pop_hist_shared_syn <- multhist(all_pop_syn_shared,
+   freq=FALSE,
+   breaks=20,
+   plot=F)
+all_pop_shared_syn_MAF_table <- as.data.frame(cbind((all_pop_hist_shared_syn[[1]]$mids),t(all_pop_hist_shared_syn[[2]])))
+colnames(all_pop_shared_syn_MAF_table) <- c("breaks",pops)
+#classes
+# all_pop_MAF_private_shared_hist <- multhist(all_pop_MAF_private_shared,
+#    freq=FALSE,
+#    breaks=20,
+#    plot=F)
+# all_pop_MAF_private_shared_table <- as.data.frame(cbind((all_pop_MAF_private_shared_hist[[1]]$mids),t(all_pop_MAF_private_shared_hist[[2]])))
+# colnames(all_pop_MAF_private_shared_table) <- c("breaks",pops_ingi_class)
+
+
+all_cols <-col_pop(pops)
+
+
+all_pop_private_miss_MAF_table_reshaped <- melt(all_pop_private_miss_MAF_table,id="breaks")
+all_pop_shared_miss_MAF_table <- melt(all_pop_shared_miss_MAF_table,id="breaks")
+all_pop_private_syn_MAF_table_reshaped <- melt(all_pop_private_syn_MAF_table,id="breaks")
+all_pop_shared_syn_MAF_table <- melt(all_pop_shared_syn_MAF_table,id="breaks")
+
+all_pop_private_miss_MAF_table_reshaped$cons <- "Missnese"
+all_pop_shared_miss_MAF_table$cons <- "Missnese"
+all_pop_private_syn_MAF_table_reshaped$cons <- "Synonymous"
+all_pop_shared_syn_MAF_table$cons <- "Synonymous"
+
+all_pop_private_miss_MAF_table_reshaped$cat <- "private"
+all_pop_shared_miss_MAF_table$cat <- "shared"
+all_pop_private_syn_MAF_table_reshaped$cat <- "private"
+all_pop_shared_syn_MAF_table$cat <- "shared"
+
+
+#merge data together
+all_pop_all_MAF_table_miss_reshaped <- rbind(all_pop_private_miss_MAF_table_reshaped,all_pop_shared_miss_MAF_table)
+all_pop_all_MAF_table_syn_reshaped <- rbind(all_pop_private_syn_MAF_table_reshaped,all_pop_shared_syn_MAF_table)
+
+
+all_pop_all_MAF_table_miss_reshaped$variable <- as.character(all_pop_all_MAF_table_miss_reshaped$variable)
+all_pop_all_MAF_table_miss_reshaped$variable <- factor(all_pop_all_MAF_table_miss_reshaped$variable, levels = pops)
+
+all_pop_all_MAF_table_syn_reshaped$variable <- as.character(all_pop_all_MAF_table_syn_reshaped$variable)
+all_pop_all_MAF_table_syn_reshaped$variable <- factor(all_pop_all_MAF_table_syn_reshaped$variable, levels = pops)
+
+
+
+# all_pop_all_MAF_table_reshaped$cat <- "total"
+# all_pop_all_MAF_table_reshaped[grep("_n",all_pop_all_MAF_table_reshaped$variable),]$cat <- "novel"
+# all_pop_all_MAF_table_reshaped[grep("_s",all_pop_all_MAF_table_reshaped$variable),]$cat <- "shared"
+# all_pop_all_MAF_table_reshaped[grep("_p",all_pop_all_MAF_table_reshaped$variable),]$cat <- "private"
+
+# all_pop_all_MAF_table_reshaped_1 <- all_pop_all_MAF_table_reshaped[which(all_pop_all_MAF_table_reshaped$breaks <= 0.1) ,]
+# all_pop_all_MAF_table_reshaped_4 <- all_pop_all_MAF_table_reshaped[which(all_pop_all_MAF_table_reshaped$breaks >= 0.45) ,]
+# all_pop_all_MAF_table_reshaped_14 <- rbind(all_pop_all_MAF_table_reshaped_1,all_pop_all_MAF_table_reshaped_4) 
+# all_pop_all_MAF_table_reshaped_2 <- all_pop_all_MAF_table_reshaped[which(all_pop_all_MAF_table_reshaped$breaks <= 0.23) ,]
+
+require(ggplot2)
+#plot MISSENSO 
+pl <- ggplot(all_pop_all_MAF_table_miss_reshaped)
+pl <- pl + geom_bar(stat="identity",width=0.8, position = position_dodge(width=0.8),colour="black")
+pl <- pl + aes(x = factor(breaks), y = value, fill=variable)
+pl <- pl + xlab("MAF")
+# pl <- pl + ylab("Proportion of sites (%)")
+pl <- pl + ylab("Site count")
+pl <- pl + scale_fill_manual("", values=all_cols)
+pl <- pl + facet_wrap( ~ cat, ncol=1)
+pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
+pl <- pl + theme_bw()
+
+# pl <- pl + theme(strip.text.x = element_text(size = 15))
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2),angle=90, vjust=0.5))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+ggsave(filename=paste(base_folder,"/ALL_MAF_pop_MISSENSE.jpeg",sep=""),width=18, height=7,dpi=300,plot=pl)
+
+#plot SYNONYMOUS 
+pl <- ggplot(all_pop_all_MAF_table_syn_reshaped)
+pl <- pl + geom_bar(stat="identity",width=1, position = position_dodge(width=0.8),colour="black")
+pl <- pl + aes(x = factor(breaks), y = value, fill=variable)
+pl <- pl + xlab("MAF")
+# pl <- pl + ylab("Proportion of sites (%)")
+pl <- pl + ylab("Site count")
+pl <- pl + scale_fill_manual("", values=all_cols)
+pl <- pl + facet_wrap( ~ cat, ncol=1)
+pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
+pl <- pl + theme_bw()
+
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2),angle=90, vjust=0.5))
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+ggsave(filename=paste(base_folder,"/ALL_MAF_pop_SYNONYMOUS.jpeg",sep=""),width=18, height=7,dpi=300,plot=pl)
+
+
+
+##########################################RXY stats
+require(ggplot2)
+
+myd=read.table("rxyinter.20150610.res", header=T, sep="," ) 
+summary(myd) 
+
+myt=subset(myd, ref=="CEU") 
+summary(myt)
+
+#myt$type <-factor(myt$type, levels=c("missense", "synonymous", "intergenic", "not_annotated") ) 
+myt$pop <-factor(myt$pop, levels=c("CARL" , "VBI",    "FVG-E" ,   "FVG-I", "FVG-R" ,  "FVG-S", "TSI") )
+
+#png("figure5RevCEU.png", width=700 ,height=400)
+ggplot(myt, aes(pop, rxy , fill=type)) +
+geom_bar(stat="identity", position=position_dodge()  ) +
+ geom_errorbar(aes(ymax = rxy + 2 * sd/sqrt(100), ymin=rxy -2 * sd/sqrt(100)) ,   position=position_dodge(0.9), width=0.25)+
+  theme_bw()  +xlab("") + ylab("R pop/CEU ") + 
+  theme(axis.title.y = element_text(size = rel(1.2), angle = 90)) 
+  + theme(axis.text= element_text(size=rel (1.1))) 
+  +  scale_fill_manual(values=c("#CC6699", "#993366",  "#660033", "#CC79A7"), name="Consequence type \n of the derived allele") +
+  theme (legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)) ) +
+  ggtitle("pop vs CEU" ) + geom_hline(yintercept=1 , colour="#CC3300" , linetype=2 )
+dev.off()
+
+pl <- ggplot(myt)
+pl <- pl + aes(x = pop, y = rxy,fill=type)
+pl <- pl + geom_bar(stat="identity", position=position_dodge()  )
+pl <- pl + geom_errorbar(aes(ymax = rxy + 2 * sd/sqrt(100), ymin=rxy -2 * sd/sqrt(100)) ,   position=position_dodge(0.9), width=0.25)
+pl <- pl + ylab("R pop/CEU")
+pl <- pl + xlab("")
+pl <- pl + scale_fill_manual(values=c("#CC6699", "#993366",  "#660033", "#CC79A7"), name="Consequence type \n of the derived allele")
+pl <- pl + theme_bw()
+pl <- pl + ggtitle("pop vs CEU" ) + geom_hline(yintercept=1 , colour="#CC3300" , linetype=2 )
+pl <- pl + theme(axis.title.y = element_text(size = rel(1.6), angle = 90)) 
+pl <- pl + theme(axis.text.x=element_text(size = 16))
+pl <- pl + theme(axis.text.y=element_text(size = 18))
+pl <- pl + theme(plot.title=element_text(size = rel(1.6)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.6)), legend.title = element_text(size = rel(1.6)))
+ggsave(filename=paste(getwd(),"/figure5aRev.jpeg",sep=""),width=10, height=8,dpi=400,plot=pl)
+
+myc=subset(myd, ref=="TSI") 
+summary(myc)
+
+#myc$type <-factor(myc$type, levels=c("missense", "synonymous", "intergenic", "not_annotated") ) 
+myc$pop <-factor(myc$pop, levels=c("CARL" , "VBI",    "FVG-E" ,   "FVG-I", "FVG-R" ,  "FVG-S", "CEU") )
+
+png("figure5RevTSI.png", width=700 ,height=400)
+ggplot(myc, aes(pop, rxy , fill=type)) +geom_bar(stat="identity", position=position_dodge()  ) 
++ geom_errorbar(aes(ymax = rxy + 2 * sd/sqrt(100), ymin=rxy -2 * sd/sqrt(100)) ,   
+  position=position_dodge(0.9), width=0.25)+ theme_bw()  +xlab("") + ylab("R pop/TSI ") + 
+theme(axis.title.y = element_text(size = rel(1.2), angle = 90)) + theme(axis.text= element_text(size=rel (1.1))) + 
+ scale_fill_manual(values=c( "#CC6699", "#993366",  "#660033", "#CC79A7"), name="Consequence type \n of the derived allele") +
+ theme (legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)) ) +ggtitle("pop vs TSI" ) 
+ + geom_hline(yintercept=1 , colour="#D55E00" , linetype=2 )
+dev.off()
+
+pl <- ggplot(myc)
+pl <- pl + aes(x = pop, y = rxy,fill=type)
+pl <- pl + geom_bar(stat="identity", position=position_dodge()  )
+pl <- pl + geom_errorbar(aes(ymax = rxy + 2 * sd/sqrt(100), ymin=rxy -2 * sd/sqrt(100)) ,   position=position_dodge(0.9), width=0.25)
+pl <- pl + ylab("R pop/TSI")
+pl <- pl + xlab("")
+pl <- pl + scale_fill_manual(values=c("#CC6699", "#993366",  "#660033", "#CC79A7"), name="Consequence type \n of the derived allele")
+pl <- pl + theme_bw()
+pl <- pl + ggtitle("pop vs TSI" ) + geom_hline(yintercept=1 , colour="#CC3300" , linetype=2 )
+pl <- pl + theme(axis.title.y = element_text(size = rel(1.6), angle = 90)) 
+pl <- pl + theme(axis.text.x=element_text(size = 16))
+pl <- pl + theme(axis.text.y=element_text(size = 18))
+pl <- pl + theme(plot.title=element_text(size = rel(1.6)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.6)), legend.title = element_text(size = rel(1.6)))
+ggsave(filename=paste(getwd(),"/figure5bRev.jpeg",sep=""),width=10, height=8,dpi=400,plot=pl)
+
 
 
 

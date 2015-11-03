@@ -359,16 +359,18 @@ ggsave(filename=paste(base_folder,"/7_A_ibd_all_5POP_lod5_WG_1200_NO_FVG_ggplot.
 # ggsave(filename=paste(base_folder,"/test_IBD_2.jpeg",sep=""),width=8, height=8,dpi=400,plot=pl)
 
 # jpeg(paste("/lustre/scratch113/projects/esgi-vbseq/20140430_purging/PLOTS/7_roh.jpg",sep=""),width=800, height=800)
-jpeg(paste(base_folder,"PLOTS/7_roh_density.jpg",sep=""),width=800, height=800)
-  plot(density(VBI_tot_roh$ROH_tot),main="",xlab="Total ROH homozigosity", col="blue")
-  lines(density(FVG_tot_roh$ROH_tot),col="red")
-  lines(density(TSI_tot_roh$ROH_tot),col="green")
-  lines(density(CEU_tot_roh$ROH_tot))
-  legend("bottomright",pch =c(rep(19,length(pops))),legend=c("CEU","FVG","TSI","VBI"),col=c("black","red","green","blue"),ncol=4)
-dev.off()
+# jpeg(paste(base_folder,"PLOTS/7_roh_density.jpg",sep=""),width=800, height=800)
+#   plot(density(VBI_tot_roh$ROH_tot),main="",xlab="Total ROH homozigosity", col="blue")
+#   lines(density(FVG_tot_roh$ROH_tot),col="red")
+#   lines(density(TSI_tot_roh$ROH_tot),col="green")
+#   lines(density(CEU_tot_roh$ROH_tot))
+#   legend("bottomright",pch =c(rep(19,length(pops))),legend=c("CEU","FVG","TSI","VBI"),col=c("black","red","green","blue"),ncol=4)
+# dev.off()
 
 
 #############################BOXPLOT 
+
+
 pops_c <- c("CEU","TSI","CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S")
 all_tot_ibd <- rbind(CEU_tot_ibd,TSI_tot_ibd,VBI_tot_ibd,CARL_tot_ibd,Sauris_tot_ibd,Erto_tot_ibd,Illegio_tot_ibd,Resia_tot_ibd)
 all_tot_ibd$pop <- as.factor(all_tot_ibd$pop)
@@ -386,9 +388,10 @@ pl <- pl + xlab("")
 pl <- pl + scale_fill_manual("Cohorts", values=pop_colors)
 pl <- pl + theme_bw()
 # pl <- pl + facet_grid(cat~cons, scales="free")
-pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
-pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
-pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
-pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
-ggsave(filename=paste(getwd(),"/figure3aRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.8)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.8)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.8)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.8)), legend.title = element_text(size = rel(1.8)))
+pl <- pl + theme(legend.position="none")
+ggsave(filename=paste(getwd(),"/figure3aRev_11062015.jpeg",sep=""),width=8, height=7,dpi=400,plot=pl)
 

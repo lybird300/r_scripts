@@ -826,7 +826,7 @@ ggsave(filename=paste(data_folder,"/8b_shared_private_plus_novel_pop_conseq_carr
 rm(list=ls())
 all_pops <- c("CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S","CEU","TSI")
 all_pops_e <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
-categories <- c("Missense","Synonymous","Neutral")
+categories <- c("Missense","Synonymous","Intergenic")
 # categories <- c("Missense","Synonymous")
 # categories <- c("Missense")
 # categories <- c("Synonymous")
@@ -841,32 +841,46 @@ all_pop_all_cat_hom <- NULL
 for (hum_cat in categories){
   # cat <- "miss"
   # hum_cat="Missense"
-  if(hum_cat=="Neutral"){
-     cat <- "neut"
-     base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
+  if(hum_cat=="Intergenic"){
+     cat <- "inter"
+     base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06052015_filt/shared"
+     # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
      # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/05302015_ALT/shared/"
   }
   if(hum_cat=="Missense"){
     cat <- "miss"
-    base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
+    base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06052015_filt/shared"
+    # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
     # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/05302015_ALT/shared/"
   }
   if(hum_cat=="Synonymous"){
     cat <- "syn"
-    base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
+    base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06052015_filt/shared"
+    # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
     # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/06012015_ALT/shared/"
   }
   print(cat)
   for(pop in all_pops_e){
-    print(pop)
-    # pop<- "CEU"
-    current_cat_pop_name <- paste(base_folder,"/",cat,"/",pop,"/All_samples_",cat,"_",pop,".tab",sep="")
-    current_cat_pop <- read.table(current_cat_pop_name,header=F)
-    colnames(current_cat_pop) <- c("ID","CHR","HOM_DA_COUNT","DAC","cohort","shared","cat_shared","tot_chr")
+      # pop<- "CEU"
+      print(pop)
+      current_cat_pop_name <- paste(base_folder,"/",cat,"/",pop,"/All_samples_",cat,"_",pop,".tab",sep="")
+      current_cat_pop <- read.table(current_cat_pop_name,header=F)
+      colnames(current_cat_pop) <- c("ID","CHR","HOM_DA_COUNT","DAC","cohort","shared","cat_shared","tot_chr","tot_hom_sample")
+      # head(current_cat_pop)
+      sample_current_cat_pop_sum <- by(current_cat_pop$DAC,current_cat_pop$ID,sum)
+      sample_current_cat_pop_sum_hom <- by(current_cat_pop$HOM_DA_COUNT,current_cat_pop$ID,sum)
+      sample_current_cat_pop_sum_ALL_hom <- by(current_cat_pop$tot_hom_sample,current_cat_pop$ID,sum)
     
-    sample_current_cat_pop_sum <- by(current_cat_pop$DAC,current_cat_pop$ID,sum)
-    sample_current_cat_pop_sum_hom <- by(current_cat_pop$HOM_DA_COUNT,current_cat_pop$ID,sum)
+
+    #get the sum of all homozygous genotype per sample in a dataframe
+    all_sample_current_cat_pop_ALL_hom <- NULL
+    for( id in 1:dim(sample_current_cat_pop_sum_ALL_hom)) {
+      sample_current_cat_pop_ALL_hom <- as.data.frame(cbind(ID=names(sample_current_cat_pop_sum_ALL_hom[id]),ALL_HOM_SUM=sample_current_cat_pop_sum_ALL_hom[id]))
+      all_sample_current_cat_pop_ALL_hom <- rbind(all_sample_current_cat_pop_ALL_hom,sample_current_cat_pop_ALL_hom)
+    }
+    rownames(all_sample_current_cat_pop_ALL_hom) <- NULL
     
+    #get the sum of all DAC per sample in a dataframe
     all_sample_current_cat_pop <- NULL
 
     for( id in 1:dim(sample_current_cat_pop_sum)) {
@@ -874,6 +888,7 @@ for (hum_cat in categories){
       all_sample_current_cat_pop <- rbind(all_sample_current_cat_pop,sample_current_cat_pop)
     }
 
+    #get the sum of all derived allele homozygous genotype per sample in a dataframe
     all_sample_current_cat_pop_hom <- NULL
 
     for( id in 1:dim(sample_current_cat_pop_sum_hom)) {
@@ -889,6 +904,10 @@ for (hum_cat in categories){
     rownames(all_sample_current_cat_pop_hom) <- NULL
     all_sample_current_cat_pop_hom$HOM_SUM <- as.numeric(as.character(all_sample_current_cat_pop_hom$HOM_SUM))
     all_sample_current_cat_pop_hom$category <- hum_cat
+    
+    # all_sample_current_cat_pop_hom <- merge(all_sample_current_cat_pop_hom,all_sample_current_cat_pop_ALL_hom,by="ID")
+
+
 
     # tot_shared <- sum(current_cat_pop$shared)/46
     # tot_cat_shared <- sum(current_cat_pop$cat_shared)/46
@@ -919,10 +938,13 @@ for (hum_cat in categories){
       all_sample_current_cat_pop_hom$cohort <- "FVG-S"
     }
 
+
+    all_sample_current_cat_pop_hom_merged <- merge(all_sample_current_cat_pop_hom,all_sample_current_cat_pop_ALL_hom,by="ID")
     all_pop_all_cat <- rbind(all_pop_all_cat,all_sample_current_cat_pop)
-    all_pop_all_cat_hom <- rbind(all_pop_all_cat_hom,all_sample_current_cat_pop_hom)
+    all_pop_all_cat_hom <- rbind(all_pop_all_cat_hom,all_sample_current_cat_pop_hom_merged)
 
   }
+
 }
 
 all_pop_all_cat$category <-as.factor(all_pop_all_cat$category)
@@ -932,6 +954,29 @@ all_pop_all_cat$cohort <-factor(all_pop_all_cat$cohort,all_pops)
 all_pop_all_cat_hom$category <-as.factor(all_pop_all_cat_hom$category)
 all_pop_all_cat_hom$category <-factor(all_pop_all_cat_hom$category,categories)
 all_pop_all_cat_hom$cohort <-factor(all_pop_all_cat_hom$cohort,all_pops)
+
+all_pop_all_cat_hom$ALL_HOM_SUM <-as.numeric(as.character(all_pop_all_cat_hom$ALL_HOM_SUM))
+
+#calculate the number of homozygous sites in the three categories by sample per sample
+all_variants_pop_cat_all_hom_persample <- by(all_pop_all_cat_hom$HOM_SUM,all_pop_all_cat_hom$ID,sum)
+all_pop_all_variants_all_hom_persample <-  NULL
+for( id in 1:dim(all_variants_pop_cat_all_hom_persample)) {
+  current_pop_all_variants_all_hom_persample <- as.data.frame(cbind(ID=names(all_variants_pop_cat_all_hom_persample[id]),ALL_CAT_HOM_SUM=all_variants_pop_cat_all_hom_persample[id]))
+  all_pop_all_variants_all_hom_persample <- rbind(all_pop_all_variants_all_hom_persample,current_pop_all_variants_all_hom_persample)
+}
+rownames(all_pop_all_variants_all_hom_persample) <- NULL
+
+
+
+#calculate the number of homozygous sites in the three categories by sample
+all_variants_pop_cat_all_hom <- by(all_pop_all_cat_hom$ALL_HOM_SUM,all_pop_all_cat_hom$ID,sum)
+
+all_pop_all_variants_all_hom <-  NULL
+for( id in 1:dim(all_variants_pop_cat_all_hom)) {
+  current_pop_all_variants_all_hom <- as.data.frame(cbind(ID=names(all_variants_pop_cat_all_hom[id]),ALL_CAT_HOM_SUM=all_variants_pop_cat_all_hom[id]))
+  all_pop_all_variants_all_hom <- rbind(all_pop_all_variants_all_hom,current_pop_all_variants_all_hom)
+}
+rownames(all_pop_all_variants_all_hom) <- NULL
 
 #calculate the number of variants in all the three categories by populations
 all_variants_pop_cat <- by(all_pop_all_cat_hom$pop_cat_shared,all_pop_all_cat_hom$cohort,sum)
@@ -953,6 +998,18 @@ for (cohort in all_pop_all_variants$ID){
 all_pop_all_cat_hom$HDAC_shared <- all_pop_all_cat_hom$HOM_SUM/all_pop_all_cat_hom$tot_variants
 all_pop_all_cat_hom$HDAC_cat <- all_pop_all_cat_hom$HOM_SUM/all_pop_all_cat_hom$pop_cat_shared
 
+all_pop_all_cat_hom_merged <- merge(all_pop_all_cat_hom,all_pop_all_variants_all_hom,by="ID")
+
+all_pop_all_cat_hom_merged$HDAC_ALL_cat <- all_pop_all_cat_hom$HOM_SUM/all_pop_all_cat_hom$ALL_HOM_SUM
+all_pop_all_cat_hom_merged$ALL_CAT_HOM_SUM <- as.numeric(as.character(all_pop_all_cat_hom_merged$ALL_CAT_HOM_SUM))
+all_pop_all_cat_hom_merged$HDAC_ALL_cat_sum <- all_pop_all_cat_hom_merged$HOM_SUM/all_pop_all_cat_hom_merged$ALL_CAT_HOM_SUM
+all_pop_all_cat_hom_merged$HDAC_ALL_cat_sum <- all_pop_all_cat_hom_merged$HOM_SUM/all_pop_all_cat_hom_merged$ALL_CAT_HOM_SUM
+#I need to dived by the number of TOTAL DERIVED SITES IN THAT CATEGORY, or BY the number of TOTAL HOM SITES IN THAT CATEGORY
+all_pop_all_cat_hom_merged_persample <- merge(all_pop_all_cat_hom_merged,all_pop_all_variants_all_hom_persample,by="ID")
+all_pop_all_cat_hom_merged_persample$ALL_CAT_HOM_SUM.y <- as.numeric(as.character(all_pop_all_cat_hom_merged_persample$ALL_CAT_HOM_SUM.y))
+all_pop_all_cat_hom_merged_persample$HDAC_ALL_cat_sum_persample <- all_pop_all_cat_hom_merged_persample$HOM_SUM/all_pop_all_cat_hom_merged_persample$ALL_CAT_HOM_SUM.y
+
+
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 require(ggplot2)
 require(reshape2)
@@ -970,6 +1027,7 @@ all_cols <-col_pop(all_pops)
 # sum(test_sample_syn$HOM_DA_COUNT)
 
 #first plot
+# pl <- ggplot(all_pop_all_cat)
 pl <- ggplot(all_pop_all_cat)
 pl <- pl + geom_boxplot()
 pl <- pl + aes(x = cohort, y = DAC_SUM, fill=cohort)
@@ -989,6 +1047,29 @@ pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = elem
 ggsave(filename=paste(base_folder,"/figure4bRev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 #second plot
+# pl <- ggplot(all_pop_all_cat_hom_merged)
+pl <- ggplot(all_pop_all_cat_hom_merged_persample)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = cohort, y = HDAC_ALL_cat_sum_persample,fill=cohort)
+# pl <- pl + aes(x = cohort, y = HDAC_ALL_cat,fill=cohort)
+# pl <- pl + aes(x = cohort, y = HDAC_shared,fill=cohort)
+pl <- pl + ylab("Fraction (HOM_sites per sample/sum of sites shared in population)")
+pl <- pl + ggtitle("Derived homozygous genotypes")
+pl <- pl + xlab("")
+pl <- pl + scale_fill_manual("", values=all_cols,guide=FALSE)
+pl <- pl + theme_bw()
+pl <- pl + facet_grid(category~.,scales="free")
+pl <- pl + theme_bw()
+pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+# ggsave(filename=paste(base_folder,"/figure4aRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/figure4aRev_ALT.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+# ggsave(filename=paste(base_folder,"/figure4aRev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/figure4aRev_filt_persample.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+#second plot
 pl <- ggplot(all_pop_all_cat_hom)
 pl <- pl + geom_boxplot()
 pl <- pl + aes(x = cohort, y = HDAC_shared,fill=cohort)
@@ -1005,7 +1086,7 @@ pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
 pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
 # ggsave(filename=paste(base_folder,"/figure4aRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 # ggsave(filename=paste(base_folder,"/figure4aRev_ALT.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
-ggsave(filename=paste(base_folder,"/figure4aRev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+ggsave(filename=paste(base_folder,"/figure4a2Rev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
 #third plot
 pl <- ggplot(all_pop_all_cat_hom)
@@ -1025,4 +1106,109 @@ pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = elem
 # ggsave(filename=paste(base_folder,"/figure4cRev.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 ggsave(filename=paste(base_folder,"/figure4cRev_filt.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
+
+
+#################################################
+#FROM ENZA
 #test for differences 
+#myd=read.table("figure4_raw.data", header=T, sep=",") 
+myd=read.table("figure4_formatted.data.nona", header=T, sep=",") 
+
+myd$pop=factor(myd$pop, levels=c("CAR","VBI", "FVG-E", "FVG-I", "FVG-R", "FVG-S","CEU","TSI") )
+myd$type=factor(myd$type , levels= c("loss of function", "missense", "synonymous") )
+
+########################### 4a counts 
+
+png("figure4aRev.png", width=700 ,height=700) 
+ggplot(myd) +geom_boxplot(aes(pop, dercount), fill=c("#F54E4E", "#CA8A1A" , "#10DFBC",  "#48867F", "#16C224", "#00631F"
+  , "#619FE0", "#13256F") ) +
+facet_grid(type ~ . , scale="free_y" ) + theme_bw()+ylab("Counts of derived allele/individual ")+ xlab("")+
+ theme (axis.text=element_text(size = 16),
+  axis.title =element_text(size = 18), 
+  legend.title=element_text(size = 18),
+  legend.text=element_text(size = 16),
+  strip.text.x = element_text(size=12) ) 
+ +theme(strip.text.x = element_text(size=8), strip.text.y = element_text(size=12, face="bold"))
+
+dev.off()
+
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+require(ggplot2)
+require(reshape2)
+all_pops <- c("CAR","VBI", "FVG-E", "FVG-I", "FVG-R", "FVG-S","CEU","TSI")
+all_cols <-col_pop(all_pops)
+base_folder <- getwd()
+
+pl <- ggplot(myd)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = pop, y = dercount,fill=pop)
+pl <- pl + ylab("Counts of derived allele/individual ")
+pl <- pl + xlab("")
+pl <- pl + scale_fill_manual("", values=all_cols,guide=FALSE)
+pl <- pl + theme_bw()
+pl <- pl + facet_grid(type~.,scales="free")
+pl <- pl + theme_bw()
+pl <- pl + theme(axis.text.x=element_text(size = 16))
+pl <- pl + theme(axis.text.y=element_text(size = 18))
+pl <- pl + theme(axis.title= element_text(size=16))
+pl <- pl + theme(legend.text= element_text(size = rel(1.6)), legend.title = element_text(size = rel(1.6)))
+pl <- pl + theme(strip.text.x = element_text(size=8), strip.text.y = element_text(size=12, face="bold"))
+ggsave(filename=paste(base_folder,"/figure4aRev.jpeg",sep=""),width=8, height=10,dpi=400,plot=pl)
+
+
+mypops=levels(myd$pop) 
+ for ( ref in c("TSI", "CEU") )  {
+ for ( t in levels(myd$type)  ) {
+for (p in levels(myd$pop) ) { 
+mydsp=subset(myd, pop==p  & type==t)
+ mydsref=subset(myd, pop==ref & type==t)
+ a=mydsp$dercount
+ b=mydsref$dercount
+ myp=(format(wilcox.test(a,b)$p.val, scientific=FALSE, digits=3) )
+ print(paste ("dercount", t,p, ref,  myp, sep=" " ))
+}
+}
+}
+
+
+##################################################### 4b frac tions 
+
+# png("figure4bRev.png", width=700 ,height=700) 
+# ggplot(myd) +geom_boxplot(aes(pop,derhomgen/inter_derhomgen ),
+#  fill=c("#F54E4E", "#CA8A1A" , "#10DFBC",  "#48867F", "#16C224", "#00631F", "#619FE0", "#13256F")) 
+# +facet_grid(type ~ . , scale="free_y" )
+#  + theme_bw()+ylab("# derived homozygous genotypes/# intergenic derived homozygous genotypes")+
+#  xlab("")+ 
+#  theme (axis.text=element_text(size = 16), axis.title =element_text(size = 18), legend.title=element_text(size = 18),legend.text=element_text(size = 16), strip.text.x = element_text(size=12) )+theme(strip.text.x = element_text(size=8), strip.text.y = element_text(size=12, face="bold"))
+# dev.off()
+
+pl <- ggplot(myd)
+pl <- pl + geom_boxplot()
+pl <- pl + aes(x = pop, y = derhomgen/inter_derhomgen,fill=pop)
+pl <- pl + ylab("# derived homozygous genotypes/# intergenic derived homozygous genotypes")
+pl <- pl + xlab("")
+pl <- pl + scale_fill_manual("", values=all_cols,guide=FALSE)
+pl <- pl + theme_bw()
+pl <- pl + facet_grid(type~.,scales="free")
+pl <- pl + theme_bw()
+pl <- pl + theme(axis.text.x=element_text(size = 16))
+pl <- pl + theme(axis.text.y=element_text(size = 18))
+pl <- pl + theme(axis.title= element_text(size=16))
+pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+pl <- pl + theme(strip.text.x = element_text(size=8), strip.text.y = element_text(size=12, face="bold"))
+ggsave(filename=paste(base_folder,"/figure4bRev.jpeg",sep=""),width=8, height=10,dpi=400,plot=pl)
+
+mypops=levels(myd$pop) 
+ for ( ref in c("TSI", "CEU") )  {
+ for ( t in levels(myd$type)  ) {
+for (p in levels(myd$pop) ) { 
+mydsp=subset(myd, pop==p  & type==t)
+ mydsref=subset(myd, pop==ref & type==t)
+ a=mydsp$derhomgen/mydsp$inter_derhomgen
+ b=mydsref$derhomgen/mydsref$inter_derhomgen
+ myp=(format(wilcox.test(a,b)$p.val, scientific=FALSE, digits=3) )
+ print(paste ("derhomgen", t,p, ref,  myp, sep=" " ))
+}
+}
+}
+

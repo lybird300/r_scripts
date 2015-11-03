@@ -204,6 +204,133 @@ s_ts_outliers <- s_tstv[which(s_tstv$Transitions %in%  s_ts_boxplot$out),]$sampl
 s_tv_outliers <- s_tstv[which(s_tstv$Transversions %in%  s_tv_boxplot$out),]$sample
 s_tstv_outliers <- s_tstv[which(s_tstv$ts_tv_ratio %in%  s_tstv_boxplot$out),]$sample
 
+
+##############################################################################################
+# plots stats for new seq and heterozygosys
+
+cohort <- "VBI"
+cohort <- "FVG"
+cohort <- "CARL"
+
+het_all <- NULL
+het_all_merged <- NULL
+for (chr in 1:22){
+	print(chr)
+	current_chr <- paste(chr,".vcf.gz.snps.stats.psc.tab",sep="")
+	het_current <- read.table(current_chr,header=T) 
+	if (chr==1){
+		het_all_merged <- het_current	
+	}else{
+		het_all_merged <- merge(het_all_merged,het_current, by="sample")
+	}
+}
+
+het_all <- as.data.frame(het_all_merged$sample)
+colnames(het_all) <- c("sample")
+het_all$nRefHom <- apply(het_all_merged[,grep("nRefHom",colnames(het_all_merged))],1,sum) 
+het_all$nNonRefHom <- apply(het_all_merged[,grep("nNonRefHom",colnames(het_all_merged))],1,sum) 
+het_all$nHets <- apply(het_all_merged[,grep("nHets",colnames(het_all_merged))],1,sum)
+het_all$nSingletons <- apply(het_all_merged[,grep("nSingletons",colnames(het_all_merged))],1,sum)
+het_all$totVar <- apply(het_all[,c("nRefHom","nNonRefHom","nHets")],1,sum)
+het_all$het_rate <- (het_all$nHets / (het_all$totVar))*100
+het_all$singleton_rate <- (het_all$nSingletons / (het_all$totVar))
+het_all$prop_alt_het<- (het_all$nHets/(het_all$nNonRefHom+het_all$nHets))
+
+#calculate stdev to select outliers
+sd_het <- sd(het_all$het_rate)
+mean_het <- mean(het_all$het_rate)
+# het_all$outliers <- as.character(het_all$sample)
+het_all$sample <- as.character(het_all$sample)
+
+# outliers <- (het_all[which(het_all$het_rate > (mean_het + 3*sd_het) | het_all$het_rate < (mean_het - 3*sd_het)),1])
+
+# for (i in 1:length(het_all$outliers)){
+# if (!het_all[i,]$outliers %in% outliers){
+# het_all[i,]$outliers <- NA
+# 	}
+# }
+
+require(ggplot2)
+pl <- ggplot(het_all)
+
+pl <- pl + geom_point(size=3,colour="red")
+pl <- pl + aes(x = factor(sample), y = het_rate)
+
+pl <- pl + xlab("Samples")
+pl <- pl + ylab("Proportion of HET sites (%)")
+pl <- pl + theme_bw()
+pl <- pl + theme(axis.ticks = element_blank(), axis.text.x = element_blank())
+pl <- pl + geom_text(aes(label=ifelse(het_rate > (mean_het + 3*sd_het) |het_rate < (mean_het - 3*sd_het),sample,'')),hjust=0.5,vjust=-0.5)
+
+base_folder <- getwd()
+png(paste(base_folder,"/",cohort,"_het.png",sep=""),width=1400, height=500)
+print(pl)
+dev.off()
+
+  # pl <- pl + scale_fill_manual("", values=all_cols)
+  # pl <- pl + facet_wrap( ~ cat, ncol=1)
+  # pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
+  # pl <- pl + theme(strip.text.x = element_text(size = 20))
+  # pl <- pl + theme(axis.text.x=element_text(size = rel(1.2)))
+  # pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+  # pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+  # pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)))
+  
+  # png(paste(base_folder,"/1_",set,"_20150912_count.png",sep=""),width=1400, height=500)
+#points(merged_new[which(merged_new$SEQ == 2),]$C1,merged_new[which(merged_new$SEQ == 2),]$C2,col="red")
+#legend(xmin,ymin,legend=c("BGI","SC"),fill=c("black","red"))
+
+
+##############################################################################################
+# Manhattan plot of something by chromosome: hard code the name of the column you want to plot against the position
+
+
+# cohorts <- c("VBI","FVG","CARL")
+require(ggplot2)
+# plot_columns <- c("lp_HWE","QUAL","VQSLOD")
+cohort <- "VBI"
+cohort <- "FVG"
+cohort <- "CARL"
+plot_columns <- c("O_HET")
+# plot_column <- "lp_HWE"
+
+#we want to plot all by chromosome, but also to have some stats genome wide
+#so we need to merge the data together, calculate the desired stats and then plot by chr
+data_all <- NULL
+for (chr in 1:22){
+        # chr=22
+        print(chr)
+        # current_chr <- paste(chr,".vcf.gz_qvh.tab",sep="")
+        current_chr <- paste(chr,".vcf.gz.snps.hardy.hwe.idxed",sep="")
+        data_current <- read.table(current_chr,header=T) 
+        # data_current$HWE <- as.numeric(as.character(data_current$HWE))
+        # data_current$lp_HWE <- -log10(data_current$HWE)
+        # data_all <- rbind(data_all,data_current)
+
+    for (plot_column in plot_columns){
+        pl <- ggplot(data_current)
+
+        pl <- pl + geom_point(size=3,colour="red")
+        # pl <- pl + aes_string(x = 'POS', y = plot_column)
+        pl <- pl + aes_string(x = 'IDX', y = plot_column)
+
+        pl <- pl + xlab("Position")
+        pl <- pl + ylab(plot_column)
+        pl <- pl + theme_bw()
+        pl <- pl + theme(axis.ticks = element_blank(), axis.text.x = element_blank())
+        # pl <- pl + scale_y_continuous()
+        # pl <- pl + geom_text(aes(label=ifelse(het_rate > (mean_het + 3*sd_het) |het_rate < (mean_het - 3*sd_het),sample,'')),hjust=0.5,vjust=-0.5)
+
+        base_folder <- getwd()
+        png(paste(base_folder,"/",cohort,"_manhattan_",plot_column,"_",chr,".png",sep=""),width=1400, height=500)
+        print(pl)
+        dev.off()
+    }
+
+}
+
+
+
 ###write a file for outliers
 sink('Outliers.txt')
 cat('Outliers for INDELS\n')
