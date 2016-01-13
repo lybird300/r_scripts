@@ -25,25 +25,25 @@ pop_name <- args[[2]]
 # pop_name <- "VBI"
 #chr <- args[[2]]
 
-pops <- c("FVG")
 pops <- c("VBI","FVG","CARL")
 all_pop_MAF_count <- NULL
 all_pop_MAF_freq <- NULL
 for (pop in pops) {
+  print(pop)
 	if( pop == "CARL") {
 	# filepath <- "/lustre/scratch113/projects/carl_seq/variant_refinement/13102015_RELEASE/ALL_CARL_20151013_freq_only.frq"
-	filepath <- "/lustre/scratch113/projects/carl_seq/variant_refinement/13102015_RELEASE/ALL_CARL_20151013_freq_only_nomono.frq"
+	filepath <- "/lustre/scratch113/projects/carl_seq/variant_refinement/12112015_FILTERED_REL/ALL_CARL_20151113.vcf.gz.snps.freq_only.frq"
 	}
 	if( pop == "VBI") {
 	# filepath <- "/lustre/scratch113/projects/esgi-vbseq/08092015/13102015_RELEASE/ALL_VBI_20151013_freq_only.frq"
-	filepath <- "/lustre/scratch113/projects/esgi-vbseq/08092015/13102015_RELEASE/ALL_VBI_20151013_freq_only_nomono.frq"
+	filepath <- "/lustre/scratch113/projects/esgi-vbseq/08092015/12112015_FILTERED_REL/ALL_VBI_20151113.vcf.gz.snps.freq_only.frq"
 	}
 	if( pop == "FVG") {
 	# filepath <- "/lustre/scratch113/projects/fvg_seq/16092015/13102015_RELEASE/ALL_FVG_20151013_freq_only.frq"
-	filepath <- "/lustre/scratch113/projects/fvg_seq/16092015/13102015_RELEASE/ALL_FVG_20151013_freq_only_nomono.frq"
+	filepath <- "/lustre/scratch113/projects/fvg_seq/16092015/12112015_FILTERED_REL/ALL_FVG_20151113.vcf.gz.snps.freq_only.frq"
 	}
 
-	current_pop_maf <- read.table(filepath,header=T,stringsAsFactors=F, comment.char="")
+	current_pop_maf <- read.table(filepath,header=F,stringsAsFactors=F, comment.char="")
 	colnames(current_pop_maf) <- c(pop)
 	#create hist for counts and freqs
 	current_pop_hist <- multhist(current_pop_maf,freq=FALSE,breaks=20,plot=F)
@@ -58,7 +58,6 @@ for (pop in pops) {
 	all_pop_MAF_freq <- rbind(all_pop_MAF_freq,current_pop_hist_freq)
 	
 }
-
 
 save(all_pop_MAF_count,file="all_pop_MAF_count.RData")
 save(all_pop_MAF_freq,file="all_pop_MAF_freq.RData")
@@ -148,13 +147,17 @@ q(save='no')
 all_pop_MAF_freq$pop <- factor(all_pop_MAF_freq$pop, levels = pops)
 colnames(all_pop_MAF_freq) <- c("breaks","value","pop")
 
+all_pop_MAF_count[which(all_pop_MAF_count$pop == "VBI"),]
+all_pop_MAF_count[which(all_pop_MAF_count$pop == "FVG"),]
+all_pop_MAF_count[which(all_pop_MAF_count$pop == "CARL"),]
+
 all_pop_MAF_count$pop <- factor(all_pop_MAF_count$pop, levels = pops)
 colnames(all_pop_MAF_count) <- c("breaks","value","pop")
 all_cols <- col_pop(pops)
 maf_sets_1 <- c("all_pop_MAF_freq")
 maf_sets_2 <- c("all_pop_MAF_count")
-# for(set in maf_sets_1){
-for(set in maf_sets_2){
+for(set in maf_sets_1){
+# for(set in maf_sets_2){
 	# set <- "all_pop_MAF_freq"
   current_set <- get(set)
   pl <- ggplot(current_set)
@@ -162,8 +165,8 @@ for(set in maf_sets_2){
   pl <- pl + geom_bar(stat="identity",width=0.5, position = position_dodge(width=0.8),colour="black")
   pl <- pl + aes(x = factor(breaks), y = value, fill=pop)
   pl <- pl + xlab("MAF")
-  # pl <- pl + ylab("Proportion of sites (%)")
-  pl <- pl + ylab("Site count")
+  pl <- pl + ylab("Proportion of sites (%)")
+  # pl <- pl + ylab("Site count")
   pl <- pl + scale_fill_manual("", values=all_cols)
   # pl <- pl + facet_wrap( ~ cat, ncol=1)
   pl <- pl + guides(colour = guide_legend(override.aes = list(shape = 2)))
@@ -178,6 +181,7 @@ for(set in maf_sets_2){
   # png(paste(base_folder,"/1_",set,"_20150527.png",sep=""),width=1400, height=500)
   # print(pl)
   # dev.off()
+  base_folder <- getwd()
   ggsave(filename=paste(base_folder,"/1_",set,"_20150525.jpeg",sep=""),width=24, height=14,units="cm",dpi=600,plot=pl)
 }
 
@@ -190,10 +194,11 @@ require(reshape2)
 base_folder <- getwd()
 
 #COMPARISON BASED ON INGI FREQS
-# pops <- c("EUR")
 # ipops <- c("fvg","vbi")
+# pops <- c("EUR")
+# pops <- c("EUR","TSI")
+# pops <- c("EUR","TSI","UK10K","TGPph3")
 pops <- c("EUR","TSI","UK10K")
-pops <- c("EUR","TSI")
 ipops <- c("carl","fvg","vbi")
 for (pop in pops){
   print(pop)
@@ -202,7 +207,7 @@ for (pop in pops){
     all_current_pop <- NULL
     for (chr in seq(1,22,1)){
       print(chr)
-      filepath <- paste("/lustre/scratch113/projects/esgi-vbseq/13102015_SIGU/",pop,"/UNION/",chr,"/sites_",pop,"_",ipop,"_only.txt",sep="")
+      filepath <- paste("/lustre/scratch113/projects/esgi-vbseq/16112015_TRIESTE/",pop,"/UNION/",chr,"/sites_",pop,"_",ipop,"_only.txt",sep="")
       current_chr <- read.table(filepath,header=F,colClasses=c("numeric","numeric","character","character","factor","numeric","numeric"),comment.char="")
       colnames(current_chr) <- c("CHR","POS","REF","ALT","OVERLAP",pop,ipop)
       
@@ -216,8 +221,10 @@ for (pop in pops){
 }
 
 #select bins of frequency and check overlapping sites
-epops <- c("EUR","TSI")
-epops <- c("TSI")
+# epops <- c("EUR","TSI")
+# epops <- c("TGPph3")
+epops <- c("EUR","TSI","UK10K")
+# epops <- c("EUR")
 for (pop in epops){
   ingi_sets <- c(paste("all_pop_",pop,"_carl_only",sep=""),paste("all_pop_",pop,"_vbi_only",sep=""),paste("all_pop_",pop,"_fvg_only",sep=""))
   for (ingi in ingi_sets){
@@ -243,10 +250,18 @@ for (pop in epops){
     }
       current_ingi_all_bin$diff <- current_ingi_all_bin$tot_ingi - current_ingi_all_bin$tot_out
       assign(paste(ingi,"_all_bin_reverse",sep=""),current_ingi_all_bin)
+      write.table(current_ingi_all_bin,file=paste(ingi,"_all_bin_reverse.tab",sep=""),row.names=F,col.names=T,sep="\t",quote=F)
   }
 }
 
-
+# for (pop in epops){
+#   ingi_sets <- c(paste("all_pop_",pop,"_carl_only",sep=""),paste("all_pop_",pop,"_vbi_only",sep=""),paste("all_pop_",pop,"_fvg_only",sep=""))
+#   for (ingi in ingi_sets){
+#     print(ingi)
+#     current_ingi_all_bin <- get(paste(ingi,"_all_bin_reverse",sep=""))
+#     write.table(current_ingi_all_bin,file=paste(ingi,"_all_bin_reverse.tab",sep=""),row.names=F,col.names=T,sep="\t",quote=F)
+# }
+# }
 
 #COMPARISON BASED ON OUTBRED FREQS
 for (pop in pops){
@@ -259,7 +274,7 @@ for (pop in pops){
   all_pop_out <- NULL
   for (chr in seq(1,22,1)){
     print(chr)
-    filepath <- paste("/lustre/scratch113/projects/esgi-vbseq/13102015_SIGU/",pop,"/UNION/",chr,"/sites_",pop,"_carl_vbi_fvg.txt",sep="")
+    filepath <- paste("/lustre/scratch113/projects/esgi-vbseq/16112015_TRIESTE/",pop,"/UNION/",chr,"/sites_",pop,"_carl_vbi_fvg.txt",sep="")
     current_chr <- read.table(filepath,header=F,colClasses=c("numeric","numeric","character","character","factor","numeric","numeric","numeric","numeric"),comment.char="")
     colnames(current_chr) <- c("CHR","POS","REF","ALT","OVERLAP",pop,"CARL","VBI","FVG")
 
@@ -273,11 +288,6 @@ for (pop in pops){
     all_pop_fvg <- rbind(all_pop_fvg,current_chr_pop_fvg)
     all_pop_out <- rbind(all_pop_out,current_chr_out)
   }
-  assign(paste("all_pop_carl_",pop,sep=""),all_pop_carl)
-  assign(paste("all_pop_vbi_",pop,sep=""),all_pop_vbi)
-  assign(paste("all_pop_fvg_",pop,sep=""),all_pop_fvg)
-  assign(paste("all_pop_",pop,sep=""),all_pop_out)
-  
   save(file=paste("all_pop_carl_",pop,".Rdata",sep=""),all_pop_carl)
   save(file=paste("all_pop_vbi_",pop,".Rdata",sep=""),all_pop_vbi)
   save(file=paste("all_pop_fvg_",pop,".Rdata",sep=""),all_pop_fvg)
@@ -285,16 +295,33 @@ for (pop in pops){
 
 }
 
-
-epops <- c("EUR","TSI")
+# for (pop in pops){
+# #   pop="EUR"
+# #   pop="TSI"
+# #   pop="UK10K"
+#     load(paste("all_pop_carl_",pop,".Rdata",sep=""))
+#     load(paste("all_pop_vbi_",pop,".Rdata",sep=""))
+#     load(paste("all_pop_fvg_",pop,".Rdata",sep=""))
+#     load(paste("all_pop_",pop,".Rdata",sep=""))
+#     assign(paste("all_pop_carl_",pop,sep=""),all_pop_carl)
+#     assign(paste("all_pop_vbi_",pop,sep=""),all_pop_vbi)
+#     assign(paste("all_pop_fvg_",pop,sep=""),all_pop_fvg)
+#     assign(paste("all_pop_",pop,sep=""),all_pop_out)
+  
+# }
+# epops <- c("EUR","TSI")
+# epops <- c("EUR","TSI","UK10K","TGPph3")
+epops <- c("EUR","TSI","UK10K")
+epops <- c("TSI","UK10K")
 for (pop in epops){
+  # pop <- "EUR"
   ingi_sets <- c(paste("all_pop_carl_",pop,sep=""),paste("all_pop_vbi_",pop,sep=""),paste("all_pop_fvg_",pop,sep=""))
+  current_out <- get((paste("all_pop_",pop,sep="")))
   
   for (ingi in ingi_sets){
     # ingi <- ingi_sets[1]
+    print(ingi)
     current_ingi <- get(ingi)
-    load(paste("all_pop_",pop,".Rdata",sep=""))
-    current_out <- all_pop_out
 
     freqs <- c(0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.30)
     current_ingi_all_bin <- NULL
@@ -315,13 +342,11 @@ for (pop in epops){
     }
       current_ingi_all_bin$diff <- current_ingi_all_bin$tot_out - current_ingi_all_bin$tot_ingi
       assign(paste(ingi,"_all_bin",sep=""),current_ingi_all_bin)
+      write.table(current_ingi_all_bin,file=paste(ingi,"_all_bin.tab",sep=""),row.names=F,col.names=T,sep="\t",quote=F)
   }
 }
 
-
-
-
-
+##########################################################################################
 
 ipops <- c("CARL","FVG","VBI")
 for (ipop in ipops){

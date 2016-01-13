@@ -826,7 +826,7 @@ ggsave(filename=paste(data_folder,"/8b_shared_private_plus_novel_pop_conseq_carr
 rm(list=ls())
 all_pops <- c("CARL","VBI","FVG-E","FVG-I","FVG-R","FVG-S","CEU","TSI")
 all_pops_e <- c("CEU","TSI","CARL","VBI","Erto","Illegio","Resia","Sauris")
-categories <- c("Missense","Synonymous","Intergenic")
+categories <- c("Missense","Synonymous","Intergenic","LoF")
 # categories <- c("Missense","Synonymous")
 # categories <- c("Missense")
 # categories <- c("Synonymous")
@@ -845,18 +845,20 @@ for (hum_cat in categories){
      cat <- "inter"
      base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06052015_filt/shared"
      # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
+  }
+  if(hum_cat=="Lof"){
+     cat <- "lof"
+     base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06102015_filt/shared/"
      # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/05302015_ALT/shared/"
   }
   if(hum_cat=="Missense"){
     cat <- "miss"
     base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06052015_filt/shared"
     # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
-    # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/05302015_ALT/shared/"
   }
   if(hum_cat=="Synonymous"){
     cat <- "syn"
     base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06052015_filt/shared"
-    # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/HOMCOUNT/06012015_filt/shared/"
     # base_folder <- "/lustre/scratch113/projects/esgi-vbseq/20140430_purging/46_SAMPLES/RESULTS/ALTCOUNT/06012015_ALT/shared/"
   }
   print(cat)
