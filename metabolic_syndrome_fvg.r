@@ -76,8 +76,8 @@ fvg_all_metabolic_females[is.na(fvg_all_metabolic_females$ADM),]$ADM <- 0
 fvg_all_metabolic_females[is.na(fvg_all_metabolic_females$DIABETES),]$DIABETES <- 0
 
 #Recode sex as 1 for Males and 2 for Females
-fvg_all_metabolic_males$sex <- 1
-fvg_all_metabolic_females$sex <- 2
+# fvg_all_metabolic_males$sex <- 1
+# fvg_all_metabolic_females$sex <- 2
 
 dim(fvg_all_metabolic_males)
 dim(fvg_all_metabolic_females)
@@ -260,4 +260,16 @@ kappa2(ratings)
 
 #         z = 16.8 
 #   p-value = 0 
+
+#########################genotype data preparation for genabel
+phenofile <- "/home/cocca/analyses/MetabolicSyndrome/FVG/fvg_all_metabolic_ALL_MetS_score.csv"
+phenotypes <- read.table(phenofile,header=T,sep="\t")
+
+all_gen <- load.burlo.data(pop = "FVG", phen = "general", data.dir = "/nfs/servizio/") 
+
+all_to_analyze <- all_gen[which(all_gen@phdata$id %in% phenotypes$id),]
+
+export.plink(all_to_analyze,filebasename="FVG", phenotypes=c("sex"), transpose=TRUE)
+convert.snp.tped(tpedfile="/home/cocca/analyses/MetabolicSyndrome/FVG/FVG.tped",tfamfile="/home/cocca/analyses/MetabolicSyndrome/FVG/FVG.tfam",outfile="FVG_out")
+
 
