@@ -1,3 +1,5 @@
+rm(list=ls())
+library(buRlo)
 args=commandArgs(trailing=TRUE)
 
 #gli args sono:
@@ -9,8 +11,6 @@ args=commandArgs(trailing=TRUE)
 #args[[6]]: cohort
 #args[[7]]: chromosome
 #args[[8]]: Imputation path and prefix
-
-library(GenABEL)
 # gkins <- as.matrix(read.table("/nfs/servizio/FVG.kinship"))
 # gkins <- as.matrix(read.table(args[[4]]))
 
