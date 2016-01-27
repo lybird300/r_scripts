@@ -15,7 +15,16 @@ args=commandArgs(trailing=TRUE)
 # gkins <- as.matrix(read.table(args[[4]]))
 
 # colnames(gkins) <- rownames(gkins)
-# chr <- load.gwaa.data(phenofile= "/home/cocca/analyses/MetabolicSyndrome/FVG/fvg_all_metabolic_ALL_MetS_score.csv", genofile = "/home/cocca/analyses/MetabolicSyndrome/FVG/FVG_out")
+
+# pheno <- "/home/cocca/analyses/MetabolicSyndrome/FVG/fvg_all_metabolic_ALL_MetS_score.csv"
+# trait <- "MetS_score"
+# covariates <- "age"
+# kinship <- "/nfs/servizio/FVG.kinship"
+# geno <- "/home/cocca/analyses/MetabolicSyndrome/FVG/FVG_out"
+# cohort <- "FVG"
+# chromosome <- "/nfs/1000G/FVG/prob/FVG_1000G"
+# imp_path <- "/home/cocca/analyses/MetabolicSyndrome/FVG/"
+
 pheno <- args[[1]]
 trait <- args[[2]]
 covariates <- args[[3]]
@@ -29,7 +38,7 @@ gwa_data <- load.gwaa.data(phenofile= pheno, genofile = geno)
 
 # load("/nfs/servizio/FVG.kinship")
 load(kinship)
-gkins <- kin.matr[chr@phdata$id,chr@phdata$id]
+gkins <- kin.matr[gwa_data@phdata$id,gwa_data@phdata$id]
 # formula <- paste(trait,"~",covariates,sep=" ")
 formula <- eval(parse(text=trait)) ~ eval(parse(text=covariates))
 
