@@ -73,7 +73,21 @@ for (pop in pops){
     cdata_nomono$PANNELLO <- factor(cdata_nomono$PANNELLO,selected_panels)
 
     save(cdata_nomono,file=paste(pop,"_cdata_nomono.RData",sep=""))
+    #pops <- c("CARL","FVG","INCIPE2","VBI")
     # load(paste(pop,"_cdata_nomono.RData",sep=""))
+    panel_test <- data.frame(BIN=cdata_nomono[which(cdata_nomono$PANEL == "1000Gph1.shapeit"),]$BIN,
+    TGP1=cdata_nomono[which(cdata_nomono$PANEL == "1000Gph1.shapeit"),]$mean,
+    INGI_TGP3=cdata_nomono[which(cdata_nomono$PANEL == "INGI_1000GPh3.shapeit"),]$mean,
+    INGI=cdata_nomono[which(cdata_nomono$PANEL == "INGI.shapeit"),]$mean,
+    UK10K=cdata_nomono[which(cdata_nomono$PANEL == "uk10k1kg.ref"),]$mean)
+
+    panel_test$D23 <- panel_test$TGP1 - panel_test$INGI_TGP3
+    panel_test$D24 <- panel_test$TGP1 - panel_test$INGI
+    panel_test$D25 <- panel_test$TGP1 - panel_test$UK10K
+    panel_test$D34 <- panel_test$INGI_TGP3 - panel_test$INGI
+    panel_test$D35 <- panel_test$INGI_TGP3 - panel_test$UK10K
+    panel_test$D45 <- panel_test$INGI - panel_test$UK10K
+
     #plot the same cohort stratifying by panel
     # The errorbars overlapped, so use position_dodge to move them horizontally
 

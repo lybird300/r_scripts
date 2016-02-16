@@ -220,6 +220,15 @@ ratings <- (vb_all_metabolic_cleaned[,c("MetS_affected","affected")])
 kappa2(ratings)
  
 
+#########################genotype data preparation for genabel
+phenofile <- "/home/cocca/analyses/MetabolicSyndrome/VBI/vb_all_metabolic_ALL_MetS_score.csv"
+phenotypes <- read.table(phenofile,header=T,sep="\t")
 
+kinship <- "/lacie/01/ftp/files/daCinzia/Genotipi/kinship_per_GEMMA/1785_IMP_1000G_gk1.cXX.txt.cXX.txt"
+kin.matr <- read.table(kinship)
 
+rownames(kin.matr) <- phenotypes$id
+colnames(kin.matr) <- phenotypes$id
 
+save(kin.matr,file="/home/cocca/analyses/MetabolicSyndrome/VBI/geno/VBI.kinship")
+convert.snp.tped(tpedfile="/home/cocca/analyses/MetabolicSyndrome/VBI/geno/VBI_all_filtered.tped",tfamfile="/home/cocca/analyses/MetabolicSyndrome/VBI/geno/VBI_all_filtered.tfam",outfile="VBI_out")
