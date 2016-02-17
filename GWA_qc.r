@@ -8,9 +8,11 @@ args=commandArgs(trailing=TRUE)
 require(GWAtoolbox)
 cohort <- args[[1]]
 chr <- args[[2]]
+outpath <- args[[3]]
+outfile <- args[[4]]
 
 # build script
-to_GWAtoolbox <- paste("/home/cocca/analyses/MetabolicSyndrome/",cohort,"/results/",chr,"/",cohort,"_GWA_toolbox_chr",chr,".conf",sep="")
+to_GWAtoolbox <- paste(outpath,cohort,"/results/",chr,"/",cohort,"_GWA_toolbox_chr",chr,".conf",sep="")
 write("# Description of input data columns", file=to_GWAtoolbox)
 
 #we need to read from a result file with the following header:
@@ -41,7 +43,7 @@ write("PREFIX Result_", append=T, file=to_GWAtoolbox)
 write("# Input file with GWA data", append=T, file=to_GWAtoolbox)
 write("VERBOSITY 2", append=T, file=to_GWAtoolbox)
 write("SEPARATOR COMMA", append=T, file=to_GWAtoolbox)
-write(paste("PROCESS /home/cocca/analyses/MetabolicSyndrome/",cohort,"/results/",chr,"/",cohort,"_MetS_score_",chr,"_Jan_27_2016_cocca_results.csv ",sep=""), append=T, file=to_GWAtoolbox)
+write(paste("PROCESS ",outfile,sep=""), append=T, file=to_GWAtoolbox)
 
 gwasqc(to_GWAtoolbox)
 ##################################################################
