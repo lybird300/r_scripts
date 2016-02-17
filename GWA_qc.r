@@ -12,7 +12,7 @@ outpath <- args[[3]]
 outfile <- args[[4]]
 
 # build script
-to_GWAtoolbox <- paste(outpath,"/",cohort,"/results/",chr,"/",cohort,"_GWA_toolbox_chr",chr,".conf",sep="")
+to_GWAtoolbox <- paste(outpath,"/results/",chr,"/",cohort,"_GWA_toolbox_chr",chr,".conf",sep="")
 write("# Description of input data columns", file=to_GWAtoolbox)
 
 #we need to read from a result file with the following header:
