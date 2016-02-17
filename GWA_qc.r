@@ -38,6 +38,7 @@ write("MAF 0.01 0.05", append=T, file=to_GWAtoolbox)
 write("IMP 0.4 0.5", append=T, file=to_GWAtoolbox)
 
 write("# Prefix for output files", append=T, file=to_GWAtoolbox)
+write(paste("PREFIX ",outpath,"/",chr,"/Result_",cohort,"_GWA_toolbox_chr",chr,sep="") , append=T, file=to_GWAtoolbox)
 write("PREFIX Result_", append=T, file=to_GWAtoolbox)
 
 write("# Input file with GWA data", append=T, file=to_GWAtoolbox)
