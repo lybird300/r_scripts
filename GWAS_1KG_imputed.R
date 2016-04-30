@@ -19,12 +19,12 @@ args=commandArgs(trailing=TRUE)
 # pheno <- "/home/cocca/analyses/MetabolicSyndrome/FVG/fvg_all_metabolic_ALL_MetS_score.csv"
 # trait <- "MetS_score"
 # covariates <- "age"
-# kinship <- "/nfs/servizio/FVG.kinship"
+# kinship <- "/netapp/nfs/servizio/FVG.kinship"
 # kinship <- "/home/cocca/analyses/MetabolicSyndrome/VBI/geno/VBI.kinship"
 # geno <- "/home/cocca/analyses/MetabolicSyndrome/FVG/FVG_out"
 # cohort <- "FVG"
 # chromosome <- 20
-# imp_path <- "/nfs/1000G/FVG/prob/FVG_1000G"
+# imp_path <- "/netapp/nfs/1000G/FVG/prob/FVG_1000G"
 
 pheno <- args[[1]]
 trait <- args[[2]]
@@ -40,7 +40,7 @@ gwa_data <- load.gwaa.data(phenofile=pheno, genofile = geno)
 # load("/nfs/servizio/FVG.kinship")
 load(kinship)
 gkins <- kin.matr[gwa_data@phdata$id,gwa_data@phdata$id]
-# formula <- paste(trait,"~",covariates,sep=" ")
+# glm_formula <- paste(trait,"~",covariates,sep=" ")
 formula <- eval(parse(text=trait)) ~ eval(parse(text=covariates))
 
 GWA(formula,

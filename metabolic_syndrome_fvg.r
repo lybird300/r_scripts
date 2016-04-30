@@ -6,7 +6,7 @@ library(buRlo)
 
 ############################## STEP 1: load phenotype data #####################
 #load all the phenotypes from the merged genotype set
-fvg_all_gen <- load.burlo.data(pop = "FVG", phen = "general", data.dir = "/nfs/servizio/") 
+fvg_all_gen <- load.burlo.data(pop = "FVG", phen = "general", data.dir = "/netapp/nfs/servizio/", phen.dir="/netapp/nfs/repository/phenotypes/") 
 
 #inclusion criteria: call rate > 95%
 fvg_all_summary <- perid.summary(fvg_all_gen)
@@ -271,5 +271,3 @@ all_to_analyze <- all_gen[which(all_gen@phdata$id %in% phenotypes$id),]
 
 export.plink(all_to_analyze,filebasename="FVG", phenotypes=c("sex"), transpose=TRUE)
 convert.snp.tped(tpedfile="/home/cocca/analyses/MetabolicSyndrome/FVG/FVG.tped",tfamfile="/home/cocca/analyses/MetabolicSyndrome/FVG/FVG.tfam",outfile="FVG_out")
-
-
