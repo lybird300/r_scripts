@@ -13,9 +13,9 @@ library(plyr)
 #last mod 4/4/2016
 pops <- c("CARL","FVG","INCIPE2","VBI")
 # pops <- c("FVG")
-ingi_panels <- c("CARL.shapeit","FVG.shapeit","VBI.shapeit")
-gen_pop_ref_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit", "EUR.shapeit")
-all_panels <- c(ingi_panels,gen_pop_ref_panels)
+# ingi_panels <- c("CARL.shapeit","FVG.shapeit","VBI.shapeit")
+# gen_pop_ref_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit", "EUR.shapeit")
+# all_panels <- c(ingi_panels,gen_pop_ref_panels)
 #for each population, we upload the interesting columns of the info file:
 # base_folder <- "/lustre/scratch114/teams/soranzo/users/mc14/fromscratch113/INGI/05272015_MERGED_REF_PANEL/IMPUTED"
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
@@ -34,7 +34,7 @@ for (pop in pops){
 
     if (pop == "CARL"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref","CARL.shapeit")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
     } else if (pop == "VBI"){
         # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","VBI.shapeit")
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
@@ -43,7 +43,7 @@ for (pop in pops){
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
     }else if (pop == "INCIPE2"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","1000GP_Phase3.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
     }
 
     for(panel in selected_panels){
@@ -64,8 +64,8 @@ for (pop in pops){
     
     current_pop_all_panels_all_chr$BIN3 <- 0
     # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
-    maf_bins <- c(0,0.01,0.02,0.05,0.5)
-    # maf_bins <- c(0,0.001,0.002,0.005,0.01,0.02,0.05)
+    # maf_bins <- c(0,0.01,0.02,0.05,0.5)
+    maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
     mode <- paste(length(maf_bins),"BIN",sep="")
     for (i in 1:(length(maf_bins))){
         if (i == 1){
@@ -205,17 +205,13 @@ require(ggplot2)
 library(plyr)
 
 # define populations and reference panes
-# pops <- c("FVG")
-# pops <- c("FVG","INCIPE2","CARL")
-# pops <- c("INCIPE2")
-# pops <- c("CARL")
 #last mod 4/4/2016
 # pops <- c("CARL","FVG","INCIPE2","VBI")
 pops <- c("CARL","INCIPE2","VBI")
 # pops <- c("FVG")
-ingi_panels <- c("CARL.shapeit","FVG.shapeit","VBI.shapeit")
-gen_pop_ref_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit", "EUR.shapeit")
-all_panels <- c(ingi_panels,gen_pop_ref_panels)
+# ingi_panels <- c("CARL.shapeit","FVG.shapeit","VBI.shapeit")
+# gen_pop_ref_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit", "EUR.shapeit")
+# all_panels <- c(ingi_panels,gen_pop_ref_panels)
 #for each population, we upload the interesting columns of the info file:
 # base_folder <- "/lustre/scratch114/teams/soranzo/users/mc14/fromscratch113/INGI/05272015_MERGED_REF_PANEL/IMPUTED"
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
@@ -235,7 +231,7 @@ for (pop in pops){
 
     if (pop == "CARL"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref","CARL.shapeit")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
     } else if (pop == "VBI"){
         # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","VBI.shapeit")
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
@@ -244,7 +240,7 @@ for (pop in pops){
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
     }else if (pop == "INCIPE2"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","1000GP_Phase3.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
     }
 
     for(panel in selected_panels){
@@ -268,7 +264,8 @@ for (pop in pops){
 
     current_pop_all_panels_all_chr$BIN3 <- 0
     # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
-    maf_bins <- c(0,0.01,0.02,0.05,0.5)
+    # maf_bins <- c(0,0.01,0.02,0.05,0.5)
+    maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
     mode <- paste(length(maf_bins),"BIN",sep="")
     for (i in 1:(length(maf_bins))){
         if (i == 1){
@@ -376,7 +373,7 @@ for (pop in pops){
     pl <- pl + theme(axis.text.x=element_text(size = rel(1.2), angle=45,hjust=1))
     pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
     pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
-    pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)),legend.position = "top")
+    pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)),legend.position = c(0.2, 0.2))
     ggsave(filename=paste(out_folder,"/complete_13042016_r2_",pop,"_",mode,"_variance.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
     # plot median
@@ -393,7 +390,7 @@ for (pop in pops){
     pl <- pl + theme(axis.text.x=element_text(size = rel(1.2), angle=45,hjust=1))
     pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
     pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
-    pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)),legend.position = "top")
+    pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)),legend.position = c(0.8, 0.2))
     ggsave(filename=paste(out_folder,"/complete_13042016_r2_",pop,"_",mode,"_median.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
     #plot also in boxplot form with median data
@@ -458,7 +455,7 @@ for (pop in pops){
     pl <- pl + theme(axis.text.x=element_text(size = rel(1.2), angle=45,hjust=1))
     pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
     pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
-    pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)),legend.position = "top")
+    pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)),legend.position = c(0.2, 0.2))
     ggsave(filename=paste(out_folder,"/complete_13042016_conc_",pop,"_",mode,"_median.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
 
     #plot also in boxplot form with median data
