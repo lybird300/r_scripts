@@ -18,6 +18,7 @@ pops <- c("CARL","FVG","INCIPE2","VBI")
 # all_panels <- c(ingi_panels,gen_pop_ref_panels)
 #for each population, we upload the interesting columns of the info file:
 # base_folder <- "/lustre/scratch114/teams/soranzo/users/mc14/fromscratch113/INGI/05272015_MERGED_REF_PANEL/IMPUTED"
+current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
 #rsId, position,expected_af, info, type and concordances 
 
@@ -34,22 +35,26 @@ for (pop in pops){
 
     if (pop == "CARL"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref","CARL.shapeit")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
     } else if (pop == "VBI"){
         # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","VBI.shapeit")
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
     }else if (pop == "FVG"){
         # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","FVG.shapeit")
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
     }else if (pop == "INCIPE2"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","1000GP_Phase3.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
     }
 
     for(panel in selected_panels){
         # panel <- "CARL.shapeit"
         print(panel)
-        for (chr in 21:21){
+        for (chr in 2:2){
             # chr <- 1
             pop_folder <- paste(base_folder,pop,panel,sep="/")
             current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
@@ -106,7 +111,7 @@ for (pop in pops){
     cdata_nomono$PANNELLO <- factor(cdata_nomono$PANNELLO,selected_panels)
     cdata_nomono$BIN <- factor(cdata_nomono$BIN,maf_bins)
    #create folder for each population
-   out_folder <- paste(base_folder,"/PLOTS/",pop,"_",mode,sep="")
+   out_folder <- paste(base_folder,"/PLOTS/",current_date,"/",pop,"_",mode,sep="")
    dir.create(out_folder, recursive=T)
 
     # save(cdata_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_nomono.RData",sep=""))
@@ -214,6 +219,7 @@ pops <- c("CARL","INCIPE2","VBI")
 # all_panels <- c(ingi_panels,gen_pop_ref_panels)
 #for each population, we upload the interesting columns of the info file:
 # base_folder <- "/lustre/scratch114/teams/soranzo/users/mc14/fromscratch113/INGI/05272015_MERGED_REF_PANEL/IMPUTED"
+current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
 #rsId, position,expected_af, info, type and concordances 
 # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
@@ -246,7 +252,7 @@ for (pop in pops){
     for(panel in selected_panels){
         # panel <- "1000Gph1.shapeit"
         print(panel)
-        for (chr in 21:21){
+        for (chr in 2:2){
             # chr <- 1
             pop_folder <- paste(base_folder,pop,panel,sep="/")
             current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
@@ -334,7 +340,7 @@ for (pop in pops){
     cdata_conc_nomono$PANNELLO <- factor(cdata_conc_nomono$PANNELLO,selected_panels)
    
    #create folder for each population
-   out_folder <- paste(base_folder,"/PLOTS/",pop,"_",mode,sep="")
+   out_folder <- paste(base_folder,"/PLOTS/",current_date,"/",pop,"_",mode,sep="")
    dir.create(out_folder, recursive=T)
 
     write.table(cdata_r2,file=paste(out_folder,"/",pop,"_",mode,"_cdata_r2.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
