@@ -7,7 +7,7 @@ source("/nfs/users/nfs_m/mc14/Work/r_scripts/assign_bins.r")
 require(ggplot2)
 library(plyr)
 args=commandArgs(trailing=TRUE)
-maf_bins <- args[[1]]
+maf_bins <- args
 # define populations and reference panes
 #last mod 4/4/2016
 pops <- c("CARL","FVG","INCIPE2","VBI")
