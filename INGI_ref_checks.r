@@ -237,16 +237,18 @@ for (pop in pops){
 
     if (pop == "CARL"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref","CARL.shapeit")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
     } else if (pop == "VBI"){
-        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","VBI.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
     }else if (pop == "FVG"){
-        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","FVG.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
         selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
     }else if (pop == "INCIPE2"){
         # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","1000GP_Phase3.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref")
-        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
+        # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
+        selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
     }
 
     for(panel in selected_panels){
