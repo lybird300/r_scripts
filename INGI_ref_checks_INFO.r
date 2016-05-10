@@ -6,7 +6,8 @@ source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/assign_bins.r")
 require(ggplot2)
 library(plyr)
-
+args=commandArgs(trailing=TRUE)
+maf_bins <- args[[1]]
 # define populations and reference panes
 #last mod 4/4/2016
 pops <- c("CARL","FVG","INCIPE2","VBI")
@@ -67,7 +68,8 @@ for (pop in pops){
         }
 
         current_pop_all_panels_all_chr$BIN3 <- 0
-        maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+        # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
+        # maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
         mode <- paste(length(maf_bins),"BIN",sep="")
         for (i in 1:(length(maf_bins))){
             if (i == 1){
