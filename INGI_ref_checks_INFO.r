@@ -112,7 +112,7 @@ for (pop in pops){
         cdata_nomono$PANNELLO <- factor(cdata_nomono$PANNELLO,selected_panels)
         cdata_nomono$BIN <- factor(cdata_nomono$BIN,maf_bins)
         #create folder for each population
-        out_folder <- paste(base_folder,"/PLOTS/",current_date,"/",pan_set,"/",pop,"_",mode,sep="")
+        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_INFO/",pan_set,"/",pop,"_",mode,sep="")
         dir.create(out_folder, recursive=T)
 
         # save(cdata_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_nomono.RData",sep=""))

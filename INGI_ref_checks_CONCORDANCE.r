@@ -150,7 +150,7 @@ for (pop in pops){
         cdata_conc_nomono$PANNELLO <- factor(cdata_conc_nomono$PANNELLO,selected_panels)
 
         #create folder for each population
-        out_folder <- paste(base_folder,"/PLOTS/",current_date,"/",pan_set,"/",pop,"_",mode,sep="")
+        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_CONC/",pan_set,"/",pop,"_",mode,sep="")
         dir.create(out_folder, recursive=T)
 
         write.table(cdata_r2,file=paste(out_folder,"/",pop,"_",mode,"_cdata_r2.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
