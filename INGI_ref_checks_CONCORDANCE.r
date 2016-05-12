@@ -20,7 +20,8 @@ panel_set1 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","EUR.shapeit")
 panel_set2 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","TGP3_ALL.shapeit","EUR.shapeit")
 # panel_set3 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","EUR.shapeit")
 panel_set3 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","EUR.shapeit")
-all_set <- c("panel_set1","panel_set2","panel_set3")
+panel_set4 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","CARL_FVG_VBI_TGP3_ALL.shapeit","TGP3_ALL.shapeit")
+all_set <- c("panel_set1","panel_set2","panel_set3","panel_set4")
 
 current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
