@@ -64,7 +64,7 @@ for (pop in pops){
         for(panel in selected_panels){
             # panel <- "1000Gph1.shapeit"
             print(panel)
-            for (chr in 2:2){
+            for (chr in c(2,21)){
                 # chr <- 1
                 pop_folder <- paste(base_folder,pop,panel,sep="/")
                 current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
