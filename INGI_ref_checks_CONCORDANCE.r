@@ -82,7 +82,8 @@ for (pop in pops){
         current_pop_all_panels_all_chr$BIN3 <- 0
         # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
         # maf_bins <- c(0,0.01,0.02,0.05,0.5)
-        maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
+        maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
+        # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
         mode <- paste(length(maf_bins),"BIN",sep="")
         for (i in 1:(length(maf_bins))){
