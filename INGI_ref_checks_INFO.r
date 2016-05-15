@@ -70,7 +70,7 @@ for (pop in pops){
                 # assign(paste("complete_",pop,"info",sep=""),current_pop_all_panels_all_chr)
             }
         }
-        current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$INFO >= 0,)]
+        current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$INFO >= 0),]
         current_pop_all_panels_all_chr$BIN3 <- 0
         maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
