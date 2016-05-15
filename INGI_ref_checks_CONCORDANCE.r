@@ -96,7 +96,8 @@ for (pop in pops){
             }
         }
 
-        current_pop_all_panels_all_chr_nomono <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$BIN3 != 0),]
+        # current_pop_all_panels_all_chr_nomono <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$BIN3 != 0),]
+        current_pop_all_panels_all_chr_nomono <- current_pop_all_panels_all_chr
         current_pop_all_panels_all_chr_nomono <- current_pop_all_panels_all_chr_nomono[which(current_pop_all_panels_all_chr_nomono$r2_TYPE0 != -1),]
 
         cdata_r2 <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3","PANEL"), summarise,
@@ -111,7 +112,8 @@ for (pop in pops){
         p75   = quantile(r2_TYPE0,c(0.75)),
         variance= var(r2_TYPE0)
         )
-        cdata_r2_nomono <- cdata_r2[which(cdata_r2$BIN3 != 0),]
+        # cdata_r2_nomono <- cdata_r2[which(cdata_r2$BIN3 != 0),]
+        cdata_r2_nomono <- cdata_r2
         # cdata_r2_nomono <- cdata_r2_nomono[which(!is.na(cdata_r2_nomono$se)),]
         cdata_conc <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3","PANEL"), summarise,
         N    = length(CONCORD_TYPE0),
@@ -125,7 +127,8 @@ for (pop in pops){
         p75   = quantile(CONCORD_TYPE0,c(0.75)),
         variance= var(CONCORD_TYPE0)
         )
-        cdata_conc_nomono <- cdata_conc[which(cdata_conc$BIN3 != 0),]
+        # cdata_conc_nomono <- cdata_conc[which(cdata_conc$BIN3 != 0),]
+        cdata_conc_nomono <- cdata_conc
         # cdata_conc_nomono <- cdata_conc_nomono[which(!is.na(cdata_conc_nomono$se)),]
         #plot the same cohort stratifying by panel
         # The errorbars overlapped, so use position_dodge to move them horizontally
