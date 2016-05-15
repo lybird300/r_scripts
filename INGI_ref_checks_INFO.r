@@ -70,10 +70,10 @@ for (pop in pops){
                 # assign(paste("complete_",pop,"info",sep=""),current_pop_all_panels_all_chr)
             }
         }
-
+        current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$INFO >= 0,)]
         current_pop_all_panels_all_chr$BIN3 <- 0
-        # maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
-        maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
+        maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
+        # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
         mode <- paste(length(maf_bins),"BIN",sep="")
         for (i in 1:(length(maf_bins))){
@@ -89,6 +89,11 @@ for (pop in pops){
         # remove all monomorphic data plus all the data with maf higher than the last bin
         current_pop_all_panels_all_chr_nomono <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$BIN3 != 0),]
 
+        ##before converting data for plotting and summarizing, I need to test differences in parameter distributions between panels
+        # I can do a ks-test to asses differences between all panels
+        # imputation_test(selected_panels)
+        
+        ###################################################################################
         cdata <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3","PANEL"), summarise,
         N    = length(INFO),
         mean = mean(INFO),
