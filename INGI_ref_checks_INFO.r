@@ -60,7 +60,7 @@ for (pop in pops){
             # panel <- "CARL.shapeit"
             print(panel)
             for (chr in c(2,21)){
-                # chr <- 1
+                # chr <- 21
                 pop_folder <- paste(base_folder,pop,panel,sep="/")
                 current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
                 # current_pop_current_panel_current_chr_info <-  read.table(current_pop_current_panel_current_chr_info_name,header=T,nrows=100000)
