@@ -72,9 +72,10 @@ for (pop in pops){
         }
         current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$INFO >= 0),]
         current_pop_all_panels_all_chr$BIN3 <- 0
-        maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
+        # maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+
         mode <- paste(length(maf_bins),"BIN",sep="")
         for (i in 1:(length(maf_bins))){
             if (i == 1){
@@ -119,7 +120,8 @@ for (pop in pops){
         cdata_nomono$PANNELLO <- factor(cdata_nomono$PANNELLO,selected_panels)
         cdata_nomono$BIN <- factor(cdata_nomono$BIN,maf_bins)
         #create folder for each population
-        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_INFO/",pan_set,"/",pop,"_",mode,sep="")
+        min_freq <- maf_bins[2]
+        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_INFO_",min_freq,"/",pan_set,"/",pop,"_",mode,sep="")
         dir.create(out_folder, recursive=T)
 
         # save(cdata_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_nomono.RData",sep=""))

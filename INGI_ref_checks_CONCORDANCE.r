@@ -83,7 +83,7 @@ for (pop in pops){
         # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
         # maf_bins <- c(0,0.01,0.02,0.05,0.5)
         # maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
-        maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
+        # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
         mode <- paste(length(maf_bins),"BIN",sep="")
         for (i in 1:(length(maf_bins))){
@@ -155,7 +155,8 @@ for (pop in pops){
         cdata_conc_nomono$PANNELLO <- factor(cdata_conc_nomono$PANNELLO,selected_panels)
 
         #create folder for each population
-        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_CONC/",pan_set,"/",pop,"_",mode,sep="")
+        min_freq <- maf_bins[2]
+        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_CONC_",min_freq,"/",pan_set,"/",pop,"_",mode,sep="")
         dir.create(out_folder, recursive=T)
 
         write.table(cdata_r2,file=paste(out_folder,"/",pop,"_",mode,"_cdata_r2.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
