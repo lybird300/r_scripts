@@ -28,48 +28,55 @@ base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
 
 for (pop in pops){
     # pop <- "CARL"
+    #first we need to read ALL panels, based on the population
+    if (pop == "CARL"){
+        selected_panels <- c(current_pan_set,"CARL.shapeit")
+    } else if (pop == "VBI"){
+        selected_panels <- c(current_pan_set,"VBI.shapeit")
+    }else if (pop == "FVG"){
+        selected_panels <- c(current_pan_set,"FVG.shapeit")
+    }else if (pop == "INCIPE2"){
+        selected_panels <- c(current_pan_set)
+    }
+
+    all_panels <- unique(c(panel_set1,panel_set2,panel_set3,panel_set4,selected_panels))
+    current_pop_all_panels_all_chr_complete <- NULL
+    #read all panels and save the data ONCE
+    for(panel in all_panels){
+        # panel <- "CARL.shapeit"
+        print(panel)
+        for (chr in c(2,21)){
+            # chr <- 21
+            pop_folder <- paste(base_folder,pop,panel,sep="/")
+            current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
+            # current_pop_current_panel_current_chr_info <-  read.table(current_pop_current_panel_current_chr_info_name,header=T,nrows=100000)
+            # CHROM RS_ID POS EXP_FREQ_A1 INFO TYPE INFO_TYPE0 CONCORD_TYPE0 r2_TYPE0 COHORT PANEL MAF BIN
+            current_pop_current_panel_current_chr_info <-  read.table(current_pop_current_panel_current_chr_info_name,header=T,sep=" ",stringsAsFactors=F, comment.char="",colClasses=c("integer","character","integer",rep("numeric",2),"character","NULL","NULL","NULL",rep("character",2),rep("numeric",2)))
+            current_pop_all_panels_all_chr_complete <- rbind(current_pop_all_panels_all_chr_complete,current_pop_current_panel_current_chr_info)
+            # assign(paste("complete_",pop,"info",sep=""),current_pop_all_panels_all_chr)
+        }
+    }
+
+    #now, for each panel set we'll extract the relevant data from the WHOLE current_pop_all_panels_all_chr
     print(pop)
     for (pan_set in all_set){
         # pan_set <- (all_set[1])
-        current_pop_all_panels_all_chr <- NULL
         current_pan_set <- get(pan_set)
 
 
         if (pop == "CARL"){
             selected_panels <- c(current_pan_set,"CARL.shapeit")
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","CARL.shapeit")
-            } else if (pop == "VBI"){
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","VBI.shapeit")
+        } else if (pop == "VBI"){
             selected_panels <- c(current_pan_set,"VBI.shapeit")
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","VBI.shapeit")
-            }else if (pop == "FVG"){
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","FVG.shapeit")
+        }else if (pop == "FVG"){
             selected_panels <- c(current_pan_set,"FVG.shapeit")
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit","FVG.shapeit")
-            }else if (pop == "INCIPE2"){
-            # selected_panels <- c("INGI.shapeit","1000Gph1.shapeit","1000GP_Phase3.shapeit","INGI_1000GPh3.shapeit","uk10k1kg.ref")
+        }else if (pop == "INCIPE2"){
             selected_panels <- c(current_pan_set)
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
-            # selected_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit","EUR.shapeit")
         }
 
-        for(panel in selected_panels){
-            # panel <- "CARL.shapeit"
-            print(panel)
-            for (chr in c(2,21)){
-                # chr <- 21
-                pop_folder <- paste(base_folder,pop,panel,sep="/")
-                current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
-                # current_pop_current_panel_current_chr_info <-  read.table(current_pop_current_panel_current_chr_info_name,header=T,nrows=100000)
-                # CHROM RS_ID POS EXP_FREQ_A1 INFO TYPE INFO_TYPE0 CONCORD_TYPE0 r2_TYPE0 COHORT PANEL MAF BIN
-                current_pop_current_panel_current_chr_info <-  read.table(current_pop_current_panel_current_chr_info_name,header=T,sep=" ",stringsAsFactors=F, comment.char="",colClasses=c("integer","character","integer",rep("numeric",2),"character","NULL","NULL","NULL",rep("character",2),rep("numeric",2)))
-                current_pop_all_panels_all_chr <- rbind(current_pop_all_panels_all_chr,current_pop_current_panel_current_chr_info)
-                # assign(paste("complete_",pop,"info",sep=""),current_pop_all_panels_all_chr)
-            }
-        }
+        #subset the dataframe according to the selected panel set
+        current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr_complete[current_pop_all_panels_all_chr_complete$PANEL %in% current_pan_set,]
+        
         current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$INFO >= 0),]
         current_pop_all_panels_all_chr$BIN3 <- 0
         maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
@@ -93,6 +100,7 @@ for (pop in pops){
         ##before converting data for plotting and summarizing, I need to test differences in parameter distributions between panels
         # I can do a ks-test to asses differences between all panels
         # imputation_test(selected_panels)
+        cdata <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3"), pairwise.wilcox.test,current_pop_all_panels_all_chr_nomono[,"INFO"],current_pop_all_panels_all_chr_nomono[,"PANEL"],alternative="less")
         
         ###################################################################################
         cdata <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3","PANEL"), summarise,
