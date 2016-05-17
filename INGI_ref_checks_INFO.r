@@ -143,7 +143,7 @@ for (pop in pops){
         # save(cdata,file=paste(out_folder,"/",pop,"_",mode,"_cdata.RData",sep=""))
         write.table(cdata,file=paste(out_folder,"/",pop,"_",mode,"_cdata.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
         write.table(cdata_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(all_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(all_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
         # # load(paste(pop,"_cdata_nomono.RData",sep=""))
 
         #######################################################

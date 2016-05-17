@@ -58,7 +58,7 @@ for (pop in pops){
             # current_pop_current_panel_current_chr_info <-  read.table(current_pop_current_panel_current_chr_info_name,header=T,nrows=100000)
             # CHROM RS_ID POS EXP_FREQ_A1 INFO TYPE INFO_TYPE0 CONCORD_TYPE0 r2_TYPE0 COHORT PANEL MAF BIN
             current_pop_current_panel_current_chr_info <-  read.table(current_pop_current_panel_current_chr_info_name,header=T,sep=" ",stringsAsFactors=F, comment.char="",colClasses=c("integer","character","integer",rep("numeric",2),"character",rep("numeric",3),rep("character",2),rep("numeric",2)))
-            current_pop_all_panels_all_chr <- rbind(current_pop_all_panels_all_chr,current_pop_current_panel_current_chr_info)
+            current_pop_all_panels_all_chr_complete <- rbind(current_pop_all_panels_all_chr_complete,current_pop_current_panel_current_chr_info)
             # assign(paste("complete_",pop,"info",sep=""),current_pop_all_panels_all_chr)
         }
     }
@@ -186,8 +186,8 @@ for (pop in pops){
         write.table(cdata_conc,file=paste(out_folder,"/",pop,"_",mode,"_cdata_conc.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
         write.table(cdata_r2_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
         write.table(cdata_conc_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(all_r2_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(all_conc_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(all_r2_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
+        write.table(all_conc_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
 
         #######################################################
         #plot without error bars of the r2 on MEDIAN MEAN and VARIANCE
