@@ -179,15 +179,17 @@ for (pop in pops){
 
         #create folder for each population
         min_freq <- maf_bins[2]
-        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_CONC_",min_freq,"/",pan_set,"/",pop,"_",mode,sep="")
+        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_CONC_",min_freq,"/FIG/",pan_set,"/",pop,"_",mode,sep="")
+        tab_folder <- paste(base_folder,"/PLOTS/",current_date,"_CONC_",min_freq,"/TAB/",pan_set,"/",pop,"_",mode,sep="")
         dir.create(out_folder, recursive=T)
+        dir.create(tab_folder, recursive=T)
 
-        write.table(cdata_r2,file=paste(out_folder,"/",pop,"_",mode,"_cdata_r2.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(cdata_conc,file=paste(out_folder,"/",pop,"_",mode,"_cdata_conc.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(cdata_r2_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(cdata_conc_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(all_r2_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
-        write.table(all_conc_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
+        write.table(cdata_r2,file=paste(tab_folder,"/",pop,"_",mode,"_cdata_r2.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(cdata_conc,file=paste(tab_folder,"/",pop,"_",mode,"_cdata_conc.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(cdata_r2_nomono,file=paste(tab_folder,"/",pop,"_",mode,"_cdata_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(cdata_conc_nomono,file=paste(tab_folder,"/",pop,"_",mode,"_cdata_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(all_r2_tests,file=paste(tab_folder,"/",pop,"_",mode,"_wilcox_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
+        write.table(all_conc_tests,file=paste(tab_folder,"/",pop,"_",mode,"_wilcox_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
 
         #######################################################
         #plot without error bars of the r2 on MEDIAN MEAN and VARIANCE

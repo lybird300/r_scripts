@@ -136,14 +136,16 @@ for (pop in pops){
         cdata_nomono$BIN <- factor(cdata_nomono$BIN,maf_bins)
         #create folder for each population
         min_freq <- maf_bins[2]
-        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_INFO_",min_freq,"/",pan_set,"/",pop,"_",mode,sep="")
+        out_folder <- paste(base_folder,"/PLOTS/",current_date,"_INFO_",min_freq,"/FIG/",pan_set,"/",pop,"_",mode,sep="")
+        tab_folder <- paste(base_folder,"/PLOTS/",current_date,"_INFO_",min_freq,"/TAB/",pan_set,"/",pop,"_",mode,sep="")
         dir.create(out_folder, recursive=T)
+        dir.create(tab_folder, recursive=T)
 
         # save(cdata_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_nomono.RData",sep=""))
         # save(cdata,file=paste(out_folder,"/",pop,"_",mode,"_cdata.RData",sep=""))
-        write.table(cdata,file=paste(out_folder,"/",pop,"_",mode,"_cdata.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(cdata_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
-        write.table(all_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
+        write.table(cdata,file=paste(tab_folder,"/",pop,"_",mode,"_cdata.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(cdata_nomono,file=paste(tab_folder,"/",pop,"_",mode,"_cdata_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(all_tests,file=paste(tab_folder,"/",pop,"_",mode,"_wilcox_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=T)
         # # load(paste(pop,"_cdata_nomono.RData",sep=""))
 
         #######################################################
