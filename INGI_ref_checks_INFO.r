@@ -30,16 +30,16 @@ for (pop in pops){
     # pop <- "CARL"
     #first we need to read ALL panels, based on the population
     if (pop == "CARL"){
-        selected_panels <- c(current_pan_set,"CARL.shapeit")
+        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4,"CARL.shapeit")
     } else if (pop == "VBI"){
-        selected_panels <- c(current_pan_set,"VBI.shapeit")
+        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4,"VBI.shapeit")
     }else if (pop == "FVG"){
-        selected_panels <- c(current_pan_set,"FVG.shapeit")
+        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4,"FVG.shapeit")
     }else if (pop == "INCIPE2"){
-        selected_panels <- c(current_pan_set)
+        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4)
     }
 
-    all_panels <- unique(c(panel_set1,panel_set2,panel_set3,panel_set4,selected_panels))
+    all_panels <- unique(selected_panels)
     current_pop_all_panels_all_chr_complete <- NULL
     #read all panels and save the data ONCE
     for(panel in all_panels){
