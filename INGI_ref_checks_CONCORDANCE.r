@@ -2,7 +2,7 @@
 # Plot R2 values by maf an cocnord
 rm(list=ls())
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
-source("/nfs/users/nfs_m/mc14/Work/r_scripts/assign_bins.r")
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/imputation_test.r")
 require(ggplot2)
 library(plyr)
 args=commandArgs(trailing=TRUE)
@@ -105,6 +105,24 @@ for (pop in pops){
         current_pop_all_panels_all_chr_nomono <- current_pop_all_panels_all_chr
         current_pop_all_panels_all_chr_nomono <- current_pop_all_panels_all_chr_nomono[which(current_pop_all_panels_all_chr_nomono$r2_TYPE0 != -1),]
 
+
+        ##before converting data for plotting and summarizing, I need to test differences in parameter distributions between panels
+        # I can do a ks-test to asses differences between all panels
+        # imputation_test(selected_panels)
+        # we'll loop trough all the alternatives
+        all_r2_tests <- NULL
+        all_conc_tests <- NULL
+        for (alt in c("two.sided", "less", "greater")){
+        print(alt)
+        current_r2_alt <- imputation_wilcox_test(current_pop_all_panels_all_chr_nomono,c("BIN3","PANEL"),"r2_TYPE0",alt)        
+        current_conc_alt <- imputation_wilcox_test(current_pop_all_panels_all_chr_nomono,c("BIN3","PANEL"),"CONCORD_TYPE0",alt)        
+        all_r2_tests <- rbind(all_r2_tests,current_r2_alt)
+        all_conc_tests <- rbind(all_conc_tests,current_conc_alt)
+        }
+
+
+        ###################################################################################
+
         cdata_r2 <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3","PANEL"), summarise,
         N    = length(r2_TYPE0),
         mean = mean(r2_TYPE0),
@@ -168,6 +186,8 @@ for (pop in pops){
         write.table(cdata_conc,file=paste(out_folder,"/",pop,"_",mode,"_cdata_conc.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
         write.table(cdata_r2_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
         write.table(cdata_conc_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(all_r2_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_r2_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(all_conc_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_conc_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
 
         #######################################################
         #plot without error bars of the r2 on MEDIAN MEAN and VARIANCE

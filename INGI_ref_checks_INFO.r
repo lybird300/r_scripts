@@ -3,7 +3,7 @@
 
 rm(list=ls())
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
-source("/nfs/users/nfs_m/mc14/Work/r_scripts/assign_bins.r")
+source("/nfs/users/nfs_m/mc14/Work/r_scripts/imputation_test.r")
 require(ggplot2)
 library(plyr)
 args=commandArgs(trailing=TRUE)
@@ -100,8 +100,15 @@ for (pop in pops){
         ##before converting data for plotting and summarizing, I need to test differences in parameter distributions between panels
         # I can do a ks-test to asses differences between all panels
         # imputation_test(selected_panels)
-        cdata <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3"), pairwise.wilcox.test,current_pop_all_panels_all_chr_nomono[,"INFO"],current_pop_all_panels_all_chr_nomono[,"PANEL"],alternative="less")
-        
+        # we'll loop trough all the alternatives
+        all_tests <- NULL
+        for (alt in c("two.sided", "less", "greater")){
+        print(alt)
+        current_alt <- imputation_wilcox_test(current_pop_all_panels_all_chr_nomono,c("BIN3","PANEL"),"INFO",alt)        
+        all_tests <- rbind(all_tests,current_alt)
+        }
+
+
         ###################################################################################
         cdata <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3","PANEL"), summarise,
         N    = length(INFO),
@@ -136,6 +143,7 @@ for (pop in pops){
         # save(cdata,file=paste(out_folder,"/",pop,"_",mode,"_cdata.RData",sep=""))
         write.table(cdata,file=paste(out_folder,"/",pop,"_",mode,"_cdata.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
         write.table(cdata_nomono,file=paste(out_folder,"/",pop,"_",mode,"_cdata_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
+        write.table(all_tests,file=paste(out_folder,"/",pop,"_",mode,"_wilcox_nomono.txt",sep=""),sep="\t",col.names=T,quote=F,row.names=F)
         # # load(paste(pop,"_cdata_nomono.RData",sep=""))
 
         #######################################################
