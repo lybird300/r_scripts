@@ -31,7 +31,7 @@ maf_bin_set1 <- c(0,0.02,0.05,0.1,0.2,0.5)
 maf_bin_set2 <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
 all_maf_bins <- c("maf_bin_set1","maf_bin_set2")
 
-all_set <- c("panel_set1","panel_set2","panel_set3","panel_set4")
+# all_set <- c("panel_set1","panel_set2","panel_set3","panel_set4")
 # gen_pop_ref_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit", "EUR.shapeit")
 #for each population, we upload the interesting columns of the info file:
 current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
