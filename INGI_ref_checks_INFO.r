@@ -22,6 +22,7 @@ panel_set4 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","CARL_FVG_VBI_TGP3_ALL.sha
 # panel_set3 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","EUR.shapeit")
 #define panel set for ESHG2016 poster
 panel_set5 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit")
+# all_set <- c("panel_set1","panel_set2","panel_set3","panel_set4")
 
 all_set <- c("panel_set5")
 
@@ -40,18 +41,18 @@ for (m_bin in all_maf_bins){
 
     maf_bins <- get(m_bin)
     print(maf_bins)
-    
+
 for (pop in pops){
     # pop <- "CARL"
     #first we need to read ALL panels, based on the population
     if (pop == "CARL"){
-        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4,"CARL.shapeit")
+        selected_panels <- c(unique(unlist(lapply(all_set,get))),"CARL.shapeit")
     } else if (pop == "VBI"){
-        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4,"VBI.shapeit")
+        selected_panels <- c(unique(unlist(lapply(all_set,get))),"VBI.shapeit")
     }else if (pop == "FVG"){
-        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4,"FVG.shapeit")
+        selected_panels <- c(unique(unlist(lapply(all_set,get))),"FVG.shapeit")
     }else if (pop == "INCIPE2"){
-        selected_panels <- c(panel_set1,panel_set2,panel_set3,panel_set4)
+        selected_panels <- c(unique(unlist(lapply(all_set,get))))
     }
 
     all_panels <- unique(selected_panels)
