@@ -13,7 +13,7 @@ maf_bins <- args
 # define populations and reference panes
 #last mod 4/4/2016
 # pops <- c("CARL","FVG","INCIPE2","VBI")
-pops <- c("CARL","INCIPE2","VBI")
+pops <- c("CARL","FVG","INCIPE2","VBI")
 # pops <- c("FVG")
 # define panel set for plotting purpouses
 panel_set1 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","EUR.shapeit")
@@ -21,7 +21,16 @@ panel_set2 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","TGP3_ALL
 # panel_set3 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","EUR.shapeit")
 panel_set3 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","EUR.shapeit")
 panel_set4 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","CARL_FVG_VBI_TGP3_ALL.shapeit","TGP3_ALL.shapeit")
-all_set <- c("panel_set1","panel_set2","panel_set3","panel_set4")
+#define panel set for ESHG2016 poster
+panel_set5 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit")
+
+all_set <- c("panel_set5")
+
+####define different set of maf bins
+maf_bin_set1 <- c(0,0.02,0.05,0.1,0.2,0.5)
+maf_bin_set2 <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
+all_maf_bins <- c("maf_bin_set1","maf_bin_set2")
+
 
 current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
 base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
@@ -31,6 +40,10 @@ base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
 # for (mode in modes) {
 # print(mode)
 # mode <- "3BIN"
+for (m_bin in all_maf_bins){
+
+    maf_bins <- get(m_bin)
+    print(maf_bins)
 
 for (pop in pops){
 # pop <- "FVG"
@@ -87,7 +100,7 @@ for (pop in pops){
         current_pop_all_panels_all_chr$BIN3 <- 0
         # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
         # maf_bins <- c(0,0.01,0.02,0.05,0.5)
-        maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
+        # maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
         # maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
         mode <- paste(length(maf_bins),"BIN",sep="")
@@ -270,6 +283,7 @@ for (pop in pops){
         ggsave(filename=paste(out_folder,"/complete_13042016_conc_",pop,"_",mode,"_info_boxplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
        
     }
+}
 }
 
 ############
