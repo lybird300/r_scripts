@@ -79,7 +79,7 @@ for (pop in pops){
         }
         
         #subset the dataframe according to the selected panel set
-        current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr_complete[current_pop_all_panels_all_chr_complete$PANEL %in% current_pan_set,]
+        current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr_complete[current_pop_all_panels_all_chr_complete$PANEL %in% selected_panels,]
         
         #select only type 2 snps
         current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$TYPE == "2"),]
