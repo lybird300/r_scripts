@@ -13,6 +13,8 @@ imputation_wilcox_test <- function(x,class_factor,score, alternative = c("two.si
         ans <- pairwise.wilcox.test(x_f1[,score],x_f1[,f2],alternative=alternative)
         f1_ans <- as.data.frame(ans$p.value)
         f1_ans[,f1] <- i
+        f1_ans$PANEL <- rownames(f1_ans)
+        rownames(f1_ans) <- NULL
         f1_ans$alternative <- alternative
         f1_ans_all <- rbind(f1_ans_all,f1_ans)
     }
