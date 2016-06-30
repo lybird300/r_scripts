@@ -4,12 +4,12 @@ args=commandArgs(trailing=TRUE)
 #args[[2]] = result_file_path
 #args[[3]] = snp list
 #args[[4]] = unfiltered sites number
-
+trait <- args[[1]]
 result_file_path <- args[[2]]
 # result_file_path <- "/lustre/scratch113/projects/uk10k/users/jh21/imputed/carl/gemma/TC"
 
 # MANHATTAN PLOT
-source("/nfs/users/nfs_m/mc14/Work/r_scripts/qqman.R")
+source("~/Work/scripts/r_scripts/qqman.R")
 
 # PLOT ALL SNPS
 # REDUCING # SNPs TO PLOT 
@@ -71,25 +71,25 @@ dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 0.1 & to_plot_unfiltered$P >
 dim(to_plot_unfiltered[which(to_plot_unfiltered$P < 0.01),])
 
 #extract snps to color from a list
-pos_con <- read.table(args[[3]], sep=" ", header=T)
-# pos_con = read.csv("TC.all.poscon.join", sep=" ", header=T)
-pos_con_list <- pos_con$RS
+if( exists("args[[3]]")){
+	pos_con <- read.table(args[[3]], sep=" ", header=T)
+	# pos_con = read.csv("TC.all.poscon.join", sep=" ", header=T)
+	pos_con_list <- pos_con$RS
+}
 
 # low_to_comm <- merged_new[which(merged_new$MAF >= 0.01 & merged_new$MAF < 0.05),]$SNP
-
-jpeg(paste(args[[1]],".manhattan.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
-# jpeg(paste("TC",".manhattan.unfiltered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
-# manhattan(to_plot_unfiltered, pch=16, main=paste("BMI", "_"," unfiltered", sep=""))
-# manhattan(to_plot_unfiltered,annotate=pos_con_list, pch=16, main=paste("TC"," unfiltered", sep=""))
-manhattan(to_plot_unfiltered,annotate=pos_con_list, pch=16, main=paste(args[[1]]," filtered", sep=""))
-# jpeg(paste("TC", "_", "22", ".manhattan.unfiltered.jpg", sep=""), width = 1768, height = 600, pointsize = 16)
-# manhattan(to_plot_unfiltered, pch=16, main=paste("TC", "_", "22", " unfiltered", sep=""))
+jpeg(paste(trait,".manhattan.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
+if( exists("pos_con_list")){
+	manhattan(to_plot_unfiltered,annotate=pos_con_list, pch=16, main=paste(trait," filtered", sep=""))
+}else{
+	manhattan(to_plot_unfiltered, pch=16, main=paste(trait," filtered", sep=""))
+}
 dev.off()
 
-# jpeg(paste(args[[1]], "_", args[[2]], ".qq.unfiltered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
-jpeg(paste(args[[1]],".qq.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
-# qq(to_plot_unfiltered$P, unfiltered=tot_unfiltered,main=paste(args[[1]], " filtered", sep=""))
-qq(to_plot_unfiltered$P, main=paste(args[[1]], " filtered", sep=""))
+# jpeg(paste(trait, "_", args[[2]], ".qq.unfiltered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
+jpeg(paste(trait,".qq.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
+# qq(to_plot_unfiltered$P, unfiltered=tot_unfiltered,main=paste(trait, " filtered", sep=""))
+qq(to_plot_unfiltered$P, main=paste(trait, " filtered", sep=""))
 # jpeg(paste("TC", "_", "22", ".qq.unfiltered.jpg", sep=""), width = 1300, height = 600, pointsize = 16)
 # qq(to_plot_unfiltered$P, pch=16, main=paste("TC", "_", "22", " unfiltered", sep=""))
 dev.off()

@@ -23,8 +23,9 @@ panel_set3 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","EUR.shapeit")
 panel_set4 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","CARL_FVG_VBI_TGP3_ALL.shapeit","TGP3_ALL.shapeit")
 #define panel set for ESHG2016 poster
 panel_set5 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit")
+panel_set6 <- c("CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shapeit")
 
-all_set <- c("panel_set5")
+all_set <- c("panel_set6")
 
 ####define different set of maf bins
 maf_bin_set1 <- c(0,0.02,0.05,0.1,0.2,0.5)
@@ -41,7 +42,7 @@ base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
 # print(mode)
 # mode <- "3BIN"
 for (m_bin in all_maf_bins){
-
+# m_bin <- all_maf_bins[1] 
     maf_bins <- get(m_bin)
     print(maf_bins)
 
