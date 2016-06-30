@@ -6,6 +6,7 @@ args=commandArgs(trailing=TRUE)
 #args[[4]] = unfiltered sites number
 trait <- args[[1]]
 result_file_path <- args[[2]]
+trait_folder <- dirname(result_file_path)
 # result_file_path <- "/lustre/scratch113/projects/uk10k/users/jh21/imputed/carl/gemma/TC"
 
 # MANHATTAN PLOT
@@ -82,7 +83,7 @@ if( exists("args[[3]]")){
 }
 
 # low_to_comm <- merged_new[which(merged_new$MAF >= 0.01 & merged_new$MAF < 0.05),]$SNP
-jpeg(paste(trait,".manhattan.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
+jpeg(paste(trait_folder,"/PLOTS/",trait,".manhattan.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
 if( exists("pos_con_list")){
 	manhattan(to_plot_unfiltered,annotate=pos_con_list, pch=16, main=paste(trait," filtered", sep=""))
 }else{
@@ -91,7 +92,7 @@ if( exists("pos_con_list")){
 dev.off()
 
 # jpeg(paste(trait, "_", args[[2]], ".qq.unfiltered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
-jpeg(paste(trait,".qq.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
+jpeg(paste(trait_folder,"/PLOTS/",trait,".qq.filtered.jpg", sep=""), width = 1024, height = 768, pointsize = 12)
 # qq(to_plot_unfiltered$P, unfiltered=tot_unfiltered,main=paste(trait, " filtered", sep=""))
 qq(to_plot_unfiltered$P, main=paste(trait, " filtered", sep=""))
 # jpeg(paste("TC", "_", "22", ".qq.unfiltered.jpg", sep=""), width = 1300, height = 600, pointsize = 16)
