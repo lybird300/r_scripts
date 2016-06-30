@@ -9,7 +9,7 @@ result_file_path <- args[[2]]
 # result_file_path <- "/lustre/scratch113/projects/uk10k/users/jh21/imputed/carl/gemma/TC"
 
 # MANHATTAN PLOT
-source("~/Work/scripts/r_scripts/qqman.R")
+source("~/scripts/r_scripts/qqman.R")
 
 # PLOT ALL SNPS
 # REDUCING # SNPs TO PLOT 
