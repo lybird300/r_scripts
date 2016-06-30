@@ -20,28 +20,32 @@ source("~/Work/scripts/r_scripts/qqman.R")
 #number of total sites unfiltered to use in qq plot generation
 # tot_unfiltered <- as.numeric(as.character(args[[4]]))
 #need to read all separated chroms, than plot all together
-to_plot_unfiltered <- NULL
+# to_plot_unfiltered <- NULL
 
-for (chr in 1:23){
-	if (chr == 23){
-		chr="X"
-		col_class <- c("NULL","character","character","integer","NULL","NULL","NULL","NULL","NULL","numeric","NULL","NULL")	
-	}else{
-		col_class <- c("NULL","character","integer","integer","NULL","NULL","NULL","NULL","NULL","numeric","NULL","NULL")
-	}
-	print(chr)
-	current_chr_tab <- paste(result_file_path,"/chr",chr,".gemma.gz", sep="")
-	current_chr_to_plot <- read.table(current_chr_tab,header=T,stringsAsFactors=F, comment.char="",colClasses=col_class)
+# for (chr in 1:23){
+# 	if (chr == 23){
+# 		chr="X"
+# 		col_class <- c("NULL","character","character","integer","NULL","NULL","NULL","NULL","NULL","numeric","NULL","NULL")	
+# 	}else{
+# 		col_class <- c("NULL","character","integer","integer","NULL","NULL","NULL","NULL","NULL","numeric","NULL","NULL")
+# 	}
+# 	print(chr)
+# 	current_chr_tab <- paste(result_file_path,"/chr",chr,".gemma.gz", sep="")
+# 	current_chr_to_plot <- read.table(current_chr_tab,header=T,stringsAsFactors=F, comment.char="",colClasses=col_class)
 	
-	if (chr == 23){
-		current_chr_to_plot$CHR <- 23
-	}
+# 	if (chr == 23){
+# 		current_chr_to_plot$CHR <- 23
+# 	}
 
-	to_plot_unfiltered <- cbind(to_plot_unfiltered,current_chr_to_plot)
+# 	to_plot_unfiltered <- cbind(to_plot_unfiltered,current_chr_to_plot)
 
-}
+# }
 
-colnames(to_plot_unfiltered) <- c("rs","CHR","BP","P")
+col_class <- c("numeric","character",rep("numeric",times=5))
+
+to_plot_unfiltered <- read.table(result_file_path,header=T,stringsAsFactors=F, comment.char="",colClasses=col_class)
+
+colnames(to_plot_unfiltered) <- c("CHR","rs","BP","BETA","SE","P","P_score")
 # colnames(to_plot_unfiltered) <- c("CHR","SNP","BP","BETA","SE","P","P_score","MAF","INFO_snptest","HWE","all_0_freq","all_1_freq","eff_all_freq")
 # colnames(to_plot_unfiltered) <- c("CHR","SNP","BP","P")
 # colnames(to_plot_unfiltered) <- c("CHR","rs","BP","beta","se","P")
