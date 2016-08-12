@@ -20,6 +20,6 @@ info_file <- args[[3]]
 sample_file <- args[[4]]
 output_file <- args[[5]]
 
-impute2mach(geno_file, info_file, sample_file, output_file, maketextdosefile=TRUE)
+impute2mach(geno_file, info_file, sample_file, output_file, maketextdosefile=TRUE,order_info_snp_pos_freq1_info_qual_type=c(2,3,6:9))
 
 #q(save="yes")
