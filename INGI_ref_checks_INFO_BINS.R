@@ -3,7 +3,8 @@
 
 rm(list=ls())
 source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
-source("/nfs/users/nfs_m/mc14/Work/r_scripts/imputation_test.r")
+# source("/nfs/users/nfs_m/mc14/Work/r_scripts/imputation_test.r")
+source("/home/cocca/scripts/r_scripts/imputation_test.r")
 require(ggplot2)
 library(plyr)
 args=commandArgs(trailing=TRUE)
@@ -26,7 +27,7 @@ panel_set5 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shap
 panel_set6 <- c("uk10k1kg.ref")
 # all_set <- c("panel_set1","panel_set2","panel_set3","panel_set4")
 
-all_set <- c("panel_set6")
+all_set <- c("panel_set5")
 
 ####define different set of maf bins
 # maf_bin_set1 <- c(0,0.02,0.05,0.1,0.2,0.5)
@@ -37,8 +38,8 @@ all_set <- c("panel_set6")
 # gen_pop_ref_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit", "EUR.shapeit")
 #for each population, we upload the interesting columns of the info file:
 current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
-base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
-
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
+base_folder <- getwd()
 # for (m_bin in all_maf_bins){
 
     # maf_bins <- get(m_bin)

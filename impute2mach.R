@@ -1,6 +1,6 @@
 #we need to use the local libs
-library('GenABEL',lib.loc='/nfs/users/nfs_m/mc14/R/library/')
-library('DatABEL',lib.loc='/nfs/users/nfs_m/mc14/R/library/')
+library('GenABEL')
+library('DatABEL')
 
 #read commandline args
 args <- commandArgs(trailing=TRUE)

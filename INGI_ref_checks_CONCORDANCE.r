@@ -1,19 +1,21 @@
 ##############################################
 # Plot R2 values by maf an cocnord
 rm(list=ls())
-source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
-source("/nfs/users/nfs_m/mc14/Work/r_scripts/imputation_test.r")
+# source("/nfs/users/nfs_m/mc14/Work/r_scripts/col_pop.r")
+# source("/nfs/users/nfs_m/mc14/Work/r_scripts/imputation_test.r")
+source("/home/cocca/scripts/r_scripts/imputation_test.r")
 require(ggplot2)
 library(plyr)
 args=commandArgs(trailing=TRUE)
-maf_bins <- args
+# maf_bins <- args
 # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
 # commandArgs <- function() maf_bins
 
 # define populations and reference panes
 #last mod 4/4/2016
 # pops <- c("CARL","FVG","INCIPE2","VBI")
-pops <- c("CARL","FVG","INCIPE2","VBI")
+# pops <- c("CARL","FVG","INCIPE2","VBI")
+pops <- c("CARL","FVG","VBI")
 # pops <- c("FVG")
 # define panel set for plotting purpouses
 panel_set1 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","EUR.shapeit")
@@ -25,7 +27,7 @@ panel_set4 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","CARL_FVG_VBI_TGP3_ALL.sha
 panel_set5 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit")
 panel_set6 <- c("CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shapeit")
 
-all_set <- c("panel_set6")
+all_set <- c("panel_set5")
 
 ####define different set of maf bins
 maf_bin_set1 <- c(0,0.02,0.05,0.1,0.2,0.5)
@@ -34,7 +36,8 @@ all_maf_bins <- c("maf_bin_set1","maf_bin_set2")
 
 
 current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
-base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
+base_folder <- getwd()
 #rsId, position,expected_af, info, type and concordances 
 # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
 # modes <- c("3BIN","11BIN")
@@ -42,22 +45,23 @@ base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
 # print(mode)
 # mode <- "3BIN"
 for (m_bin in all_maf_bins){
-# m_bin <- all_maf_bins[1] 
+# m_bin <- all_maf_bins[2] 
     maf_bins <- get(m_bin)
     print(maf_bins)
 
 for (pop in pops){
 # pop <- "FVG"
     #first we need to read ALL panels, based on the population
-    if (pop == "CARL"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))),"CARL.shapeit")
-    } else if (pop == "VBI"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))),"VBI.shapeit")
-    }else if (pop == "FVG"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))),"FVG.shapeit")
-    }else if (pop == "INCIPE2"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))))
-    }
+    # if (pop == "CARL"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))),"CARL.shapeit")
+    # } else if (pop == "VBI"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))),"VBI.shapeit")
+    # }else if (pop == "FVG"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))),"FVG.shapeit")
+    # }else if (pop == "INCIPE2"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))))
+    # }
+    selected_panels <- c(unique(unlist(lapply(all_set,get))))
 
     all_panels <- unique(selected_panels)
     current_pop_all_panels_all_chr_complete <- NULL
@@ -65,7 +69,7 @@ for (pop in pops){
     for(panel in all_panels){
         # panel <- "CARL.shapeit"
         print(panel)
-        for (chr in c(2,21)){
+        for (chr in c(2,6,11,21)){
             # chr <- 21
             pop_folder <- paste(base_folder,pop,panel,sep="/")
             current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
@@ -82,15 +86,16 @@ for (pop in pops){
     for (pan_set in all_set){
         current_pan_set <- get(pan_set)
 
-        if (pop == "CARL"){
-            selected_panels <- c(current_pan_set,"CARL.shapeit")
-            } else if (pop == "VBI"){
-            selected_panels <- c(current_pan_set,"VBI.shapeit")
-            }else if (pop == "FVG"){
-            selected_panels <- c(current_pan_set,"FVG.shapeit")
-            }else if (pop == "INCIPE2"){
-            selected_panels <- c(current_pan_set)
-        }
+        # if (pop == "CARL"){
+        #     selected_panels <- c(current_pan_set,"CARL.shapeit")
+        #     } else if (pop == "VBI"){
+        #     selected_panels <- c(current_pan_set,"VBI.shapeit")
+        #     }else if (pop == "FVG"){
+        #     selected_panels <- c(current_pan_set,"FVG.shapeit")
+        #     }else if (pop == "INCIPE2"){
+        #     selected_panels <- c(current_pan_set)
+        # }
+        selected_panels <- c(current_pan_set)
         
         #subset the dataframe according to the selected panel set
         current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr_complete[current_pop_all_panels_all_chr_complete$PANEL %in% selected_panels,]
@@ -99,11 +104,7 @@ for (pop in pops){
         current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr[which(current_pop_all_panels_all_chr$TYPE == "2"),]
 
         current_pop_all_panels_all_chr$BIN3 <- 0
-        # maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
-        # maf_bins <- c(0,0.01,0.02,0.05,0.5)
-        # maf_bins <- c(0,0.02,0.05,0.1,0.2,0.5)
-        # maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
-        # maf_bins <- c(0,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+
         mode <- paste(length(maf_bins),"BIN",sep="")
         for (i in 1:(length(maf_bins))){
             if (i == 1){
@@ -288,3 +289,109 @@ for (pop in pops){
 }
 
 ############
+# 12/07/2016
+# code snippet to plot all population on the same plot
+##############################################
+# Plot R2 values by maf an cocnord
+rm(list=ls())
+require(ggplot2)
+library(plyr)
+args=commandArgs(trailing=TRUE)
+maf_bins <- args
+# maf_bins <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
+# commandArgs <- function() maf_bins
+
+# define populations and reference panes
+#last mod 4/4/2016
+# pops <- c("CARL","FVG","INCIPE2","VBI")
+pops <- c("CARL","FVG","INCIPE2","VBI")
+# pops <- c("FVG")
+# define panel set for plotting purpouses
+panel_set1 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","EUR.shapeit")
+panel_set2 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","TGP3_ALL.shapeit","EUR.shapeit")
+# panel_set3 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_UK10K_TGP3_ALL.shapeit","uk10k1kg.ref","EUR.shapeit")
+panel_set3 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","EUR.shapeit")
+panel_set4 <- c("CARL_FVG_VBI.shapeit","uk10k1kg.ref","CARL_FVG_VBI_TGP3_ALL.shapeit","TGP3_ALL.shapeit")
+#define panel set for ESHG2016 poster
+panel_set5 <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","TGP3_ALL.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit")
+panel_set6 <- c("INGI+TSI","1000GPhase3","INGI+1000GPhase3")
+
+all_set <- c("panel_set6")
+
+####define different set of maf bins
+# maf_bin_set1 <- c(0,0.02,0.05,0.1,0.2,0.5)
+# maf_bin_set2 <- c(0,0.01,0.02,0.05,0.1,0.2,0.5)
+# all_maf_bins <- c("maf_bin_set1","maf_bin_set2")
+
+
+# current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
+#rsId, position,expected_af, info, type and concordances 
+# maf_bins <- c(0,0.005,0.01,0.02,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50)
+# modes <- c("3BIN","11BIN")
+# for (mode in modes) {
+# print(mode)
+# mode <- "3BIN"
+
+for (pop in pops){
+# pop <- "FVG"
+    #now, for each panel set we'll extract the relevant data from the WHOLE current_pop_all_panels_all_chr
+
+        all_pop_pan <- read.table("all_pop_ITALIAN_TGP3_r2.txt",h=T)
+        all_pop_pan$PANEL <- as.character(all_pop_pan$PANEL)
+        all_pop_pan$POP <- as.character(all_pop_pan$POP)
+        all_pop_pan <- all_pop_pan[order(all_pop_pan$POP),]
+        all_pop_pan$PANNELLO <- all_pop_pan$PANEL
+        all_pop_pan$PANNELLO <- factor(all_pop_pan$PANNELLO,panel_set6)
+        all_pop_pan$COHORT <- all_pop_pan$POP
+        all_pop_pan$COHORT <- factor(all_pop_pan$COHORT,pops)
+        #######################################################
+        #plot without error bars of the r2 on MEDIAN MEAN and VARIANCE
+        plot_range <- c("median","mean","variance")
+
+        # for (variable in plot_range){
+            variable <- plot_range[2]
+            print(variable)
+            # plot mean r2
+            pd <- position_dodge(0.001)
+            pl <- ggplot(all_pop_pan)
+            pl <- pl + aes(x = BIN3, y = all_pop_pan[,variable],group=PANNELLO,colour=PANNELLO)
+            # pl <- pl + geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=0.005,colour="black")
+            pl <- pl + scale_x_continuous(breaks=all_pop_pan$BIN3,labels=all_pop_pan$BIN)
+            pl <- pl + geom_line(position=pd,aes(group=PANNELLO),size=1.8) + geom_point(position=pd,size=3, shape=21, fill="white")
+            # pl <- pl + scale_fill_manual("Ref. Panel", values=factor(PANEL),guide=FALSE)
+            # pl <- pl + scale_color_discrete(name=paste(pop," on:"))
+            pl <- pl + xlab("MAF bins") + ylab(paste(toupper(variable),"IMPUTE r^2",sep=" "))
+            pl <- pl + facet_wrap( ~ COHORT, scales="free_y")
+            # pl <- pl + facet_wrap( ~ POP)
+            pl <- pl + theme_bw() 
+            pl <- pl + theme(axis.text.x=element_text(size = rel(1.2), angle=45,hjust=1))
+            pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+            pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+            pl <- pl + theme(legend.text= element_text(size = rel(1.2)), legend.title = element_text(size = rel(1.2)),legend.position = c(0.9, 0.2))
+            ggsave(filename=paste("complete_09062016_r2_all_",toupper(variable),".jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+
+        # } 
+
+        #plot also in boxplot form with median data
+        pd <- position_dodge(0.001)
+        pl <- ggplot(all_pop_pan)
+        pl <- pl + aes(x = PANNELLO, y = mean)
+        pl <- pl + geom_boxplot(aes(lower=p25,middle=median,upper=p75,ymax=max,ymin=min,fill=PANNELLO),stat = "identity")
+        pl <- pl + facet_wrap( ~ BIN,scales = "free_y")
+        pl <- pl + scale_color_discrete(name=paste(pop," on:"))
+        pl <- pl + xlab("Panels") + ylab("IMPUTE r2 ")
+        pl <- pl + theme_bw()
+        pl <- pl + theme(axis.text.x=element_blank())
+        pl <- pl + theme(axis.text.y=element_text(size = rel(1.2)))
+        pl <- pl + theme(axis.title= element_text(size=rel(1.2)))
+        ggsave(filename=paste(out_folder,"/complete_13042016_r2_",pop,"_",mode,"_info_boxplot.jpeg",sep=""),width=12, height=7,dpi=300,plot=pl)
+        
+        #######################################################
+       
+    }
+}
+}
+
+############
+

@@ -35,7 +35,8 @@ all_maf_bins <- c("maf_bin_set1","maf_bin_set2")
 # gen_pop_ref_panels <- c("CARL_FVG_VBI.shapeit","CARL_FVG_VBI_TSI.shapeit","CARL_FVG_VBI_TGP3_ALL.shapeit","uk10k1kg.ref","TGP3_ALL.shapeit", "EUR.shapeit")
 #for each population, we upload the interesting columns of the info file:
 current_date <- format(Sys.time(),"%d_%m_%Y_%H%M%S")
-base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
+# base_folder <- "/lustre/scratch113/projects/esgi-vbseq/31032016_IMPUTATION"
+base_folder <- getwd()
 
 for (m_bin in all_maf_bins){
 
@@ -45,23 +46,23 @@ for (m_bin in all_maf_bins){
 for (pop in pops){
     # pop <- "CARL"
     #first we need to read ALL panels, based on the population
-    if (pop == "CARL"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))),"CARL.shapeit")
-    } else if (pop == "VBI"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))),"VBI.shapeit")
-    }else if (pop == "FVG"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))),"FVG.shapeit")
-    }else if (pop == "INCIPE2"){
-        selected_panels <- c(unique(unlist(lapply(all_set,get))))
-    }
-
+    # if (pop == "CARL"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))),"CARL.shapeit")
+    # } else if (pop == "VBI"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))),"VBI.shapeit")
+    # }else if (pop == "FVG"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))),"FVG.shapeit")
+    # }else if (pop == "INCIPE2"){
+    #     selected_panels <- c(unique(unlist(lapply(all_set,get))))
+    # }
+    selected_panels <- c(unique(unlist(lapply(all_set,get))))
     all_panels <- unique(selected_panels)
     current_pop_all_panels_all_chr_complete <- NULL
     #read all panels and save the data ONCE
     for(panel in all_panels){
         # panel <- "CARL.shapeit"
         print(panel)
-        for (chr in c(2,21)){
+        for (chr in c(11)){
             # chr <- 21
             pop_folder <- paste(base_folder,pop,panel,sep="/")
             current_pop_current_panel_current_chr_info_name <- paste(pop_folder,"/",chr,"/chr",chr,".gen_info_partial_t2.gz",sep="")
@@ -80,16 +81,16 @@ for (pop in pops){
         current_pan_set <- get(pan_set)
 
 
-        if (pop == "CARL"){
-            selected_panels <- c(current_pan_set,"CARL.shapeit")
-        } else if (pop == "VBI"){
-            selected_panels <- c(current_pan_set,"VBI.shapeit")
-        }else if (pop == "FVG"){
-            selected_panels <- c(current_pan_set,"FVG.shapeit")
-        }else if (pop == "INCIPE2"){
-            selected_panels <- c(current_pan_set)
-        }
-
+        # if (pop == "CARL"){
+        #     selected_panels <- c(current_pan_set,"CARL.shapeit")
+        # } else if (pop == "VBI"){
+        #     selected_panels <- c(current_pan_set,"VBI.shapeit")
+        # }else if (pop == "FVG"){
+        #     selected_panels <- c(current_pan_set,"FVG.shapeit")
+        # }else if (pop == "INCIPE2"){
+        #     selected_panels <- c(current_pan_set)
+        # }
+        selected_panels <- c(current_pan_set)
         #subset the dataframe according to the selected panel set
         current_pop_all_panels_all_chr <- current_pop_all_panels_all_chr_complete[current_pop_all_panels_all_chr_complete$PANEL %in% selected_panels,]
         
@@ -123,7 +124,6 @@ for (pop in pops){
         current_alt <- imputation_wilcox_test(current_pop_all_panels_all_chr_nomono,c("BIN3","PANEL"),"INFO",alt)        
         all_tests <- rbind(all_tests,current_alt)
         }
-
 
         ###################################################################################
         cdata <- ddply(current_pop_all_panels_all_chr_nomono, c("BIN3","PANEL"), summarise,
