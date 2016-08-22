@@ -1,7 +1,7 @@
 #we need to use the local libs
 library('GenABEL')
 library('DatABEL')
-# source("/home/cocca/scripts/r_scripts/impute2databel.r")
+source("/home/cocca/scripts/r_scripts/impute2databel.r")
 
 #read commandline args
 args <- commandArgs(trailing=TRUE)
